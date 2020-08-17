@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>qml/ScannerPage.qml</file>
+        <file>qml/ScannerOverlay.qml</file>
+    </qresource>
+</RCC>
