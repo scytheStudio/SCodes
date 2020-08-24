@@ -22,10 +22,12 @@ ZXing-C++ Library supports many other formats, but currently it is possible to o
 All you need to do is to follow these steps.
 
 1. Add SBarcodeReader as submodule, by typing `git submodule add git@gitlab.com:scythestudio/sbarcodereader.git`
-2. Update submodule `git submodule update --recursive` (you can also put wrapper files to your project manually without adding submodule)
-3. Import SBarcodeReader in your Qml file `import com.scythestudio.sbarcodereader 1.0`
-4. Import multimedia module `import QtMultimedia 5.15`
-5. You are done. Get inspired by [QML Barcode Reader demo](https://github.com/scytheStudio/SBarcodeReader/blob/master/examples/QmlBarcodeReader/qml/ScannerPage.qml) to test wrapper.
+2. Update submodule `git submodule update --recursive --init` (you can also put wrapper files to your project manually without adding submodule)
+3. Add `include(sbarcodereader/src/SBarcodeReader.pri` to your .pro file
+4. Import SBarcodeReader in your Qml file `import com.scythestudio.sbarcodereader 1.0`
+5. Import multimedia module `import QtMultimedia 5.15`
+6. If build fails, try to add `CONFIG += c++17` to your .pro file
+7. You are done. Get inspired by [QML Barcode Reader demo](https://github.com/scytheStudio/SBarcodeReader/blob/master/examples/QmlBarcodeReader/qml/ScannerPage.qml) to test wrapper.
 
 If you use Qt version older than 5.15 you need to manually register BarcodeFilter e.g. in main.cpp. Use this line for this purpose:
 ```
