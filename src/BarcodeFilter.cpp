@@ -11,12 +11,12 @@ void processImage(BarcodeDecoder *decoder, const QImage &image)
   decoder->process(image);
 };
 
-class QRRunnable : public QVideoFilterRunnable
+class BarcodeFilterRunnable : public QVideoFilterRunnable
 {
 
 public:
 
-    QRRunnable(BarcodeFilter *filter)
+    BarcodeFilterRunnable(BarcodeFilter *filter)
         : _filter{filter}
     {
     }
@@ -32,12 +32,12 @@ public:
             return *input;
         }
 
-        if (_filter->getFutureThread().isRunning()) {
+        if (_filter->getImageFuture().isRunning()) {
             return *input;
         }
 
         const QImage croppedCapturedImage = BarcodeDecoder::videoFrameToImage(*input, _filter->captureRect().toRect());
-        _filter->getFutureThread() = QtConcurrent::run(processImage, _filter->getDecoder(), croppedCapturedImage);
+        _filter->getImageFuture() = QtConcurrent::run(processImage, _filter->getDecoder(), croppedCapturedImage);
 
         return *input;
     }
@@ -62,7 +62,7 @@ BarcodeFilter::BarcodeFilter(QObject *parent)
 
 QVideoFilterRunnable *BarcodeFilter::createFilterRunnable()
 {
-    return new QRRunnable(this);
+    return new BarcodeFilterRunnable(this);
 }
 
 QString BarcodeFilter::captured() const
@@ -106,7 +106,7 @@ BarcodeDecoder *BarcodeFilter::getDecoder() const
     return _decoder;
 }
 
-QFuture<void> BarcodeFilter::getFutureThread() const
+QFuture<void> BarcodeFilter::getImageFuture() const
 {
-    return _futureThread;
+    return _imageFuture;
 }

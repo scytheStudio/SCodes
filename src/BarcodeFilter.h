@@ -23,7 +23,7 @@ public:
     void setCaptureRect(const QRectF &captureRect);
 
     BarcodeDecoder *getDecoder() const;
-    QFuture<void> getFutureThread() const;
+    QFuture<void> getImageFuture() const;
 
     QVideoFilterRunnable * createFilterRunnable() override;
 
@@ -40,7 +40,7 @@ private:
     QRectF _captureRect;
 
     BarcodeDecoder *_decoder;
-    QFuture<void> _futureThread;
+    QFuture<void> _imageFuture;
 };
 
 #endif // QRSCANNERFILTER_H
