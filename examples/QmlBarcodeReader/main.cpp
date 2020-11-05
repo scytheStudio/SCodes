@@ -1,6 +1,8 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include "BarcodeFilter.h"
+#include "SBarcodeGenerator.h"
+#include "SCamera.h"
 
 int main(int argc, char *argv[])
 {
