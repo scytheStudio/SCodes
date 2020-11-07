@@ -12,8 +12,6 @@ INCLUDEPATH += \
 HEADERS += \
     $$PWD/BarcodeDecoder.h \
     $$PWD/BarcodeFilter.h \
-    $$PWD/SBarcodeGenerator.h \
-    $$PWD/SCamera.h \
     $$PWD/zxing-cpp/core/src/BarcodeFormat.h \
     $$PWD/zxing-cpp/core/src/BinaryBitmap.h \
     $$PWD/zxing-cpp/core/src/BitArray.h \
@@ -184,8 +182,6 @@ HEADERS += \
 SOURCES += \
     $$PWD/BarcodeDecoder.cpp \
     $$PWD/BarcodeFilter.cpp \
-    $$PWD/SBarcodeGenerator.cpp \
-    $$PWD/SCamera.cpp \
     $$PWD/zxing-cpp/core/src/BarcodeFormat.cpp \
     $$PWD/zxing-cpp/core/src/BitArray.cpp \
     $$PWD/zxing-cpp/core/src/BitMatrix.cpp \

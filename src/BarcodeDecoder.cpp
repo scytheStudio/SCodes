@@ -121,11 +121,16 @@ void BarcodeDecoder::process(const QImage capturedImage)
     const auto hints = DecodeHints()
             .setFormats(BarcodeFormat::QR_CODE
                         | BarcodeFormat::DATA_MATRIX
-                        | BarcodeFormat::CODE_128)
+                        | BarcodeFormat::CODE_128
+                        | BarcodeFormat::CODABAR)
             .setTryHarder(true)
-            .setBinarizer(Binarizer::FixedThreshold);
+            .setTryRotate(true)
+            .setIsPure(false)
+            .setBinarizer(Binarizer::LocalAverage);
 
     const auto result = ReadBarcode(capturedImage, hints);
+
+    qDebug().noquote().nospace() << result.text() << result.format(), result.status();
 
     if (result.isValid()) {
        setCaptured(result.text());
@@ -137,12 +142,7 @@ void BarcodeDecoder::process(const QImage capturedImage)
 QImage BarcodeDecoder::videoFrameToImage(const QVideoFrame &videoFrame, const QRect &captureRect)
 {
     if (videoFrame.handleType() == QAbstractVideoBuffer::NoHandle) {
-        const QImage::Format imageFormat = QVideoFrame::imageFormatFromPixelFormat(videoFrame.pixelFormat());
-        QImage image(videoFrame.bits(),
-                     videoFrame.width(),
-                     videoFrame.height(),
-                     videoFrame.bytesPerLine(),
-                     imageFormat);
+        QImage image = videoFrame.image();
 
         if (image.isNull()) {
             return QImage();

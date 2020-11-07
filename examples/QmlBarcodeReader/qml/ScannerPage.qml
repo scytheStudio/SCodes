@@ -7,6 +7,8 @@ import com.scythestudio.sbarcodereader 1.0
 ApplicationWindow {
   id: root
   visible: true
+  height: if(Qt.platform.os != "android") camera.viewfinder.resolution.height
+  width: if(Qt.platform.os != "android") camera.viewfinder.resolution.width
 
   Camera {
     id: camera
@@ -86,28 +88,6 @@ ApplicationWindow {
           barcodeFilter.active = true
         }
       }
-    }
-  }
-
-  GeneratorPage {
-      id: generator
-      visible: false
-      onVisibleChanged: generateCode.visible = !generateCode.visible ? true : false
-  }
-
-  Button {
-    id: generateCode
-    anchors.top: parent.top
-    anchors.horizontalCenter: parent.horizontalCenter
-    anchors.topMargin: 10
-    text: qsTr("Generate code")
-    palette.buttonText: "#bdbdbd"
-    background: Rectangle {
-                radius: 10
-                color: "#218165"
-            }
-    onClicked: {
-        generator.visible = true;
     }
   }
 }
