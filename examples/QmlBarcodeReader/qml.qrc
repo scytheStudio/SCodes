@@ -2,6 +2,5 @@
     <qresource prefix="/">
         <file>qml/ScannerPage.qml</file>
         <file>qml/ScannerOverlay.qml</file>
-        <file>qml/GeneratorPage.qml</file>
     </qresource>
 </RCC>
