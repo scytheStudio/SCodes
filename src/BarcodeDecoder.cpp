@@ -130,8 +130,6 @@ void BarcodeDecoder::process(const QImage capturedImage)
 
     const auto result = ReadBarcode(capturedImage, hints);
 
-    qDebug().noquote().nospace() << result.text() << result.format(), result.status();
-
     if (result.isValid()) {
        setCaptured(result.text());
     }

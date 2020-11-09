@@ -6,9 +6,8 @@ import com.scythestudio.sbarcodereader 1.0
 
 ApplicationWindow {
   id: root
-  visible: true
-  height: if(Qt.platform.os != "android") camera.viewfinder.resolution.height
-  width: if(Qt.platform.os != "android") camera.viewfinder.resolution.width
+  height: Qt.platform.os == "android" || Qt.platform.os == "ios" ? Screen.width: camera.viewfinder.resolution.width
+  width: Qt.platform.os == "android" || Qt.platform.os == "ios" ? Screen.width: camera.viewfinder.resolution.width
 
   Camera {
     id: camera
