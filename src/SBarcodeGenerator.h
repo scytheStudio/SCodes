@@ -30,7 +30,7 @@ public:
 public slots:
     bool process(const QString inputString);
     bool saveImage();
-    void barcodeFormatFromQMLString(QString format);
+    void barcodeFormatFromQMLString(const QString &format);
 
 signals:
     void processFinished();
@@ -43,9 +43,9 @@ private:
     ZXing::BarcodeFormat _format = ZXing::BarcodeFormat::QR_CODE;
     QString _extension = "png";
     QString _fileName = "code";
-    QString _filePath;
-    QString _inputText;
-    ZXing::Matrix<uint8_t> _bitmap;
+    QString _filePath = "";
+    QString _inputText = "";
+    ZXing::Matrix<uint8_t> _bitmap = ZXing::Matrix<uint8_t>();
 
 };
 

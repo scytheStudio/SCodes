@@ -4,11 +4,12 @@ import QtMultimedia 5.12
 import QtQuick.Layouts 1.12
 import com.scythestudio.sbarcodereader 1.0
 
-Item {
+ApplicationWindow {
   id: root
-  anchors.fill: parent
+  visible: true
+  width: 400
+  height: 800
 
-  //  width: Qt.platform.os == "android" || Qt.platform.os == "ios" ? Screen.width: camera.viewfinder.resolution.width
   SBarcodeGenerator {
     id: barcodeGenerator
     onProcessFinished: {

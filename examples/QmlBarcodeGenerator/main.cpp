@@ -1,6 +1,6 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
-#include "BarcodeFilter.h"
+#include "SBarcodeGenerator.h"
 
 int main(int argc, char *argv[])
 {
@@ -8,7 +8,7 @@ int main(int argc, char *argv[])
     QGuiApplication app(argc, argv);
 
     QQmlApplicationEngine engine;
-    engine.load(QUrl(QStringLiteral("qrc:/qml/ScannerPage.qml")));
+    engine.load(QUrl(QStringLiteral("qrc:/qml/GeneratorPage.qml")));
     if (engine.rootObjects().isEmpty()) {
         return -1;
     }
