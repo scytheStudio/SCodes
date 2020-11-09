@@ -30,3 +30,5 @@ android {
     ANDROID_ABIS = armeabi-v7a
 }
 
+ANDROID_ABIS = armeabi-v7a
+

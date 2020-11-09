@@ -7,6 +7,7 @@ Button {
   Layout.alignment: Qt.AlignHCenter
   Layout.fillHeight: true
   Layout.fillWidth: true
+  Layout.bottomMargin: 10
   checkable: true
   palette.buttonText: "#bdbdbd"
   background: Rectangle {

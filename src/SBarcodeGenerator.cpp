@@ -11,10 +11,10 @@ SBarcodeGenerator::SBarcodeGenerator()
 
 }
 
-bool SBarcodeGenerator::process(const QString inputString)
+bool SBarcodeGenerator::process(const QString &inputString)
 {
     if (inputString.isEmpty()){
-        return 0;
+        return false;
     }
     else {
     ZXing::MultiFormatWriter writer = ZXing::MultiFormatWriter(_format).setMargin(_margin).setEccLevel(_eccLevel);
@@ -31,7 +31,7 @@ bool SBarcodeGenerator::process(const QString inputString)
 
     emit processFinished();
 
-    return 1;
+    return true;
     }
 }
 
@@ -40,15 +40,13 @@ bool SBarcodeGenerator::process(const QString inputString)
 bool SBarcodeGenerator::saveImage()
 {
     if (_filePath.isEmpty()) {
-        return 0;
+        return false;
     }
-    else {
     QString docFolder = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) + "/" + _fileName + "." + _extension;
 
     QFile::copy(_filePath, docFolder);
 
-    return 1;
-    }
+    return true;
 }
 
 void SBarcodeGenerator::barcodeFormatFromQMLString(const QString &format)

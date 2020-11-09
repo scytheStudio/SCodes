@@ -36,6 +36,7 @@ ApplicationWindow {
       TextField {
         id: textField
         anchors.fill: parent
+        selectByMouse: true
         placeholderText: qsTr("Input")
       }
     }
@@ -74,8 +75,9 @@ ApplicationWindow {
         CButton {
           id: settingsButton
           text: qsTr("Settings")
+          Layout.leftMargin: 5
           onClicked: {
-            !checked ? settings.visible = false : settings.visible = true
+            settingsPopup.open()
           }
         }
 
@@ -84,56 +86,91 @@ ApplicationWindow {
           text: qsTr("Generate")
           onClicked: {
             image.source = ""
-            barcodeGenerator.process(textField.text)
+            if (!barcodeGenerator.process(textField.text)) {
+              generateLabel.text = "Input is empty"
+              generatePopup.open()
+            }
           }
         }
 
         CButton {
           id: saveButton
           text: qsTr("Save")
+          Layout.rightMargin: 5
           onClicked: {
-            barcodeGenerator.saveImage()
-          }
-        }
-
-        CButton {
-          id: backButton
-          text: qsTr("Back")
-          onClicked: {
-            root.visible = false
+            if (barcodeGenerator.saveImage()) {
+              saveLabel.text = "File successfully saved"
+            } else {
+              saveLabel.text = "There was an error while saving file"
+            }
+            imageSavedPopup.open()
           }
         }
       }
     }
 
-    Rectangle {
-      id: settings
+    Popup {
+      id: generatePopup
+      anchors.centerIn: parent
+      dim: true
+      modal: true
+
+      onClosed: {
+        generateButton.checked = false
+      }
+
+      Label {
+        id: generateLabel
+        anchors.centerIn: parent
+      }
+    }
+
+    Popup {
+      id: imageSavedPopup
+      anchors.centerIn: parent
+      dim: true
+      modal: true
+
+      onClosed: {
+        saveButton.checked = false
+      }
+
+      Label {
+        id: saveLabel
+        anchors.centerIn: parent
+      }
+    }
+
+    Popup {
+      id: settingsPopup
       anchors.centerIn: parent
       width: parent.width * 0.6
       height: parent.height * 0.6
-      visible: false
-      border {
-        color: "#333"
-        width: 1
+      dim: true
+      modal: true
+
+      onClosed: {
+        settingsButton.checked = false
       }
 
-      Column {
+      ColumnLayout {
         anchors.fill: parent
-        spacing: 2
+        spacing: 5
 
         CTextField {
+          id: height
           placeholderText: "Current width: " + barcodeGenerator.width
-          onEditingFinished: barcodeGenerator.width = text
+          onEditingFinished: barcodeGenerator.width = parseInt(text)
         }
 
         CTextField {
           placeholderText: "Current height: " + barcodeGenerator.height
-          onEditingFinished: barcodeGenerator.height = text
+          onEditingFinished: barcodeGenerator.height = parseInt(text)
         }
 
         CTextField {
           placeholderText: "Current margin: " + barcodeGenerator.margin
-          onEditingFinished: barcodeGenerator.margin = text
+          onEditingFinished: barcodeGenerator.margin = parseInt(text)
         }
 
         CTextField {
