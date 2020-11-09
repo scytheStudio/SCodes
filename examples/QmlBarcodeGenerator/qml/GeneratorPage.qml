@@ -83,6 +83,7 @@ ApplicationWindow {
 
         CButton {
           id: generateButton
+          checkable: false
           text: qsTr("Generate")
           onClicked: {
             image.source = ""
