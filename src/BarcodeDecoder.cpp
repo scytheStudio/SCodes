@@ -137,11 +137,17 @@ void BarcodeDecoder::process(const QImage capturedImage)
     setIsDecoding(false);
 }
 
-QImage BarcodeDecoder::videoFrameToImage(const QVideoFrame &videoFrame, const QRect &captureRect)
+QImage BarcodeDecoder::videoFrameToImage(QVideoFrame &videoFrame, const QRect &captureRect)
 {
     if (videoFrame.handleType() == QAbstractVideoBuffer::NoHandle) {
 
+#if QT_VERSION >= 0x050150
         QImage image = videoFrame.image();
+#else
+        videoFrame.map(QAbstractVideoBuffer::ReadOnly);
+        QImage image = imageFromVideoFrame(videoFrame);
+        videoFrame.unmap();
+#endif
 
         if (image.isNull()) {
             return QImage();
@@ -172,3 +178,81 @@ QImage BarcodeDecoder::videoFrameToImage(const QVideoFrame &videoFrame, const QR
 
     return QImage();
 }
+
+QImage BarcodeDecoder::imageFromVideoFrame(const QVideoFrame &videoFrame)
+{
+    uchar* YUYVbits = new uchar[(videoFrame.width() * videoFrame.height()) * 4]; // 8 bit to 32 bit
+
+    qt_convert_YUYV_to_ARGB32(videoFrame, YUYVbits);
+
+    QImage img(YUYVbits,
+                 videoFrame.width(),
+                 videoFrame.height(),
+                 QImage::Format_ARGB32);
+
+    return img;
+}
+
+#if QT_VERSION >= 0x050150
+
+#define FETCH_INFO_PACKED(frame) \
+    const uchar *src = frame.bits(); \
+    int stride = frame.bytesPerLine(); \
+    int width = frame.width(); \
+    int height = frame.height();
+
+#define MERGE_LOOPS(width, height, stride, bpp) \
+    if (stride == width * bpp) { \
+        width *= height; \
+        height = 1; \
+        stride = 0; \
+    }
+
+#define CLAMP(n) (n > 255 ? 255 : (n < 0 ? 0 : n))
+
+#define EXPAND_UV(u, v) \
+    int uu = u - 128; \
+    int vv = v - 128; \
+    int rv = 409 * vv + 128; \
+    int guv = 100 * uu + 208 * vv + 128; \
+    int bu = 516 * uu + 128; \
+
+static inline quint32 qYUVToARGB32(int y, int rv, int guv, int bu, int a = 0xff)
+{
+    int yy = (y - 16) * 298;
+    return (a << 24)
+            | CLAMP((yy + rv) >> 8) << 16
+            | CLAMP((yy - guv) >> 8) << 8
+            | CLAMP((yy + bu) >> 8);
+}
+
+void QT_FASTCALL BarcodeDecoder::qt_convert_YUYV_to_ARGB32(const QVideoFrame &frame, uchar *output)
+{
+    FETCH_INFO_PACKED(frame)
+    MERGE_LOOPS(width, height, stride, 2)
+
+    quint32 *rgb = reinterpret_cast<quint32*>(output);
+
+    for (int i = 0; i < height; ++i) {
+        const uchar *lineSrc = src;
+
+        for (int j = 0; j < width; j += 2) {
+            int y0 = *lineSrc++;
+            int u = *lineSrc++;
+            int y1 = *lineSrc++;
+            int v = *lineSrc++;
+
+            EXPAND_UV(u, v);
+
+            *rgb++ = qYUVToARGB32(y0, rv, guv, bu);
+            *rgb++ = qYUVToARGB32(y1, rv, guv, bu);
+        }
+
+        src += stride;
+    }
+}
+
+#endif
+
+
+
