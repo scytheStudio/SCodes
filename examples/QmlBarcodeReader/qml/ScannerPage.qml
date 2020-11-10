@@ -3,10 +3,13 @@ import QtQuick.Controls 2.12
 import QtMultimedia 5.12
 import com.scythestudio.sbarcodereader 1.0
 
-
 ApplicationWindow {
   id: root
   visible: true
+  width: Qt.platform.os == "android"
+         || Qt.platform.os == "ios" ? Screen.width : camera.viewfinder.resolution.width
+  height: Qt.platform.os == "android"
+          || Qt.platform.os == "ios" ? Screen.height : camera.viewfinder.resolution.height
 
   Camera {
     id: camera
@@ -23,13 +26,11 @@ ApplicationWindow {
     autoOrientation: true
     fillMode: VideoOutput.PreserveAspectCrop
     // add barcodeFilter to videoOutput's filters to enable catching barcodes
-    filters: [
-      barcodeFilter
-    ]
+    filters: [barcodeFilter]
 
     onSourceRectChanged: {
-      barcodeFilter.captureRect = videoOutput.mapRectToSource(videoOutput.mapNormalizedRectToItem(
-                                                                Qt.rect(0.25, 0.25, 0.5, 0.5)))
+      barcodeFilter.captureRect = videoOutput.mapRectToSource(
+            videoOutput.mapNormalizedRectToItem(Qt.rect(0.25, 0.25, 0.5, 0.5)))
     }
 
     ScannerOverlay {
@@ -56,8 +57,9 @@ ApplicationWindow {
     id: barcodeFilter
 
     // you can adjust capture rect (scan area) ne changing these Qt.rect() parameters
-    captureRect: videoOutput.mapRectToSource(videoOutput.mapNormalizedRectToItem(
-                                               Qt.rect(0.25, 0.25, 0.5, 0.5)))
+    captureRect: videoOutput.mapRectToSource(
+                   videoOutput.mapNormalizedRectToItem(Qt.rect(0.25, 0.25,
+                                                               0.5, 0.5)))
 
     onCapturedChanged: {
       active = false

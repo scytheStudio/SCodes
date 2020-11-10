@@ -38,7 +38,6 @@ public:
 
         const QImage croppedCapturedImage = BarcodeDecoder::videoFrameToImage(*input, _filter->captureRect().toRect());
         _filter->getImageFuture() = QtConcurrent::run(processImage, _filter->getDecoder(), croppedCapturedImage);
-
         return *input;
     }
 
