@@ -1,4 +1,8 @@
-QT += multimedia concurrent androidextras
+QT += multimedia concurrent
+
+android {
+    QT += androidextras
+}
 
 CONFIG += qmltypes
 QML_IMPORT_NAME = com.scythestudio.sbarcodereader
