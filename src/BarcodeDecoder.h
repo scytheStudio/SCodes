@@ -18,10 +18,7 @@ public:
 
     static QImage videoFrameToImage(QVideoFrame &videoFrame, const QRect &captureRect);
     static QImage imageFromVideoFrame(const QVideoFrame &videoFrame);
-
-#if QT_VERSION >= 0x050150
     static void QT_FASTCALL qt_convert_YUYV_to_ARGB32(const QVideoFrame &frame, uchar *output);
-#endif
 
 
 

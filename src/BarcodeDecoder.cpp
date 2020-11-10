@@ -11,6 +11,28 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
+#define FETCH_INFO_PACKED(frame) \
+    const uchar *src = frame.bits(); \
+    int stride = frame.bytesPerLine(); \
+    int width = frame.width(); \
+    int height = frame.height();
+
+#define MERGE_LOOPS(width, height, stride, bpp) \
+    if (stride == width * bpp) { \
+        width *= height; \
+        height = 1; \
+        stride = 0; \
+    }
+
+#define CLAMP(n) (n > 255 ? 255 : (n < 0 ? 0 : n))
+
+#define EXPAND_UV(u, v) \
+    int uu = u - 128; \
+    int vv = v - 128; \
+    int rv = 409 * vv + 128; \
+    int guv = 100 * uu + 208 * vv + 128; \
+    int bu = 516 * uu + 128; \
+
 namespace ZXing {
 namespace Qt {
 
@@ -193,30 +215,6 @@ QImage BarcodeDecoder::imageFromVideoFrame(const QVideoFrame &videoFrame)
     return img;
 }
 
-#if QT_VERSION >= 0x050150
-
-#define FETCH_INFO_PACKED(frame) \
-    const uchar *src = frame.bits(); \
-    int stride = frame.bytesPerLine(); \
-    int width = frame.width(); \
-    int height = frame.height();
-
-#define MERGE_LOOPS(width, height, stride, bpp) \
-    if (stride == width * bpp) { \
-        width *= height; \
-        height = 1; \
-        stride = 0; \
-    }
-
-#define CLAMP(n) (n > 255 ? 255 : (n < 0 ? 0 : n))
-
-#define EXPAND_UV(u, v) \
-    int uu = u - 128; \
-    int vv = v - 128; \
-    int rv = 409 * vv + 128; \
-    int guv = 100 * uu + 208 * vv + 128; \
-    int bu = 516 * uu + 128; \
-
 static inline quint32 qYUVToARGB32(int y, int rv, int guv, int bu, int a = 0xff)
 {
     int yy = (y - 16) * 298;
@@ -251,8 +249,6 @@ void QT_FASTCALL BarcodeDecoder::qt_convert_YUYV_to_ARGB32(const QVideoFrame &fr
         src += stride;
     }
 }
-
-#endif
 
 
 
