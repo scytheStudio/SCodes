@@ -19,7 +19,7 @@ public:
     static QImage videoFrameToImage(QVideoFrame &videoFrame, const QRect &captureRect);
     static QImage imageFromVideoFrame(const QVideoFrame &videoFrame);
     static void QT_FASTCALL qt_convert_YUYV_to_ARGB32(const QVideoFrame &frame, uchar *output);
-
+    static void QT_FASTCALL qt_convert_NV12_to_ARGB32(const QVideoFrame &frame, uchar *output);
 
 
 public slots:
