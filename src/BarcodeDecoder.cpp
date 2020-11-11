@@ -11,37 +11,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
-#define FETCH_INFO_BIPLANAR(frame) \
-    const uchar *plane1 = frame.bits(0); \
-    const uchar *plane2 = frame.bits(1); \
-    int plane1Stride = frame.bytesPerLine(0); \
-    int plane2Stride = frame.bytesPerLine(1); \
-    int width = frame.width(); \
-    int height = frame.height();
-
-
-
-#define FETCH_INFO_PACKED(frame) \
-    const uchar *src = frame.bits(); \
-    int stride = frame.bytesPerLine(); \
-    int width = frame.width(); \
-    int height = frame.height();
-
-#define MERGE_LOOPS(width, height, stride, bpp) \
-    if (stride == width * bpp) { \
-        width *= height; \
-        height = 1; \
-        stride = 0; \
-    }
-
-#define CLAMP(n) (n > 255 ? 255 : (n < 0 ? 0 : n))
-
-#define EXPAND_UV(u, v) \
-    int uu = u - 128; \
-    int vv = v - 128; \
-    int rv = 409 * vv + 128; \
-    int guv = 100 * uu + 208 * vv + 128; \
-    int bu = 516 * uu + 128; \
+#include "qvideoframeconversionhelper_p.h"
 
 namespace ZXing {
 namespace Qt {
@@ -215,110 +185,33 @@ QImage BarcodeDecoder::videoFrameToImage(QVideoFrame &videoFrame, const QRect &c
 
 QImage BarcodeDecoder::imageFromVideoFrame(const QVideoFrame &videoFrame)
 {
-    if (videoFrame.pixelFormat() == QVideoFrame::Format_YUYV ) {
-        uchar* YUYVbits = new uchar[(videoFrame.width() * videoFrame.height()) * 4]; // 8 bit to 32 bit
+    uchar* ARGB32Bits = new uchar[(videoFrame.width() * videoFrame.height()) * 4];
+    QImage::Format imageFormat = videoFrame.imageFormatFromPixelFormat(videoFrame.pixelFormat());
+    if(imageFormat == QImage::Format_Invalid) {
+        switch(videoFrame.pixelFormat()) {
+            case QVideoFrame::Format_YUYV: qt_convert_YUYV_to_ARGB32(videoFrame, ARGB32Bits); break;
+            case QVideoFrame::Format_NV12: qt_convert_NV12_to_ARGB32(videoFrame, ARGB32Bits); break;
+            case QVideoFrame::Format_YUV420P: qt_convert_YUV420P_to_ARGB32(videoFrame, ARGB32Bits); break;
+            case QVideoFrame::Format_YV12: qt_convert_YV12_to_ARGB32(videoFrame, ARGB32Bits); break;
+            case QVideoFrame::Format_AYUV444: qt_convert_AYUV444_to_ARGB32(videoFrame, ARGB32Bits); break;
+            case QVideoFrame::Format_YUV444: qt_convert_YUV444_to_ARGB32(videoFrame, ARGB32Bits); break;
+            case QVideoFrame::Format_UYVY: qt_convert_UYVY_to_ARGB32(videoFrame, ARGB32Bits); break;
+            case QVideoFrame::Format_NV21: qt_convert_NV21_to_ARGB32(videoFrame, ARGB32Bits); break;
+            case QVideoFrame::Format_BGRA32: qt_convert_BGRA32_to_ARGB32(videoFrame, ARGB32Bits); break;
+            case QVideoFrame::Format_BGR24: qt_convert_BGR24_to_ARGB32(videoFrame, ARGB32Bits); break;
+            case QVideoFrame::Format_BGR565: qt_convert_BGR565_to_ARGB32(videoFrame, ARGB32Bits); break;
+            case QVideoFrame::Format_BGR555: qt_convert_BGR555_to_ARGB32(videoFrame, ARGB32Bits); break;
+            default: break;
+        }
 
-        qt_convert_YUYV_to_ARGB32(videoFrame, YUYVbits);
-
-        return QImage(YUYVbits,
-                      videoFrame.width(),
-                      videoFrame.height(),
-                      QImage::Format_ARGB32);
-    } else if (videoFrame.pixelFormat() == QVideoFrame::Format_NV12) {
-        uchar* NVbits = new uchar[(videoFrame.width() * videoFrame.height()) * 4];
-
-        qt_convert_NV12_to_ARGB32(videoFrame, NVbits);
-
-        return QImage(NVbits,
+        return QImage(ARGB32Bits,
                       videoFrame.width(),
                       videoFrame.height(),
                       QImage::Format_ARGB32);
     }
-
 
     return QImage(videoFrame.bits(),
                   videoFrame.width(),
                   videoFrame.height(),
-                  QImage::Format_ARGB32);
-}
-
-static inline quint32 qYUVToARGB32(int y, int rv, int guv, int bu, int a = 0xff)
-{
-    int yy = (y - 16) * 298;
-    return (a << 24)
-            | CLAMP((yy + rv) >> 8) << 16
-            | CLAMP((yy - guv) >> 8) << 8
-            | CLAMP((yy + bu) >> 8);
-}
-
-void QT_FASTCALL BarcodeDecoder::qt_convert_YUYV_to_ARGB32(const QVideoFrame &frame, uchar *output)
-{
-    FETCH_INFO_PACKED(frame)
-    MERGE_LOOPS(width, height, stride, 2)
-
-    quint32 *rgb = reinterpret_cast<quint32*>(output);
-
-    for (int i = 0; i < height; ++i) {
-        const uchar *lineSrc = src;
-
-        for (int j = 0; j < width; j += 2) {
-            int y0 = *lineSrc++;
-            int u = *lineSrc++;
-            int y1 = *lineSrc++;
-            int v = *lineSrc++;
-
-            EXPAND_UV(u, v);
-
-            *rgb++ = qYUVToARGB32(y0, rv, guv, bu);
-            *rgb++ = qYUVToARGB32(y1, rv, guv, bu);
-        }
-
-        src += stride;
-    }
-}
-
-static inline void planarYUV420_to_ARGB32(const uchar *y, int yStride,
-                                          const uchar *u, int uStride,
-                                          const uchar *v, int vStride,
-                                          int uvPixelStride,
-                                          quint32 *rgb,
-                                          int width, int height)
-{
-    quint32 *rgb0 = rgb;
-    quint32 *rgb1 = rgb + width;
-
-    for (int j = 0; j < height; j += 2) {
-        const uchar *lineY0 = y;
-        const uchar *lineY1 = y + yStride;
-        const uchar *lineU = u;
-        const uchar *lineV = v;
-
-        for (int i = 0; i < width; i += 2) {
-            EXPAND_UV(*lineU, *lineV);
-            lineU += uvPixelStride;
-            lineV += uvPixelStride;
-
-            *rgb0++ = qYUVToARGB32(*lineY0++, rv, guv, bu);
-            *rgb0++ = qYUVToARGB32(*lineY0++, rv, guv, bu);
-            *rgb1++ = qYUVToARGB32(*lineY1++, rv, guv, bu);
-            *rgb1++ = qYUVToARGB32(*lineY1++, rv, guv, bu);
-        }
-
-        y += yStride << 1; // stride * 2
-        u += uStride;
-        v += vStride;
-        rgb0 += width;
-        rgb1 += width;
-    }
-}
-
-void QT_FASTCALL BarcodeDecoder::qt_convert_NV12_to_ARGB32(const QVideoFrame &frame, uchar *output)
-{
-    FETCH_INFO_BIPLANAR(frame)
-    planarYUV420_to_ARGB32(plane1, plane1Stride,
-                           plane2, plane2Stride,
-                           plane2 + 1, plane2Stride,
-                           2,
-                           reinterpret_cast<quint32*>(output),
-                           width, height);
+                  imageFormat);
 }
