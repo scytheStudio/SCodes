@@ -166,9 +166,11 @@ QImage BarcodeDecoder::videoFrameToImage(QVideoFrame &videoFrame, const QRect &c
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
         QImage image = videoFrame.image();
 #else
+
         videoFrame.map(QAbstractVideoBuffer::ReadOnly);
         QImage image = imageFromVideoFrame(videoFrame);
         videoFrame.unmap();
+
 #endif
 
         if (image.isNull()) {
@@ -203,16 +205,21 @@ QImage BarcodeDecoder::videoFrameToImage(QVideoFrame &videoFrame, const QRect &c
 
 QImage BarcodeDecoder::imageFromVideoFrame(const QVideoFrame &videoFrame)
 {
-    uchar* YUYVbits = new uchar[(videoFrame.width() * videoFrame.height()) * 4]; // 8 bit to 32 bit
+    if (videoFrame.pixelFormat() == QVideoFrame::Format_YUYV) {
+        uchar* YUYVbits = new uchar[(videoFrame.width() * videoFrame.height()) * 4]; // 8 bit to 32 bit
 
-    qt_convert_YUYV_to_ARGB32(videoFrame, YUYVbits);
+        qt_convert_YUYV_to_ARGB32(videoFrame, YUYVbits);
 
-    QImage img(YUYVbits,
-                 videoFrame.width(),
-                 videoFrame.height(),
-                 QImage::Format_ARGB32);
+        return QImage(YUYVbits,
+                      videoFrame.width(),
+                      videoFrame.height(),
+                      QImage::Format_ARGB32);
+    }
 
-    return img;
+    return QImage(videoFrame.bits(),
+                  videoFrame.width(),
+                  videoFrame.height(),
+                  QImage::Format_ARGB32);
 }
 
 static inline quint32 qYUVToARGB32(int y, int rv, int guv, int bu, int a = 0xff)
