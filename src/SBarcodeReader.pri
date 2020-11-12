@@ -17,6 +17,7 @@ HEADERS += \
     $$PWD/BarcodeDecoder.h \
     $$PWD/BarcodeFilter.h \
     $$PWD/SBarcodeGenerator.h \
+    $$PWD/qvideoframeconversionhelper_p.h \
     $$PWD/zxing-cpp/core/src/BarcodeFormat.h \
     $$PWD/zxing-cpp/core/src/BinaryBitmap.h \
     $$PWD/zxing-cpp/core/src/BitArray.h \

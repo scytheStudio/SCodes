@@ -11,6 +11,8 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
+#include "qvideoframeconversionhelper_p.h"
+
 namespace ZXing {
 namespace Qt {
 
@@ -121,9 +123,12 @@ void BarcodeDecoder::process(const QImage capturedImage)
     const auto hints = DecodeHints()
             .setFormats(BarcodeFormat::QR_CODE
                         | BarcodeFormat::DATA_MATRIX
-                        | BarcodeFormat::CODE_128)
+                        | BarcodeFormat::CODE_128
+                        | BarcodeFormat::CODABAR)
             .setTryHarder(true)
-            .setBinarizer(Binarizer::FixedThreshold);
+            .setTryRotate(true)
+            .setIsPure(false)
+            .setBinarizer(Binarizer::LocalAverage);
 
     const auto result = ReadBarcode(capturedImage, hints);
 
@@ -134,15 +139,19 @@ void BarcodeDecoder::process(const QImage capturedImage)
     setIsDecoding(false);
 }
 
-QImage BarcodeDecoder::videoFrameToImage(const QVideoFrame &videoFrame, const QRect &captureRect)
+QImage BarcodeDecoder::videoFrameToImage(QVideoFrame &videoFrame, const QRect &captureRect)
 {
     if (videoFrame.handleType() == QAbstractVideoBuffer::NoHandle) {
-        const QImage::Format imageFormat = QVideoFrame::imageFormatFromPixelFormat(videoFrame.pixelFormat());
-        QImage image(videoFrame.bits(),
-                     videoFrame.width(),
-                     videoFrame.height(),
-                     videoFrame.bytesPerLine(),
-                     imageFormat);
+
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
+        QImage image = videoFrame.image();
+#else
+
+        videoFrame.map(QAbstractVideoBuffer::ReadOnly);
+        QImage image = imageFromVideoFrame(videoFrame);
+        videoFrame.unmap();
+
+#endif
 
         if (image.isNull()) {
             return QImage();
@@ -172,4 +181,37 @@ QImage BarcodeDecoder::videoFrameToImage(const QVideoFrame &videoFrame, const QR
     }
 
     return QImage();
+}
+
+QImage BarcodeDecoder::imageFromVideoFrame(const QVideoFrame &videoFrame)
+{
+    uchar* ARGB32Bits = new uchar[(videoFrame.width() * videoFrame.height()) * 4];
+    QImage::Format imageFormat = videoFrame.imageFormatFromPixelFormat(videoFrame.pixelFormat());
+    if(imageFormat == QImage::Format_Invalid) {
+        switch(videoFrame.pixelFormat()) {
+            case QVideoFrame::Format_YUYV: qt_convert_YUYV_to_ARGB32(videoFrame, ARGB32Bits); break;
+            case QVideoFrame::Format_NV12: qt_convert_NV12_to_ARGB32(videoFrame, ARGB32Bits); break;
+            case QVideoFrame::Format_YUV420P: qt_convert_YUV420P_to_ARGB32(videoFrame, ARGB32Bits); break;
+            case QVideoFrame::Format_YV12: qt_convert_YV12_to_ARGB32(videoFrame, ARGB32Bits); break;
+            case QVideoFrame::Format_AYUV444: qt_convert_AYUV444_to_ARGB32(videoFrame, ARGB32Bits); break;
+            case QVideoFrame::Format_YUV444: qt_convert_YUV444_to_ARGB32(videoFrame, ARGB32Bits); break;
+            case QVideoFrame::Format_UYVY: qt_convert_UYVY_to_ARGB32(videoFrame, ARGB32Bits); break;
+            case QVideoFrame::Format_NV21: qt_convert_NV21_to_ARGB32(videoFrame, ARGB32Bits); break;
+            case QVideoFrame::Format_BGRA32: qt_convert_BGRA32_to_ARGB32(videoFrame, ARGB32Bits); break;
+            case QVideoFrame::Format_BGR24: qt_convert_BGR24_to_ARGB32(videoFrame, ARGB32Bits); break;
+            case QVideoFrame::Format_BGR565: qt_convert_BGR565_to_ARGB32(videoFrame, ARGB32Bits); break;
+            case QVideoFrame::Format_BGR555: qt_convert_BGR555_to_ARGB32(videoFrame, ARGB32Bits); break;
+            default: break;
+        }
+
+        return QImage(ARGB32Bits,
+                      videoFrame.width(),
+                      videoFrame.height(),
+                      QImage::Format_ARGB32);
+    }
+
+    return QImage(videoFrame.bits(),
+                  videoFrame.width(),
+                  videoFrame.height(),
+                  imageFormat);
 }

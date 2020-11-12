@@ -12,7 +12,9 @@ class BarcodeFilter : public QAbstractVideoFilter
     Q_OBJECT
     Q_PROPERTY(QString captured READ captured NOTIFY capturedChanged)
     Q_PROPERTY(QRectF captureRect READ captureRect WRITE setCaptureRect NOTIFY captureRectChanged)
-    QML_ELEMENT
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
+        QML_ELEMENT
+#endif
 
 public:
     explicit BarcodeFilter(QObject *parent = nullptr);

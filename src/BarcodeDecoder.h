@@ -16,7 +16,8 @@ public:
     bool isDecoding() const;
     QString captured() const;
 
-    static QImage videoFrameToImage(const QVideoFrame &videoFrame, const QRect &captureRect);
+    static QImage videoFrameToImage(QVideoFrame &videoFrame, const QRect &captureRect);
+    static QImage imageFromVideoFrame(const QVideoFrame &videoFrame);
 
 public slots:
     void process(const QImage capturedImage);
