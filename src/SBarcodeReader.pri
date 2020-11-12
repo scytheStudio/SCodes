@@ -1,5 +1,9 @@
 QT += multimedia concurrent
 
+android {
+    QT += androidextras
+}
+
 CONFIG += qmltypes
 QML_IMPORT_NAME = com.scythestudio.sbarcodereader
 QML_IMPORT_MAJOR_VERSION = 1
@@ -12,6 +16,7 @@ INCLUDEPATH += \
 HEADERS += \
     $$PWD/BarcodeDecoder.h \
     $$PWD/BarcodeFilter.h \
+    $$PWD/SBarcodeGenerator.h \
     $$PWD/qvideoframeconversionhelper_p.h \
     $$PWD/zxing-cpp/core/src/BarcodeFormat.h \
     $$PWD/zxing-cpp/core/src/BinaryBitmap.h \
@@ -183,6 +188,7 @@ HEADERS += \
 SOURCES += \
     $$PWD/BarcodeDecoder.cpp \
     $$PWD/BarcodeFilter.cpp \
+    $$PWD/SBarcodeGenerator.cpp \
     $$PWD/zxing-cpp/core/src/BarcodeFormat.cpp \
     $$PWD/zxing-cpp/core/src/BitArray.cpp \
     $$PWD/zxing-cpp/core/src/BitMatrix.cpp \

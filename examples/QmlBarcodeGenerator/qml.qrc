@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/">
+        <file>qml/GeneratorPage.qml</file>
+        <file>qml/CButton.qml</file>
+        <file>qml/CTextField.qml</file>
+        <file>qml/CComboBox.qml</file>
+    </qresource>
+</RCC>
