@@ -4,12 +4,12 @@
 #include <QObject>
 #include <QVideoFrame>
 
-class BarcodeDecoder : public QObject
+class SBarcodeDecoder : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit BarcodeDecoder(QObject *parent = nullptr);
+    explicit SBarcodeDecoder(QObject *parent = nullptr);
 
     void clean();
 

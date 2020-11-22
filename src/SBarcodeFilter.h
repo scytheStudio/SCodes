@@ -5,9 +5,9 @@
 #include <QtConcurrent/QtConcurrent>
 #include <qqml.h>
 
-#include "./BarcodeDecoder.h"
+#include "./SBarcodeDecoder.h"
 
-class BarcodeFilter : public QAbstractVideoFilter
+class SBarcodeFilter : public QAbstractVideoFilter
 {
     Q_OBJECT
     Q_PROPERTY(QString captured READ captured NOTIFY capturedChanged)
@@ -17,14 +17,14 @@ class BarcodeFilter : public QAbstractVideoFilter
 #endif
 
 public:
-    explicit BarcodeFilter(QObject *parent = nullptr);
+    explicit SBarcodeFilter(QObject *parent = nullptr);
 
     QString captured() const;
 
     QRectF captureRect() const;
     void setCaptureRect(const QRectF &captureRect);
 
-    BarcodeDecoder *getDecoder() const;
+    SBarcodeDecoder *getDecoder() const;
     QFuture<void> getImageFuture() const;
 
     QVideoFilterRunnable * createFilterRunnable() override;
@@ -41,7 +41,7 @@ private:
     QString _captured = "";
     QRectF _captureRect;
 
-    BarcodeDecoder *_decoder;
+    SBarcodeDecoder *_decoder;
     QFuture<void> _imageFuture;
 };
 

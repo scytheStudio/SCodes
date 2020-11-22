@@ -23,7 +23,10 @@ class SBarcodeGenerator : public QQuickItem
     Q_PROPERTY(QString extension MEMBER _extension)
     Q_PROPERTY(QString filePath MEMBER _filePath)
     Q_PROPERTY(QString inputText MEMBER _inputText)
-    QML_ELEMENT
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
+        QML_ELEMENT
+#endif
+
 public:
     SBarcodeGenerator();
 

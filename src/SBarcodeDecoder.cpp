@@ -1,4 +1,4 @@
-#include "BarcodeDecoder.h"
+#include "SBarcodeDecoder.h"
 
 #include <QDebug>
 #include <QImage>
@@ -76,22 +76,22 @@ std::ostream& operator<<(std::ostream& os, const std::vector<ZXing::ResultPoint>
     return os;
 }
 
-BarcodeDecoder::BarcodeDecoder(QObject *parent) : QObject(parent)
+SBarcodeDecoder::SBarcodeDecoder(QObject *parent) : QObject(parent)
 {
 
 }
 
-void BarcodeDecoder::clean()
+void SBarcodeDecoder::clean()
 {
     _captured = "";
 }
 
-QString BarcodeDecoder::captured() const
+QString SBarcodeDecoder::captured() const
 {
     return _captured;
 }
 
-void BarcodeDecoder::setCaptured(const QString &captured)
+void SBarcodeDecoder::setCaptured(const QString &captured)
 {
     if (_captured == captured) {
         return;
@@ -101,7 +101,7 @@ void BarcodeDecoder::setCaptured(const QString &captured)
     emit capturedChanged(_captured);
 }
 
-void BarcodeDecoder::setIsDecoding(bool isDecoding)
+void SBarcodeDecoder::setIsDecoding(bool isDecoding)
 {
     if (_isDecoding == isDecoding) {
         return;
@@ -111,12 +111,12 @@ void BarcodeDecoder::setIsDecoding(bool isDecoding)
     emit isDecodingChanged(_isDecoding);
 }
 
-bool BarcodeDecoder::isDecoding() const
+bool SBarcodeDecoder::isDecoding() const
 {
     return _isDecoding;
 }
 
-void BarcodeDecoder::process(const QImage capturedImage)
+void SBarcodeDecoder::process(const QImage capturedImage)
 {
     setIsDecoding(true);
 
@@ -139,7 +139,7 @@ void BarcodeDecoder::process(const QImage capturedImage)
     setIsDecoding(false);
 }
 
-QImage BarcodeDecoder::videoFrameToImage(QVideoFrame &videoFrame, const QRect &captureRect)
+QImage SBarcodeDecoder::videoFrameToImage(QVideoFrame &videoFrame, const QRect &captureRect)
 {
     if (videoFrame.handleType() == QAbstractVideoBuffer::NoHandle) {
 
@@ -183,7 +183,7 @@ QImage BarcodeDecoder::videoFrameToImage(QVideoFrame &videoFrame, const QRect &c
     return QImage();
 }
 
-QImage BarcodeDecoder::imageFromVideoFrame(const QVideoFrame &videoFrame)
+QImage SBarcodeDecoder::imageFromVideoFrame(const QVideoFrame &videoFrame)
 {
     uchar* ARGB32Bits = new uchar[(videoFrame.width() * videoFrame.height()) * 4];
     QImage::Format imageFormat = videoFrame.imageFormatFromPixelFormat(videoFrame.pixelFormat());

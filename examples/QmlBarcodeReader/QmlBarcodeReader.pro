@@ -1,4 +1,4 @@
-include("../../src/SBarcodeReader.pri")
+include("../../src/SCodes.pri")
 
 QT += quick
 

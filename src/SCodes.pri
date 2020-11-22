@@ -5,7 +5,7 @@ android {
 }
 
 CONFIG += qmltypes
-QML_IMPORT_NAME = com.scythestudio.sbarcodereader
+QML_IMPORT_NAME = com.scythestudio.scodes
 QML_IMPORT_MAJOR_VERSION = 1
 
 INCLUDEPATH += \
@@ -14,8 +14,8 @@ INCLUDEPATH += \
     $$PWD/zxing-cpp/thirdparty/stb/
 
 HEADERS += \
-    $$PWD/BarcodeDecoder.h \
-    $$PWD/BarcodeFilter.h \
+    $$PWD/SBarcodeDecoder.h \
+    $$PWD/SBarcodeFilter.h \
     $$PWD/SBarcodeGenerator.h \
     $$PWD/qvideoframeconversionhelper_p.h \
     $$PWD/zxing-cpp/core/src/BarcodeFormat.h \
@@ -186,8 +186,8 @@ HEADERS += \
     $$PWD/zxing-cpp/core/src/textcodec/KRTextEncoder.h
 
 SOURCES += \
-    $$PWD/BarcodeDecoder.cpp \
-    $$PWD/BarcodeFilter.cpp \
+    $$PWD/SBarcodeDecoder.cpp \
+    $$PWD/SBarcodeFilter.cpp \
     $$PWD/SBarcodeGenerator.cpp \
     $$PWD/zxing-cpp/core/src/BarcodeFormat.cpp \
     $$PWD/zxing-cpp/core/src/BitArray.cpp \
