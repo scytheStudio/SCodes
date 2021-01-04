@@ -1,5 +1,6 @@
 
 
+![SCodes ](/assets/scodes.png)
 # SCodes
 
 This project is Qt & Qml wrapper for [ZXing-C++ Library](https://github.com/nu-book/zxing-cpp) that is used for decoding and generating 1D and 2D barcodes. This particular C++ ZXing port is one of the most recent C++ versions of popular ZXing library using modern compilers.
@@ -18,7 +19,7 @@ ZXing-C++ Library supports many other formats, but currently it is possible to o
 
 
 # How to use wrapper?
-![SCodes gif](/scanner.gif)
+![SCodes Scanner Preview](/assets/scanner.gif)![SCodes Generator Preview](/assets/generator.gif)
 
 
 All you need to do is to follow these steps.
