@@ -53,7 +53,7 @@ private:
     int _height = 500;
     int _margin = 10;
     int _eccLevel = -1;
-    ZXing::BarcodeFormat _format = ZXing::BarcodeFormat::QR_CODE;
+    ZXing::BarcodeFormat _format = ZXing::BarcodeFormat::QRCode;
     QString _extension = "png";
     QString _fileName = "code";
     QString _filePath = "";
