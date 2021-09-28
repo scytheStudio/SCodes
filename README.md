@@ -58,10 +58,15 @@ import com.scythestudio.scodes 1.0
 
 6. You are done. Get inspired by [QML Barcode Reader demo](https://github.com/scytheStudio/SCodes/blob/master/examples/QmlBarcodeReader/qml/ScannerPage.qml) to test wrapper.
 
+
+## Note 
+
 If you use Qt version older than 5.15 you need to manually register SBarcodeFilter e.g. in main.cpp. Use this line for this purpose:
-```
+
+```cpp
 qmlRegisterType<MyClass>("com.scythestudio.scodes", 1, 0, "SBarcodeFilter");
 ```
+
 Don't forget to firstly include SBarcodeFilter.
 
 In the case of barcodes scanning you will need to expose SBarcodeGenerator class.
