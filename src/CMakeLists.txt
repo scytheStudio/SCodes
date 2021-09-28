@@ -14,6 +14,9 @@ if (NOT DEFINED BUILD_SHARED_LIBS)
     set(BUILD_SHARED_LIBS ON)
 endif()
 
+set(BUILD_UNIT_TESTS OFF)
+set(BUILD_BLACKBOX_TESTS OFF)
+set(BUILD_EXAMPLES OFF)
 add_subdirectory(zxing-cpp)
 
 find_package(QT NAMES Qt5 Qt6 COMPONENTS Core Multimedia Concurrent Quick REQUIRED)
