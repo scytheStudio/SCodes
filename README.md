@@ -21,7 +21,9 @@ ZXing-C++ Library supports many other formats, but currently it is possible to o
 # How to use wrapper?
 ![SCodes Scanner Preview](/assets/scanner.gif)![SCodes Generator Preview](/assets/generator.gif)
 
+## Using 
 
+### QMake
 All you need to do is to follow these steps.
 
 1. Add SCodes as submodule, by typing `git submodule add git@gitlab.com:scythestudio/scodes.git`
@@ -32,10 +34,39 @@ All you need to do is to follow these steps.
 6. If build fails, try to add `CONFIG += c++17` to your .pro file
 7. You are done. Get inspired by [QML Barcode Reader demo](https://github.com/scytheStudio/SCodes/blob/master/examples/QmlBarcodeReader/qml/ScannerPage.qml) to test wrapper.
 
-If you use Qt version older than 5.15 you need to manually register SBarcodeFilter e.g. in main.cpp. Use this line for this purpose:
+### CMake
+
+1. Add SCodes as submodule, by typing `git submodule add git@gitlab.com:scythestudio/scodes.git`
+2. Update submodule `git submodule update --recursive --init` (you can also put wrapper files to your project manually without adding submodule)
+3. Add to your project SCodes library
+
+```cmake
+add_subdirectory(SCodes)
 ```
+
+4. Link SCodes library to your library or executable. 
+
+```cmake 
+target_link_libraries(${PROJECT_NAME} PUBLIC SCodes)
+```
+
+5. Import SCodes in your Qml file 
+
+```qml
+import com.scythestudio.scodes 1.0
+```
+
+6. You are done. Get inspired by [QML Barcode Reader demo](https://github.com/scytheStudio/SCodes/blob/master/examples/QmlBarcodeReader/qml/ScannerPage.qml) to test wrapper.
+
+
+## Note 
+
+If you use Qt version older than 5.15 you need to manually register SBarcodeFilter e.g. in main.cpp. Use this line for this purpose:
+
+```cpp
 qmlRegisterType<MyClass>("com.scythestudio.scodes", 1, 0, "SBarcodeFilter");
 ```
+
 Don't forget to firstly include SBarcodeFilter.
 
 In the case of barcodes scanning you will need to expose SBarcodeGenerator class.
