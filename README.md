@@ -5,9 +5,17 @@
 
 This project is Qt & Qml wrapper for [ZXing-C++ Library](https://github.com/nu-book/zxing-cpp) that is used for decoding and generating 1D and 2D barcodes. This particular C++ ZXing port is one of the most recent C++ versions of popular ZXing library using modern compilers.
 
-The goal of this project was to create convenient filter allowing to process video frame from phone camera. Thanks to SCodes you can start scanning barcodes in few steps. We used Qt 5.15 to built both wrapper and example application, but it's compatible with older Qt versions as well. Feel free to read ["How to scan barcodes in Qt Qml application" blog post](https://scythe-studio.com/blog/how-to-scan-barcodes-in-qt-qml-application) if you are interested in the details behind scanning mechanism. This blog post contains ste by step tutorial on how to do that.
+The goal of this project was to create convenient filter allowing to process video frame from phone camera. Thanks to SCodes you can start scanning barcodes in few steps. We used Qt 5.15 to built both wrapper and example application, but it's compatible with older Qt versions as well. Feel free to read ["How to scan barcodes in Qt Qml application" blog post](https://scythe-studio.com/blog/how-to-scan-barcodes-in-qt-qml-application) if you are interested in the details behind scanning mechanism. This blog post contains step by step tutorial on how to do that.
 
-SCodes supports generating barcodes as well. It will be covered in another blog post soon.
+SCodes supports generating barcodes as well. It is covered in ["How to generate barcode in Qt Qml" application blog post](https://scythe-studio.com/en/blog/how-to-generate-barcode-in-qt-qml-application).
+
+---
+
+[![Scythe Studio](./assets/scythestudio-logo.png)](https://scythe-studio.com)
+
+[![Built with Qt](./assets/built-with-qt.png)](https://qt.io)
+
+---
 
 ## Supported Formats
 
@@ -71,3 +79,14 @@ Don't forget to firstly include SBarcodeFilter.
 
 In the case of barcodes scanning you will need to expose SBarcodeGenerator class.
 If you are using SCodes for this case, check our [QML Barcode Generator demo](https://github.com/scytheStudio/SCodes/blob/master/examples/QmlBarcodeGenerator/qml/GeneratorPage.qml) to do that easily!
+
+# About Scythe Studio
+SCodes project was developed and is maintained mainly by Scythe Studio company.
+We are an official Qt Service Partner and a provider of Qt Software Development services including:
+- Desktop applications development
+- Mobile applications development
+- Embedded systems development
+- Qt and C++ consulting
+- UI/UX designing
+
+Do not hesitate visting https://scythe-studio.com to discover our capabilities and learn more about Qt Software Development from [Scythe Studio Blog](https://scythe-studio.com/en/blog).
