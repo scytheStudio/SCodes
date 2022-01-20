@@ -12,9 +12,15 @@ ApplicationWindow {
 
   SBarcodeGenerator {
     id: barcodeGenerator
-    onProcessFinished: {
-      console.log(barcodeGenerator.filePath)
-      image.source = "file:///" + barcodeGenerator.filePath
+
+    onGenerationFinished: {
+      if (error == "") {
+        console.log(barcodeGenerator.filePath)
+        image.source = "file:///" + barcodeGenerator.filePath
+      } else {
+        generateLabel.text = error
+        generatePopup.open()
+      }
     }
   }
 
@@ -87,9 +93,11 @@ ApplicationWindow {
           text: qsTr("Generate")
           onClicked: {
             image.source = ""
-            if (!barcodeGenerator.process(textField.text)) {
+            if (textField.text === "") {
               generateLabel.text = "Input is empty"
               generatePopup.open()
+            } else {
+              barcodeGenerator.generate(textField.text)
             }
           }
         }
@@ -185,21 +193,62 @@ ApplicationWindow {
           model: ListModel {
             id: formats
 
-            ListElement {
-              text: "QR_CODE"
-            }
 
             ListElement {
-              text: "DATA_MATRIX"
+              text: "Aztec"
+            }
+            ListElement {
+              text: "Codabar"
+            }
+            ListElement {
+              text: "Code39"
+            }
+            ListElement {
+              text: "Code93"
+            }
+            ListElement {
+              text: "Code128"
+            }
+            ListElement {
+              text: "DataBar"
+            }
+            ListElement {
+              text: "DataBarExpanded"
+            }
+            ListElement {
+              text: "DataMatrix"
+            }
+            ListElement {
+              text: "EAN-8"
+            }
+            ListElement {
+              text: "EAN-13"
+            }
+            ListElement {
+              text: "ITF"
+            }
+            ListElement {
+              text: "MaxiCode"
+            }
+            ListElement {
+              text: "PDF417"
+            }
+            ListElement {
+              text: "QRCode"
+            }
+            ListElement {
+              text: "UPC-A"
+            }
+            ListElement {
+              text: "UPC-E"
             }
 
-            ListElement {
-              text: "CODE_128"
-            }
           }
           onCurrentIndexChanged: {
-            barcodeGenerator.barcodeFormatFromQMLString(formats.get(
-                                                          currentIndex).text)
+            var formatAsText = formats.get(currentIndex).text
+            // a separate method was used because of qml error
+            // when try to use it as overloaded setter
+            barcodeGenerator.setFormat(formatAsText)
           }
         }
 

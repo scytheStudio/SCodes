@@ -1,6 +1,7 @@
 include("../../src/SCodes.pri")
 
 QT += quick
+CONFIG += c++17
 
 DEFINES += QT_DEPRECATED_WARNINGS
 
@@ -29,6 +30,4 @@ android {
 
     ANDROID_ABIS = armeabi-v7a
 }
-
-ANDROID_ABIS = armeabi-v7a
 
