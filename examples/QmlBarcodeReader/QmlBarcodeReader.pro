@@ -1,8 +1,13 @@
 include("../../src/SCodes.pri")
 
 QT += quick
+CONFIG += c++17
 
 DEFINES += QT_DEPRECATED_WARNINGS
+
+CONFIG += qmltypes
+QML_IMPORT_NAME = com.scythestudio.scodes
+QML_IMPORT_MAJOR_VERSION = 1
 
 SOURCES += \
     main.cpp

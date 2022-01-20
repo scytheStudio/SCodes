@@ -8,7 +8,7 @@ namespace SCodes {
     Q_NAMESPACE
     QML_ELEMENT
 
-    enum class SBarcodeFormat {
+    enum class SBarcodeFormat : int {
         None            = 0,
         Aztec           = (1 << 0),
         Codabar         = (1 << 1),
@@ -30,7 +30,7 @@ namespace SCodes {
         OneDCodes = Codabar | Code39 | Code93 | Code128 | EAN8 | EAN13 | ITF | DataBar | DataBarExpanded | UPCA | UPCE,
         TwoDCodes = Aztec | DataMatrix | MaxiCode | PDF417 | QRCode,
         Any       = OneDCodes | TwoDCodes,
-        Basic     = Code128 | QRCode,
+        Basic     = Code39 | Code93 | Code128 | QRCode | DataMatrix,
     };
 
     Q_DECLARE_FLAGS(SBarcodeFormats, SBarcodeFormat)
@@ -38,6 +38,7 @@ namespace SCodes {
     Q_FLAG_NS(SBarcodeFormats)
 
     ZXing::BarcodeFormat toZXingFormat(SBarcodeFormat format);
+    ZXing::BarcodeFormats toZXingFormat(SBarcodeFormats formats);
 
     QString toString(SBarcodeFormat format);
     SBarcodeFormat fromString(const QString &formatName);

@@ -51,3 +51,22 @@ SCodes::SBarcodeFormat SCodes::fromString(const QString &formatName)
 
     return SCodes::SBarcodeFormat::None;
 }
+
+ZXing::BarcodeFormats SCodes::toZXingFormat(SBarcodeFormats formats)
+{
+    ZXing::BarcodeFormats zXingformats;
+
+    int formatEnumIndex = SCodes::staticMetaObject.indexOfEnumerator("SBarcodeFormat");
+    QMetaEnum sBarcodeFormatEnumMeta = SCodes::staticMetaObject.enumerator(formatEnumIndex);
+
+    for (int i = 0; i < sBarcodeFormatEnumMeta.keyCount(); ++i) {
+        const auto key = sBarcodeFormatEnumMeta.key(i);
+        const auto value = sBarcodeFormatEnumMeta.keyToValue(key);
+        const auto enumValue = static_cast<SCodes::SBarcodeFormat>(value);
+        if (formats.testFlag(enumValue)) {
+            zXingformats |= toZXingFormat(enumValue);
+        }
+    }
+
+    return zXingformats;
+}
