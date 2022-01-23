@@ -6,9 +6,9 @@
 
 #include "SBarcodeDecoder.h"
 
-void processImage(SBarcodeDecoder *decoder, const QImage &image)
+void processImage(SBarcodeDecoder *decoder, const QImage &image, ZXing::BarcodeFormats formats)
 {
-  decoder->process(image);
+    decoder->process(image, formats);
 };
 
 class SBarcodeFilterRunnable : public QVideoFilterRunnable
@@ -36,8 +36,11 @@ public:
             return *input;
         }
 
-        const QImage croppedCapturedImage = SBarcodeDecoder::videoFrameToImage(*input, _filter->captureRect().toRect());
-        _filter->getImageFuture() = QtConcurrent::run(processImage, _filter->getDecoder(), croppedCapturedImage);
+        const QImage croppedCapturedImage =
+                SBarcodeDecoder::videoFrameToImage(*input,_filter->captureRect().toRect());
+        _filter->getImageFuture() =
+                QtConcurrent::run(processImage, _filter->getDecoder(), croppedCapturedImage, SCodes::toZXingFormat(_filter->format()));
+
         return *input;
     }
 
@@ -108,4 +111,18 @@ SBarcodeDecoder *SBarcodeFilter::getDecoder() const
 QFuture<void> SBarcodeFilter::getImageFuture() const
 {
     return _imageFuture;
+}
+
+const SCodes::SBarcodeFormats &SBarcodeFilter::format() const
+{
+    return m_format;
+}
+
+void SBarcodeFilter::setFormat(const SCodes::SBarcodeFormats &format)
+{
+    qDebug() << "set format " << format << ", old format " << m_format;
+    if (m_format != format) {
+        m_format = format;
+        emit formatChanged(m_format);
+    }
 }

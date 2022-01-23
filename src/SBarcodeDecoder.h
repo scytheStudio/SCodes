@@ -4,6 +4,8 @@
 #include <QObject>
 #include <QVideoFrame>
 
+#include "SBarcodeFormat.h"
+
 class SBarcodeDecoder : public QObject
 {
     Q_OBJECT
@@ -20,7 +22,7 @@ public:
     static QImage imageFromVideoFrame(const QVideoFrame &videoFrame);
 
 public slots:
-    void process(const QImage capturedImage);
+    void process(const QImage capturedImage, ZXing::BarcodeFormats formats);
 
 signals:
     void isDecodingChanged(bool isDecoding);

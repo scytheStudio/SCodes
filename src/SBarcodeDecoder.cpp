@@ -116,15 +116,12 @@ bool SBarcodeDecoder::isDecoding() const
     return _isDecoding;
 }
 
-void SBarcodeDecoder::process(const QImage capturedImage)
+void SBarcodeDecoder::process(const QImage capturedImage, ZXing::BarcodeFormats formats)
 {
     setIsDecoding(true);
 
     const auto hints = DecodeHints()
-            .setFormats(BarcodeFormat::QR_CODE
-                        | BarcodeFormat::DATA_MATRIX
-                        | BarcodeFormat::CODE_128
-                        | BarcodeFormat::CODABAR)
+            .setFormats(formats)
             .setTryHarder(true)
             .setTryRotate(true)
             .setIsPure(false)

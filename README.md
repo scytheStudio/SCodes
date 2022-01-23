@@ -19,11 +19,33 @@ SCodes supports generating barcodes as well. It is covered in ["How to generate 
 
 ## Supported Formats
 
-ZXing-C++ Library supports many other formats, but currently it is possible to only use these two barcode formats.
+There are plenty of supported formats and we constantly work on adding new.
 
-|    1D    |    2D
-| -------- | -------
-| Code 128 | QR Code
+## Supported 1D Formats
+
+|      Format      |    Supports scanning     |    Supports generating
+| ---------------- | ------------------------ |    -------------------
+|      UPC-A       |   <center>✔️</center>    |   <center>✔️</center>
+|      UPC-E       |   <center>✔️</center>    |   <center>✔️</center>
+|      EAN-8       |   <center>✔️</center>    |   <center>✔️</center>
+|      EAN-13      |   <center>✔️</center>    |   <center>✔️</center>
+|     DataBar      |   <center>✔️</center>    |   <center>❌</center>
+| DataBar Expanded |   <center>❌</center>    |   <center>❌</center>
+|     Code 39      |   <center>✔️</center>    |   <center>✔️</center>
+|     Code 93      |   <center>✔️</center>    |   <center>✔️</center>
+|     Code 128     |   <center>✔️</center>    |   <center>✔️</center>
+|     Codabar      |   <center>✔️</center>    |   <center>✔️</center>
+|       ITF        |   <center>❌</center>    |   <center>✔️</center>
+
+## Supported 1D Formats
+
+|    Format    |    Supports scanning     |    Supports generating
+| ------------ | ------------------------ |    -------------------
+|   QR Code    |   <center>✔️</center>    |   <center>✔️</center>
+|  DataMatrix  |   <center>✔️</center>    |   <center>✔️</center>
+|    Aztec     |   <center>✔️</center>    |   <center>✔️</center>
+|    PDF417    |   <center>✔️</center>    |   <center>✔️</center>
+|   MaxiCode   |   <center>❌</center>    |   <center>❌</center>
 
 
 # How to use wrapper?
@@ -66,6 +88,18 @@ import com.scythestudio.scodes 1.0
 
 6. You are done. Get inspired by [QML Barcode Reader demo](https://github.com/scytheStudio/SCodes/blob/master/examples/QmlBarcodeReader/qml/ScannerPage.qml) to test wrapper.
 
+### Trying various formats
+`SBarcodeFilter` is a class that you need to use for scanning case. By default it scans only specific basic formats of code (Code 39, Code 93, Code 128, QR Code and DataMatrix.).
+The goal of that is to limit number of possible formats and improve performance.
+
+To specify formats that should be accepted by the `SBarcodeFilter` instance, you need to set it's `format` property accordingly. This property allows setting multiple enum values as it's for flags. Add the following to your `SBarcodeFilter` item in Qml code:
+```qml
+Component.onCompleted: {
+    barcodeFilter.format = SCodes.OneDCodes
+}
+```
+See the enumeration values that represent supported formats in [SBarcodeFormat.h](https://github.com/scytheStudio/SCodes/blob/master/src/SBarcodeFormat.h)
+To accept all supported formats use `SCodes.Any`.
 
 ## Note 
 
