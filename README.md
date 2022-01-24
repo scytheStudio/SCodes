@@ -37,7 +37,7 @@ There are plenty of supported formats and we constantly work on adding new.
 |     Codabar      |   <center>✔️</center>    |   <center>✔️</center>
 |       ITF        |   <center>❌</center>    |   <center>✔️</center>
 
-## Supported 1D Formats
+## Supported 2D Formats
 
 |    Format    |    Supports scanning     |    Supports generating
 | ------------ | ------------------------ |    -------------------
