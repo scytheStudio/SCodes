@@ -13,17 +13,27 @@ void processImage(SBarcodeDecoder *decoder, const QImage &image, ZXing::BarcodeF
 
 class SBarcodeFilterRunnable : public QVideoFilterRunnable
 {
-
 public:
 
+    /*!
+     * \fn SBarcodeFilterRunnable(SBarcodeFilter *filter)
+     * \brief Constructor.
+     * \param SBarcodeFilter *filter - a pointer to filter.
+     */
     SBarcodeFilterRunnable(SBarcodeFilter *filter)
         : _filter{filter}
-    {
-    }
+    { }
 
-    QVideoFrame run(QVideoFrame *input,
-                    const QVideoSurfaceFormat &surfaceFormat,
-                    QVideoFilterRunnable::RunFlags flags) override
+    /*!
+     * \fn QVideoFrame run(QVideoFrame *input, const QVideoSurfaceFormat &surfaceFormat, QVideoFilterRunnable::RunFlags flags) override
+     * \brief Run method in order to asynchronously process the input video frame.
+     * \param QVideoFrame *input - a pointer to frame of video data.
+     * \param const QVideoSurfaceFormat &surfaceFormat - the stream format of a video presentation surface.
+     * \param QVideoFilterRunnable::RunFlags flags - typedef for QFlags<RunFlag>.
+     */
+    QVideoFrame run(QVideoFrame *    input,
+      const QVideoSurfaceFormat      &surfaceFormat,
+      QVideoFilterRunnable::RunFlags flags) override
     {
         Q_UNUSED(surfaceFormat);
         Q_UNUSED(flags);
@@ -37,9 +47,10 @@ public:
         }
 
         const QImage croppedCapturedImage =
-                SBarcodeDecoder::videoFrameToImage(*input,_filter->captureRect().toRect());
+          SBarcodeDecoder::videoFrameToImage(*input, _filter->captureRect().toRect());
         _filter->getImageFuture() =
-                QtConcurrent::run(processImage, _filter->getDecoder(), croppedCapturedImage, SCodes::toZXingFormat(_filter->format()));
+          QtConcurrent::run(processImage, _filter->getDecoder(), croppedCapturedImage,
+            SCodes::toZXingFormat(_filter->format()));
 
         return *input;
     }
@@ -50,12 +61,12 @@ private:
 
 
 SBarcodeFilter::SBarcodeFilter(QObject *parent)
-    : QAbstractVideoFilter{parent}
-    , _decoder{new SBarcodeDecoder}
+    : QAbstractVideoFilter{parent},
+    _decoder{new SBarcodeDecoder}
 {
     connect(_decoder, &SBarcodeDecoder::capturedChanged, this, &SBarcodeFilter::setCaptured);
 
-    connect(this, &QAbstractVideoFilter::activeChanged, this, [this]() {
+    connect(this, &QAbstractVideoFilter::activeChanged, this, [this](){
         if (this->isActive()) {
             this->clean();
         }
@@ -79,12 +90,14 @@ void SBarcodeFilter::setCaptured(const QString &captured)
     }
 
     _captured = captured;
+
     emit capturedChanged(_captured);
 }
 
 void SBarcodeFilter::clean()
 {
     _captured = "";
+
     _decoder->clean();
 }
 
@@ -100,6 +113,7 @@ void SBarcodeFilter::setCaptureRect(const QRectF &captureRect)
     }
 
     _captureRect = captureRect;
+
     emit captureRectChanged(_captureRect);
 }
 
@@ -115,14 +129,15 @@ QFuture<void> SBarcodeFilter::getImageFuture() const
 
 const SCodes::SBarcodeFormats &SBarcodeFilter::format() const
 {
-    return m_format;
+    return _format;
 }
 
 void SBarcodeFilter::setFormat(const SCodes::SBarcodeFormats &format)
 {
-    qDebug() << "set format " << format << ", old format " << m_format;
-    if (m_format != format) {
-        m_format = format;
-        emit formatChanged(m_format);
+    qDebug() << "set format " << format << ", old format " << _format;
+
+    if (_format != format) {
+        _format = format;
+        emit formatChanged(_format);
     }
 }

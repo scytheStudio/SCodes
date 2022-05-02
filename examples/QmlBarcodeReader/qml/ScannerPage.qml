@@ -4,9 +4,15 @@ import QtQuick.Window 2.12
 import QtMultimedia 5.12
 import com.scythestudio.scodes 1.0
 
+
+/*!
+  Barcode scanner main page. All QML elements managing from here.
+  */
 ApplicationWindow {
   id: root
+
   visible: true
+
   width: Qt.platform.os == "android"
          || Qt.platform.os == "ios" ? Screen.width : camera.viewfinder.resolution.width
   height: Qt.platform.os == "android"
@@ -14,6 +20,7 @@ ApplicationWindow {
 
   Camera {
     id: camera
+
     focus {
       focusMode: CameraFocus.FocusContinuous
       focusPointMode: CameraFocus.FocusPointAuto
@@ -22,10 +29,15 @@ ApplicationWindow {
 
   VideoOutput {
     id: videoOutput
-    source: camera
+
     anchors.fill: parent
+
+    source: camera
+
     autoOrientation: true
+
     fillMode: VideoOutput.PreserveAspectCrop
+
     // add barcodeFilter to videoOutput's filters to enable catching barcodes
     filters: [barcodeFilter]
 
@@ -36,6 +48,7 @@ ApplicationWindow {
 
     ScannerOverlay {
       id: scannerOverlay
+
       anchors.fill: parent
 
       captureRect: videoOutput.mapRectToItem(barcodeFilter.captureRect)
@@ -43,9 +56,11 @@ ApplicationWindow {
 
     // used to get camera focus on touched point
     MouseArea {
-      anchors.fill: parent
-      onClicked: {
+      id: focusTouchArea
 
+      anchors.fill: parent
+
+      onClicked: {
         camera.focus.customFocusPoint = Qt.point(mouse.x / width,
                                                  mouse.y / height)
         camera.focus.focusMode = CameraFocus.FocusMacro
@@ -69,20 +84,30 @@ ApplicationWindow {
   }
 
   Rectangle {
+    id: resultScreen
+
     anchors.fill: parent
+
     visible: !barcodeFilter.active
 
     Column {
       anchors.centerIn: parent
+
       spacing: 20
 
       Text {
+        id: scanResultText
+
         anchors.horizontalCenter: parent.horizontalCenter
+
         text: barcodeFilter.captured
       }
 
       Button {
+        id: scanButton
+
         anchors.horizontalCenter: parent.horizontalCenter
+
         text: qsTr("Scan again")
 
         onClicked: {

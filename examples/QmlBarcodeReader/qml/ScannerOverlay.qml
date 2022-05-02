@@ -2,6 +2,9 @@ import QtQuick 2.12
 import QtGraphicalEffects 1.12
 
 
+/*!
+  Area for scanning barcodes
+  */
 Item {
   id: root
 
@@ -9,12 +12,16 @@ Item {
 
   Item {
     id: captureZoneCorners
+
     x: root.captureRect.x
     y: root.captureRect.y
+
     width: root.captureRect.width
     height: root.captureRect.height
 
     Rectangle {
+      id: topLeftCornerH
+
       anchors {
         top: parent.top
         left: parent.left
@@ -22,11 +29,13 @@ Item {
 
       width: 20
       height: 5
+
       color: "#218165"
       radius: height / 2
     }
 
     Rectangle {
+      id: topLeftCornerV
       anchors {
         top: parent.top
         left: parent.left
@@ -34,12 +43,15 @@ Item {
 
       width: 5
       height: 20
+
       color: "#218165"
       radius: width / 2
     }
 
     // ----------------------
     Rectangle {
+      id: bottomLeftCornerH
+
       anchors {
         bottom: parent.bottom
         left: parent.left
@@ -47,11 +59,14 @@ Item {
 
       width: 20
       height: 5
+
       color: "#218165"
       radius: height / 2
     }
 
     Rectangle {
+      id: bottomLeftCornerV
+
       anchors {
         bottom: parent.bottom
         left: parent.left
@@ -59,12 +74,15 @@ Item {
 
       width: 5
       height: 20
+
       color: "#218165"
       radius: width / 2
     }
 
     // ----------------------
     Rectangle {
+      id: topRightCornerH
+
       anchors {
         top: parent.top
         right: parent.right
@@ -72,11 +90,14 @@ Item {
 
       width: 20
       height: 5
+
       color: "#218165"
       radius: height / 2
     }
 
     Rectangle {
+      id: topRightCornerV
+
       anchors {
         top: parent.top
         right: parent.right
@@ -84,12 +105,15 @@ Item {
 
       width: 5
       height: 20
+
       color: "#218165"
       radius: width / 2
     }
 
     // ----------------------
     Rectangle {
+      id: bottomRightCornerH
+
       anchors {
         bottom: parent.bottom
         right: parent.right
@@ -97,11 +121,14 @@ Item {
 
       width: 20
       height: 5
+
       color: "#218165"
       radius: height / 2
     }
 
     Rectangle {
+      id: bottomRightCornerV
+
       anchors {
         bottom: parent.bottom
         right: parent.right
@@ -109,6 +136,7 @@ Item {
 
       width: 5
       height: 20
+
       color: "#218165"
       radius: width / 2
     }
@@ -116,19 +144,19 @@ Item {
     Rectangle {
       id: scanIndicator
 
-      y: captureZoneCorners.height / 2
+      //y: captureZoneCorners.height/2
+      width: parent.width
+      height: 1
 
       anchors {
         horizontalCenter: parent.horizontalCenter
       }
 
-      width: parent.width
-      height: 1
-
       color: "#218165"
 
       SequentialAnimation {
         id: scanIndicatorAnimation
+
         loops: Animation.Infinite
 
         PropertyAnimation {
@@ -148,17 +176,17 @@ Item {
     }
 
     RectangularGlow {
-        id: effect
+      id: effect
 
-        anchors.centerIn: scanIndicator
+      width: scanIndicator.width / 2
+      height: scanIndicator.height
 
-        width: scanIndicator.width / 2
-        height: scanIndicator.height
+      anchors.centerIn: scanIndicator
 
-        glowRadius: 50
-        spread: 0.2
-        color: "#218165"
-        cornerRadius: glowRadius
+      glowRadius: 50
+      spread: 0.2
+      color: "#218165"
+      cornerRadius: glowRadius
     }
   }
 

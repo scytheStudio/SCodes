@@ -4,9 +4,15 @@ import QtMultimedia 5.12
 import QtQuick.Layouts 1.12
 import com.scythestudio.scodes 1.0
 
+
+/*!
+  Barcode generator main page. All QML elements managing from here.
+  */
 ApplicationWindow {
   id: root
+
   visible: true
+
   width: 400
   height: 800
 
@@ -14,7 +20,7 @@ ApplicationWindow {
     id: barcodeGenerator
 
     onGenerationFinished: {
-      if (error == "") {
+      if (error === "") {
         console.log(barcodeGenerator.filePath)
         image.source = "file:///" + barcodeGenerator.filePath
       } else {
@@ -26,29 +32,36 @@ ApplicationWindow {
 
   Rectangle {
     anchors.fill: parent
+
     height: parent.height
     width: parent.width
 
     Rectangle {
       id: inputRect
       z: 100
+
+      height: 40
+
       anchors {
         top: parent.top
         left: parent.left
         right: parent.right
       }
-      height: 40
 
       TextField {
         id: textField
+
         anchors.fill: parent
+
         selectByMouse: true
+
         placeholderText: qsTr("Input")
       }
     }
 
     Rectangle {
       id: imageRect
+
       anchors {
         top: inputRect.bottom
         bottom: buttonsRect.top
@@ -58,30 +71,41 @@ ApplicationWindow {
 
       Image {
         id: image
-        anchors.centerIn: parent
+
         width: parent.width
         height: image.width
+
+        anchors.centerIn: parent
+
         cache: false
       }
     }
 
     Rectangle {
       id: buttonsRect
+
+      height: 40
+
       anchors {
         bottom: parent.bottom
         left: parent.left
         right: parent.right
       }
-      height: 40
 
       RowLayout {
         id: buttonsLayout
+
         anchors.fill: parent
 
         CButton {
           id: settingsButton
-          text: qsTr("Settings")
+
+          anchors.margins: 5
+
           Layout.leftMargin: 5
+
+          text: qsTr("Settings")
+
           onClicked: {
             settingsPopup.open()
           }
@@ -89,8 +113,13 @@ ApplicationWindow {
 
         CButton {
           id: generateButton
+
+          anchors.margins: 5
+
           checkable: false
+
           text: qsTr("Generate")
+
           onClicked: {
             image.source = ""
             if (textField.text === "") {
@@ -104,14 +133,20 @@ ApplicationWindow {
 
         CButton {
           id: saveButton
-          text: qsTr("Save")
+
+          anchors.margins: 5
+
           Layout.rightMargin: 5
+
+          text: qsTr("Save")
+
           onClicked: {
             if (barcodeGenerator.saveImage()) {
               saveLabel.text = "File successfully saved"
             } else {
               saveLabel.text = "There was an error while saving file"
             }
+
             imageSavedPopup.open()
           }
         }
@@ -120,79 +155,100 @@ ApplicationWindow {
 
     Popup {
       id: generatePopup
-      anchors.centerIn: parent
-      dim: true
-      modal: true
 
-      onClosed: {
-        generateButton.checked = false
-      }
+      anchors.centerIn: parent
+
+      dim: true
+
+      modal: true
 
       Label {
         id: generateLabel
+
         anchors.centerIn: parent
+      }
+
+      onClosed: {
+        generateButton.checked = false
       }
     }
 
     Popup {
       id: imageSavedPopup
-      anchors.centerIn: parent
-      dim: true
-      modal: true
 
-      onClosed: {
-        saveButton.checked = false
-      }
+      anchors.centerIn: parent
+
+      dim: true
+
+      modal: true
 
       Label {
         id: saveLabel
+
         anchors.centerIn: parent
+      }
+
+      onClosed: {
+        saveButton.checked = false
       }
     }
 
     Popup {
       id: settingsPopup
-      anchors.centerIn: parent
+
       width: parent.width * 0.6
       height: parent.height * 0.6
-      dim: true
-      modal: true
 
-      onClosed: {
-        settingsButton.checked = false
-      }
+      anchors.centerIn: parent
+
+      dim: true
+
+      modal: true
 
       ColumnLayout {
         anchors.fill: parent
+
         spacing: 5
 
         CTextField {
-          id: height
+          id: widthField
+
           placeholderText: "Current width: " + barcodeGenerator.width
+
           onEditingFinished: barcodeGenerator.width = parseInt(text)
         }
 
         CTextField {
+          id: heightField
+
           placeholderText: "Current height: " + barcodeGenerator.height
+
           onEditingFinished: barcodeGenerator.height = parseInt(text)
         }
 
         CTextField {
+          id: marginField
+
           placeholderText: "Current margin: " + barcodeGenerator.margin
+
           onEditingFinished: barcodeGenerator.margin = parseInt(text)
         }
 
         CTextField {
+          id: eccLevelField
+
           placeholderText: "Current ECC Level: " + barcodeGenerator.eccLevel
+
           onEditingFinished: {
             barcodeGenerator.eccLevel = text
           }
         }
 
         CComboBox {
+          id: formatDropDown
+
           model: ListModel {
             id: formats
-
 
             ListElement {
               text: "Aztec"
@@ -242,7 +298,6 @@ ApplicationWindow {
             ListElement {
               text: "UPC-E"
             }
-
           }
           onCurrentIndexChanged: {
             var formatAsText = formats.get(currentIndex).text
@@ -253,6 +308,8 @@ ApplicationWindow {
         }
 
         CComboBox {
+          id: imageFormat
+
           model: ListModel {
             id: extensions
 
@@ -270,11 +327,18 @@ ApplicationWindow {
         }
 
         CTextField {
+          id: fileNameField
+
           placeholderText: "Current file name: " + barcodeGenerator.fileName
+
           onEditingFinished: {
             barcodeGenerator.fileName = text
           }
         }
+      }
+
+      onClosed: {
+        settingsButton.checked = false
       }
     }
   }
