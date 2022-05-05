@@ -15,7 +15,6 @@ Button {
 
   background: Rectangle {
     radius: 10
-    color: root.pressed ? Qt.darker(
-                            Theme.backgroundColor) : Theme.backgroundColor
+    color: root.pressed ? Qt.darker(Theme.backgroundColor) : Theme.backgroundColor
   }
 }
