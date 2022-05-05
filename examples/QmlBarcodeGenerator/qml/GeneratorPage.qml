@@ -16,10 +16,14 @@ ApplicationWindow {
   width: 400
   height: 800
 
+  Theme {
+    id: theme
+  }
+
   SBarcodeGenerator {
     id: barcodeGenerator
 
-    onGenerationFinished: {
+    onGenerationFinished: function (error) {
       if (error === "") {
         console.log(barcodeGenerator.filePath)
         image.source = "file:///" + barcodeGenerator.filePath
@@ -31,6 +35,8 @@ ApplicationWindow {
   }
 
   Rectangle {
+    id: dashboard
+
     anchors.fill: parent
 
     height: parent.height
@@ -59,26 +65,19 @@ ApplicationWindow {
       }
     }
 
-    Rectangle {
-      id: imageRect
+    Image {
+      id: image
+
+      width: parent.width
+      height: image.width
 
       anchors {
-        top: inputRect.bottom
-        bottom: buttonsRect.top
         left: parent.left
         right: parent.right
+        verticalCenter: parent.verticalCenter
       }
 
-      Image {
-        id: image
-
-        width: parent.width
-        height: image.width
-
-        anchors.centerIn: parent
-
-        cache: false
-      }
+      cache: false
     }
 
     Rectangle {
@@ -95,13 +94,17 @@ ApplicationWindow {
       RowLayout {
         id: buttonsLayout
 
+        spacing: 5
+
         anchors.fill: parent
 
         CButton {
           id: settingsButton
 
-          anchors.margins: 5
-
+          Layout.alignment: Qt.AlignHCenter
+          Layout.fillHeight: true
+          Layout.fillWidth: true
+          Layout.bottomMargin: 10
           Layout.leftMargin: 5
 
           text: qsTr("Settings")
@@ -114,7 +117,10 @@ ApplicationWindow {
         CButton {
           id: generateButton
 
-          anchors.margins: 5
+          Layout.alignment: Qt.AlignHCenter
+          Layout.fillHeight: true
+          Layout.fillWidth: true
+          Layout.bottomMargin: 10
 
           checkable: false
 
@@ -134,8 +140,10 @@ ApplicationWindow {
         CButton {
           id: saveButton
 
-          anchors.margins: 5
-
+          Layout.alignment: Qt.AlignHCenter
+          Layout.fillHeight: true
+          Layout.fillWidth: true
+          Layout.bottomMargin: 10
           Layout.rightMargin: 5
 
           text: qsTr("Save")
@@ -213,39 +221,66 @@ ApplicationWindow {
         CTextField {
           id: widthField
 
+          implicitWidth: parent.width
+          implicitHeight: parent.height / 8
+
           placeholderText: "Current width: " + barcodeGenerator.width
 
-          onEditingFinished: barcodeGenerator.width = parseInt(text)
+          onEditingFinished: function () {
+            if (parseInt(text)) {
+              barcodeGenerator.width = parseInt(text)
+            }
+          }
         }
 
         CTextField {
           id: heightField
 
+          implicitWidth: parent.width
+          implicitHeight: parent.height / 8
+
           placeholderText: "Current height: " + barcodeGenerator.height
 
-          onEditingFinished: barcodeGenerator.height = parseInt(text)
+          onEditingFinished: function () {
+            if (parseInt(text)) {
+              barcodeGenerator.height = parseInt(text)
+            }
+          }
         }
 
         CTextField {
           id: marginField
 
+          implicitWidth: parent.width
+          implicitHeight: parent.height / 8
+
           placeholderText: "Current margin: " + barcodeGenerator.margin
 
-          onEditingFinished: barcodeGenerator.margin = parseInt(text)
+          onEditingFinished: function () {
+            if (parseInt(text)) {
+              barcodeGenerator.margin = parseInt(text)
+            }
+          }
         }
 
         CTextField {
           id: eccLevelField
 
+          implicitWidth: parent.width
+          implicitHeight: parent.height / 8
+
           placeholderText: "Current ECC Level: " + barcodeGenerator.eccLevel
 
-          onEditingFinished: {
+          onEditingFinished: function () {
             barcodeGenerator.eccLevel = text
           }
         }
 
         CComboBox {
           id: formatDropDown
+
+          implicitWidth: parent.width
+          implicitHeight: parent.height / 8
 
           model: ListModel {
             id: formats
@@ -299,7 +334,7 @@ ApplicationWindow {
               text: "UPC-E"
             }
           }
-          onCurrentIndexChanged: {
+          onCurrentIndexChanged: function () {
             var formatAsText = formats.get(currentIndex).text
             // a separate method was used because of qml error
             // when try to use it as overloaded setter
@@ -309,6 +344,9 @@ ApplicationWindow {
 
         CComboBox {
           id: imageFormat
+
+          implicitWidth: parent.width
+          implicitHeight: parent.height / 8
 
           model: ListModel {
             id: extensions
@@ -321,7 +359,7 @@ ApplicationWindow {
               text: "jpg"
             }
           }
-          onCurrentIndexChanged: {
+          onCurrentIndexChanged: function () {
             barcodeGenerator.extension = extensions.get(currentIndex).text
           }
         }
@@ -329,7 +367,10 @@ ApplicationWindow {
         CTextField {
           id: fileNameField
 
-          placeholderText: "Current file name: " + barcodeGenerator.fileName
+          text: qsTr(barcodeGenerator.fileName)
+
+          implicitWidth: parent.width
+          implicitHeight: parent.height / 8
 
           onEditingFinished: {
             barcodeGenerator.fileName = text

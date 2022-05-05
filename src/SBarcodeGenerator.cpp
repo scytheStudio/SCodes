@@ -19,20 +19,20 @@ bool SBarcodeGenerator::generate(const QString &inputString)
         if (inputString.isEmpty()) {
             return false;
         } else {
-            ZXing::MultiFormatWriter writer = ZXing::MultiFormatWriter(SCodes::toZXingFormat(_format)).setMargin(
-                _margin).setEccLevel(_eccLevel);
+            ZXing::MultiFormatWriter writer = ZXing::MultiFormatWriter(SCodes::toZXingFormat(m_format)).setMargin(
+                m_margin).setEccLevel(m_eccLevel);
 
             _bitmap =
               ZXing::ToMatrix<uint8_t>(writer.encode(ZXing::TextUtfEncoding::FromUtf8(inputString.toStdString()),
-                _width, _height));
+                m_width, m_height));
 
-            _filePath = QDir::tempPath() + "/" + _fileName + "." + _extension;
+            m_filePath = QDir::tempPath() + "/" + m_fileName + "." + m_extension;
 
-            if (_extension == "png") {
-                stbi_write_png(_filePath.toStdString().c_str(), _bitmap.width(), _bitmap.height(), 1, _bitmap.data(),
+            if (m_extension == "png") {
+                stbi_write_png(m_filePath.toStdString().c_str(), _bitmap.width(), _bitmap.height(), 1, _bitmap.data(),
                   0);
-            } else if (_extension == "jpg" || _extension == "jpeg") {
-                stbi_write_jpg(_filePath.toStdString().c_str(), _bitmap.width(), _bitmap.height(), 1, _bitmap.data(),
+            } else if (m_extension == "jpg" || m_extension == "jpeg") {
+                stbi_write_jpg(m_filePath.toStdString().c_str(), _bitmap.width(), _bitmap.height(), 1, _bitmap.data(),
                   0);
             }
 
@@ -51,7 +51,7 @@ bool SBarcodeGenerator::generate(const QString &inputString)
 
 bool SBarcodeGenerator::saveImage()
 {
-    if (_filePath.isEmpty()) {
+    if (m_filePath.isEmpty()) {
         return false;
     }
 
@@ -67,22 +67,22 @@ bool SBarcodeGenerator::saveImage()
     }
     #endif
 
-    QString docFolder = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) + "/" + _fileName + "."
-      + _extension;
+    QString docFolder = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) + "/" + m_fileName + "."
+      + m_extension;
 
-    QFile::copy(_filePath, docFolder);
+    QFile::copy(m_filePath, docFolder);
 
     return true;
 }
 
 SCodes::SBarcodeFormat SBarcodeGenerator::format() const
 {
-    return _format;
+    return m_format;
 }
 
 void SBarcodeGenerator::setFormat(SCodes::SBarcodeFormat format)
 {
-    if (_format != format) {
+    if (m_format != format) {
         switch (format) {
             case SCodes::SBarcodeFormat::None:
                 qWarning() << "You need to set a specific format";
@@ -95,8 +95,8 @@ void SBarcodeGenerator::setFormat(SCodes::SBarcodeFormat format)
                 return;
 
             default:
-                _format = format;
-                emit formatChanged(_format);
+                m_format = format;
+                emit formatChanged(m_format);
         }
     }
 }

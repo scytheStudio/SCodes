@@ -8,16 +8,13 @@ import QtQuick.Controls 2.12
 TextField {
   id: root
 
-  implicitWidth: parent.width
-  implicitHeight: parent.height / 8
-
   selectByMouse: true
 
   background: Rectangle {
     radius: 2
 
     border {
-      color: "#333"
+      color: theme.borderColor
       width: 1
     }
   }

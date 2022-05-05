@@ -80,9 +80,9 @@ signals:
     void capturedChanged(const QString &captured);
 
 private:
-    bool _isDecoding = false;
+    bool m_isDecoding = false;
 
-    QString _captured = "";
+    QString m_captured = "";
 
     /*!
      * \fn void setCaptured(const QString &captured)

@@ -9,17 +9,13 @@ import QtQuick.Layouts 1.12
 Button {
   id: root
 
-  Layout.alignment: Qt.AlignHCenter
-  Layout.fillHeight: true
-  Layout.fillWidth: true
-  Layout.bottomMargin: 10
-
   checkable: true
 
-  palette.buttonText: "#bdbdbd"
+  palette.buttonText: theme.textColor
 
   background: Rectangle {
     radius: 10
-    color: "#218165"
+    color: root.pressed ? Qt.darker(
+                            theme.backgroundColor) : theme.backgroundColor
   }
 }

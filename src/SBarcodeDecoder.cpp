@@ -87,39 +87,39 @@ SBarcodeDecoder::SBarcodeDecoder(QObject *parent) : QObject(parent)
 
 void SBarcodeDecoder::clean()
 {
-    _captured = "";
+    m_captured = "";
 }
 
 QString SBarcodeDecoder::captured() const
 {
-    return _captured;
+    return m_captured;
 }
 
 void SBarcodeDecoder::setCaptured(const QString &captured)
 {
-    if (_captured == captured) {
+    if (m_captured == captured) {
         return;
     }
 
-    _captured = captured;
+    m_captured = captured;
 
-    emit capturedChanged(_captured);
+    emit capturedChanged(m_captured);
 }
 
 void SBarcodeDecoder::setIsDecoding(bool isDecoding)
 {
-    if (_isDecoding == isDecoding) {
+    if (m_isDecoding == isDecoding) {
         return;
     }
 
-    _isDecoding = isDecoding;
+    m_isDecoding = isDecoding;
 
-    emit isDecodingChanged(_isDecoding);
+    emit isDecodingChanged(m_isDecoding);
 }
 
 bool SBarcodeDecoder::isDecoding() const
 {
-    return _isDecoding;
+    return m_isDecoding;
 }
 
 void SBarcodeDecoder::process(const QImage capturedImage, ZXing::BarcodeFormats formats)

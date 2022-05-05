@@ -116,15 +116,15 @@ private slots:
     void clean();
 
 private:
-    QString _captured = "";
+    QString m_captured = "";
 
-    QRectF _captureRect;
+    QRectF m_captureRect;
 
     SBarcodeDecoder *_decoder;
 
     QFuture<void> _imageFuture;
 
-    SCodes::SBarcodeFormats _format = SCodes::SBarcodeFormat::Basic;
+    SCodes::SBarcodeFormats m_format = SCodes::SBarcodeFormat::Basic;
 };
 
 #endif // QRSCANNERFILTER_H

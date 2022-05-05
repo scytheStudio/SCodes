@@ -8,14 +8,11 @@ import QtQuick.Controls 2.12
 ComboBox {
   id: root
 
-  implicitWidth: parent.width
-  implicitHeight: parent.height / 8
-
   background: Rectangle {
     radius: 2
 
     border {
-      color: "#333"
+      color: theme.borderColor
       width: 1
     }
   }

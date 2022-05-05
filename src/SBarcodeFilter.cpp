@@ -9,7 +9,7 @@
 void processImage(SBarcodeDecoder *decoder, const QImage &image, ZXing::BarcodeFormats formats)
 {
     decoder->process(image, formats);
-};
+}
 
 class SBarcodeFilterRunnable : public QVideoFilterRunnable
 {
@@ -80,41 +80,41 @@ QVideoFilterRunnable *SBarcodeFilter::createFilterRunnable()
 
 QString SBarcodeFilter::captured() const
 {
-    return _captured;
+    return m_captured;
 }
 
 void SBarcodeFilter::setCaptured(const QString &captured)
 {
-    if (captured == _captured) {
+    if (captured == m_captured) {
         return;
     }
 
-    _captured = captured;
+    m_captured = captured;
 
-    emit capturedChanged(_captured);
+    emit capturedChanged(m_captured);
 }
 
 void SBarcodeFilter::clean()
 {
-    _captured = "";
+    m_captured = "";
 
     _decoder->clean();
 }
 
 QRectF SBarcodeFilter::captureRect() const
 {
-    return _captureRect;
+    return m_captureRect;
 }
 
 void SBarcodeFilter::setCaptureRect(const QRectF &captureRect)
 {
-    if (captureRect == _captureRect) {
+    if (captureRect == m_captureRect) {
         return;
     }
 
-    _captureRect = captureRect;
+    m_captureRect = captureRect;
 
-    emit captureRectChanged(_captureRect);
+    emit captureRectChanged(m_captureRect);
 }
 
 SBarcodeDecoder *SBarcodeFilter::getDecoder() const
@@ -129,15 +129,15 @@ QFuture<void> SBarcodeFilter::getImageFuture() const
 
 const SCodes::SBarcodeFormats &SBarcodeFilter::format() const
 {
-    return _format;
+    return m_format;
 }
 
 void SBarcodeFilter::setFormat(const SCodes::SBarcodeFormats &format)
 {
-    qDebug() << "set format " << format << ", old format " << _format;
+    qDebug() << "set format " << format << ", old format " << m_format;
 
-    if (_format != format) {
-        _format = format;
-        emit formatChanged(_format);
+    if (m_format != format) {
+        m_format = format;
+        emit formatChanged(m_format);
     }
 }

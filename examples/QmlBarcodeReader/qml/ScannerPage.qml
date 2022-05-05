@@ -18,6 +18,10 @@ ApplicationWindow {
   height: Qt.platform.os == "android"
           || Qt.platform.os == "ios" ? Screen.height : camera.viewfinder.resolution.height
 
+  Theme {
+    id: theme
+  }
+
   Camera {
     id: camera
 

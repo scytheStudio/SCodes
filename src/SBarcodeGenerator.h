@@ -18,14 +18,14 @@
 class SBarcodeGenerator : public QQuickItem
 {
     Q_OBJECT
-    Q_PROPERTY(int width MEMBER _width NOTIFY widthChanged)
-    Q_PROPERTY(int height MEMBER _height NOTIFY heightChanged)
-    Q_PROPERTY(int margin MEMBER _margin NOTIFY marginChanged)
-    Q_PROPERTY(int eccLevel MEMBER _eccLevel NOTIFY eccLevelChanged)
-    Q_PROPERTY(QString fileName MEMBER _fileName NOTIFY fileNameChanged)
-    Q_PROPERTY(QString extension MEMBER _extension)
-    Q_PROPERTY(QString filePath MEMBER _filePath)
-    Q_PROPERTY(QString inputText MEMBER _inputText)
+    Q_PROPERTY(int width MEMBER m_width NOTIFY widthChanged)
+    Q_PROPERTY(int height MEMBER m_height NOTIFY heightChanged)
+    Q_PROPERTY(int margin MEMBER m_margin NOTIFY marginChanged)
+    Q_PROPERTY(int eccLevel MEMBER m_eccLevel NOTIFY eccLevelChanged)
+    Q_PROPERTY(QString fileName MEMBER m_fileName NOTIFY fileNameChanged)
+    Q_PROPERTY(QString extension MEMBER m_extension)
+    Q_PROPERTY(QString filePath MEMBER m_filePath)
+    Q_PROPERTY(QString inputText MEMBER m_inputText)
     Q_PROPERTY(SCodes::SBarcodeFormat format READ format WRITE setFormat NOTIFY formatChanged)
 
     #if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
@@ -127,17 +127,17 @@ signals:
     void formatChanged(SCodes::SBarcodeFormat format);
 
 private:
-    int _width    = 500;
-    int _height   = 500;
-    int _margin   = 10;
-    int _eccLevel = -1;
+    int m_width    = 500;
+    int m_height   = 500;
+    int m_margin   = 10;
+    int m_eccLevel = -1;
 
-    QString _extension = "png";
-    QString _fileName  = "code";
-    QString _filePath  = "";
-    QString _inputText = "";
+    QString m_extension = "png";
+    QString m_fileName  = "code";
+    QString m_filePath  = "";
+    QString m_inputText = "";
 
-    SCodes::SBarcodeFormat _format = SCodes::SBarcodeFormat::Code128;
+    SCodes::SBarcodeFormat m_format = SCodes::SBarcodeFormat::Code128;
 
     ZXing::Matrix<uint8_t> _bitmap = ZXing::Matrix<uint8_t>();
 };
