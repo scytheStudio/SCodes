@@ -30,7 +30,7 @@ Item {
       width: 20
       height: 5
 
-      color: theme.borderColor
+      color: Theme.borderColor
       radius: height / 2
     }
 
@@ -44,7 +44,7 @@ Item {
       width: 5
       height: 20
 
-      color: theme.borderColor
+      color: Theme.borderColor
       radius: width / 2
     }
 
@@ -60,7 +60,7 @@ Item {
       width: 20
       height: 5
 
-      color: theme.borderColor
+      color: Theme.borderColor
       radius: height / 2
     }
 
@@ -75,7 +75,7 @@ Item {
       width: 5
       height: 20
 
-      color: theme.borderColor
+      color: Theme.borderColor
       radius: width / 2
     }
 
@@ -91,7 +91,7 @@ Item {
       width: 20
       height: 5
 
-      color: theme.borderColor
+      color: Theme.borderColor
       radius: height / 2
     }
 
@@ -106,7 +106,7 @@ Item {
       width: 5
       height: 20
 
-      color: theme.borderColor
+      color: Theme.borderColor
       radius: width / 2
     }
 
@@ -122,7 +122,7 @@ Item {
       width: 20
       height: 5
 
-      color: theme.borderColor
+      color: Theme.borderColor
       radius: height / 2
     }
 
@@ -137,7 +137,7 @@ Item {
       width: 5
       height: 20
 
-      color: theme.borderColor
+      color: Theme.borderColor
       radius: width / 2
     }
 
@@ -152,7 +152,7 @@ Item {
         horizontalCenter: parent.horizontalCenter
       }
 
-      color: theme.borderColor
+      color: Theme.borderColor
 
       SequentialAnimation {
         id: scanIndicatorAnimation
@@ -185,7 +185,7 @@ Item {
 
       glowRadius: 50
       spread: 0.2
-      color: theme.borderColor
+      color: Theme.borderColor
       cornerRadius: glowRadius
     }
   }
@@ -199,7 +199,7 @@ Item {
     }
 
     text: qsTr("Scan barcode")
-    color: theme.borderColor
+    color: Theme.borderColor
   }
 
   onCaptureRectChanged: {

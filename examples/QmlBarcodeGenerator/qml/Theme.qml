@@ -1,4 +1,6 @@
-import QtQuick 2.12
+pragma Singleton
+
+import QtQuick 2.0
 
 
 /**

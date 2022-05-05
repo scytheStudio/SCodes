@@ -11,11 +11,11 @@ Button {
 
   checkable: true
 
-  palette.buttonText: theme.textColor
+  palette.buttonText: Theme.textColor
 
   background: Rectangle {
     radius: 10
     color: root.pressed ? Qt.darker(
-                            theme.backgroundColor) : theme.backgroundColor
+                            Theme.backgroundColor) : Theme.backgroundColor
   }
 }

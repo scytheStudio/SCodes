@@ -16,10 +16,6 @@ ApplicationWindow {
   width: 400
   height: 800
 
-  Theme {
-    id: theme
-  }
-
   SBarcodeGenerator {
     id: barcodeGenerator
 
@@ -227,8 +223,11 @@ ApplicationWindow {
           placeholderText: "Current width: " + barcodeGenerator.width
 
           onEditingFinished: function () {
-            if (parseInt(text)) {
-              barcodeGenerator.width = parseInt(text)
+
+            var parsedWidth = parseInt(text)
+
+            if (isNaN(parsedWidth) != true && parsedWidth > 0) {
+              barcodeGenerator.width = parsedWidth
             }
           }
         }
@@ -242,8 +241,11 @@ ApplicationWindow {
           placeholderText: "Current height: " + barcodeGenerator.height
 
           onEditingFinished: function () {
-            if (parseInt(text)) {
-              barcodeGenerator.height = parseInt(text)
+
+            var parsedHeight = parseInt(text)
+
+            if (isNaN(parsedHeight) != true && parsedHeight > 0) {
+              barcodeGenerator.height = parsedHeight
             }
           }
         }
@@ -257,8 +259,11 @@ ApplicationWindow {
           placeholderText: "Current margin: " + barcodeGenerator.margin
 
           onEditingFinished: function () {
-            if (parseInt(text)) {
-              barcodeGenerator.margin = parseInt(text)
+
+            var parsedMargin = parseInt(text)
+
+            if (isNaN(parsedMargin) != true) {
+              barcodeGenerator.margin = parsedMargin
             }
           }
         }

@@ -12,7 +12,7 @@ ComboBox {
     radius: 2
 
     border {
-      color: theme.borderColor
+      color: Theme.borderColor
       width: 1
     }
   }
