@@ -11,9 +11,9 @@ SCodes supports generating barcodes as well. It is covered in ["How to generate 
 
 ---
 
-[![Scythe Studio](./assets/scythestudio-logo.png)](https://scythe-studio.com)
+[![Scythe Studio](./assets/scytheStudioLogo.png)](https://scythe-studio.com)
 
-[![Built with Qt](./assets/built-with-qt.png)](https://qt.io)
+[![Built with Qt](./assets/buildWithQt.png)](https://qt.io)
 
 ---
 

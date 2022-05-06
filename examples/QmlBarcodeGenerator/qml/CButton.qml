@@ -1,17 +1,20 @@
-import QtQuick 2.0
+import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 
+
+/*!
+  Classic push button for configure, generate & save operations.
+  */
 Button {
-  anchors.margins: 5
-  Layout.alignment: Qt.AlignHCenter
-  Layout.fillHeight: true
-  Layout.fillWidth: true
-  Layout.bottomMargin: 10
+  id: root
+
   checkable: true
-  palette.buttonText: "#bdbdbd"
+
+  palette.buttonText: Theme.textColor
+
   background: Rectangle {
     radius: 10
-    color: "#218165"
+    color: root.pressed ? Qt.darker(Theme.backgroundColor) : Theme.backgroundColor
   }
 }

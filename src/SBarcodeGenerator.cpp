@@ -1,7 +1,7 @@
 #include "SBarcodeGenerator.h"
 #include <QStandardPaths>
 #ifdef Q_OS_ANDROID
-#include <QtAndroid>
+# include <QtAndroid>
 #endif
 #include "MultiFormatWriter.h"
 #include "TextUtfEncoding.h"
@@ -11,9 +11,7 @@
 
 SBarcodeGenerator::SBarcodeGenerator(QQuickItem *parent)
     : QQuickItem(parent)
-{
-
-}
+{ }
 
 bool SBarcodeGenerator::generate(const QString &inputString)
 {
@@ -21,16 +19,24 @@ bool SBarcodeGenerator::generate(const QString &inputString)
         if (inputString.isEmpty()) {
             return false;
         } else {
-            ZXing::MultiFormatWriter writer = ZXing::MultiFormatWriter(SCodes::toZXingFormat(m_format)).setMargin(_margin).setEccLevel(_eccLevel);
+            ZXing::MultiFormatWriter writer = ZXing::MultiFormatWriter(SCodes::toZXingFormat(m_format)).setMargin(
+                m_margin).setEccLevel(m_eccLevel);
 
-            _bitmap = ZXing::ToMatrix<int>(writer.encode(ZXing::TextUtfEncoding::FromUtf8(inputString.toStdString()), _width, _height),  _background.rgba(), _foreground.rgba());
 
-            _filePath = QDir::tempPath() + "/" + _fileName + "." + _extension;
+            _bitmap =
+              ZXing::ToMatrix<int>(writer.encode(ZXing::TextUtfEncoding::FromUtf8(inputString.toStdString()),
+                m_width, m_height) ,  m_background.rgba(), m_foreground.rgba());
 
-            if (_extension == "png") {
-                stbi_write_png(_filePath.toStdString().c_str(), _bitmap.width(), _bitmap.height(), 4, _bitmap.data(), _bitmap.width() * 4);
-            } else if (_extension == "jpg" || _extension == "jpeg") {
-                stbi_write_jpg(_filePath.toStdString().c_str(), _bitmap.width(), _bitmap.height(), 4, _bitmap.data(),  _bitmap.width() * 4);
+            m_filePath = QDir::tempPath() + "/" + m_fileName + "." + m_extension;
+
+
+            if (m_extension == "png") {
+                stbi_write_png(m_filePath.toStdString().c_str(), _bitmap.width(), _bitmap.height(), 4, _bitmap.data(),
+                   _bitmap.width() * 4);
+            } else if (m_extension == "jpg" || m_extension == "jpeg") {
+                stbi_write_jpg(m_filePath.toStdString().c_str(), _bitmap.width(), _bitmap.height(), 4, _bitmap.data(),
+                   _bitmap.width() * 4);
+
             }
 
             emit generationFinished();
@@ -44,55 +50,57 @@ bool SBarcodeGenerator::generate(const QString &inputString)
     }
 
     return false;
-}
-
-
+} // SBarcodeGenerator::generate
 
 bool SBarcodeGenerator::saveImage()
 {
-    if (_filePath.isEmpty()) {
+    if (m_filePath.isEmpty()) {
         return false;
     }
 
-#ifdef Q_OS_ANDROID
-    if (QtAndroid::checkPermission(QString("android.permission.WRITE_EXTERNAL_STORAGE")) == QtAndroid::PermissionResult::Denied){
-        QtAndroid::PermissionResultMap resultHash = QtAndroid::requestPermissionsSync(QStringList({"android.permission.WRITE_EXTERNAL_STORAGE"}));
+    #ifdef Q_OS_ANDROID
+    if (QtAndroid::checkPermission(QString("android.permission.WRITE_EXTERNAL_STORAGE")) ==
+      QtAndroid::PermissionResult::Denied)
+    {
+        QtAndroid::PermissionResultMap resultHash =
+          QtAndroid::requestPermissionsSync(QStringList({ "android.permission.WRITE_EXTERNAL_STORAGE" }));
         if (resultHash["android.permission.WRITE_EXTERNAL_STORAGE"] == QtAndroid::PermissionResult::Denied) {
             return false;
         }
     }
-#endif
+    #endif
 
-    QString docFolder = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) + "/" + _fileName + "." + _extension;
+    QString docFolder = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) + "/" + m_fileName + "."
+      + m_extension;
 
-    QFile::copy(_filePath, docFolder);
+    QFile::copy(m_filePath, docFolder);
 
     return true;
 }
 
 const QColor &SBarcodeGenerator::background() const
 {
-    return _background;
+    return m_background;
 }
 
 void SBarcodeGenerator::setBackground(const QColor &newBackground)
 {
-    if (_background == newBackground)
+    if (m_background == newBackground)
         return;
-    _background = newBackground;
+    m_background = newBackground;
     emit backgroundChanged();
 }
 
 const QColor &SBarcodeGenerator::foreground() const
 {
-    return _foreground;
+    return m_foreground;
 }
 
 void SBarcodeGenerator::setForeground(const QColor &newForeground)
 {
-    if (_foreground == newForeground)
+    if (m_foreground == newForeground)
         return;
-    _foreground = newForeground;
+    m_foreground = newForeground;
 
     emit foregroundChanged();
 }
@@ -106,17 +114,19 @@ void SBarcodeGenerator::setFormat(SCodes::SBarcodeFormat format)
 {
     if (m_format != format) {
         switch (format) {
-        case SCodes::SBarcodeFormat::None:
-            qWarning() << "You need to set a specific format";
-            return;
-        case SCodes::SBarcodeFormat::Any:
-        case SCodes::SBarcodeFormat::OneDCodes:
-        case SCodes::SBarcodeFormat::TwoDCodes:
-            qWarning() << "Multiple formats can't be used to generate a barcode";
-            return;
-        default:
-            m_format = format;
-            emit formatChanged(m_format);
+            case SCodes::SBarcodeFormat::None:
+                qWarning() << "You need to set a specific format";
+                return;
+
+            case SCodes::SBarcodeFormat::Any:
+            case SCodes::SBarcodeFormat::OneDCodes:
+            case SCodes::SBarcodeFormat::TwoDCodes:
+                qWarning() << "Multiple formats can't be used to generate a barcode";
+                return;
+
+            default:
+                m_format = format;
+                emit formatChanged(m_format);
         }
     }
 }

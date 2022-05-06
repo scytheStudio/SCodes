@@ -12,30 +12,54 @@
 
 #include "SBarcodeFormat.h"
 
+/*!
+ * \brief The SBarcodeGenerator class allows you to configure, generate & save barcodes.
+ */
 class SBarcodeGenerator : public QQuickItem
 {
     Q_OBJECT
-    Q_PROPERTY(int width MEMBER _width NOTIFY widthChanged)
-    Q_PROPERTY(int height MEMBER _height NOTIFY heightChanged)
-    Q_PROPERTY(int margin MEMBER _margin NOTIFY marginChanged)
-    Q_PROPERTY(int eccLevel MEMBER _eccLevel NOTIFY eccLevelChanged)
-    Q_PROPERTY(QString fileName MEMBER _fileName NOTIFY fileNameChanged)
-    Q_PROPERTY(QString extension MEMBER _extension)
-    Q_PROPERTY(QString filePath MEMBER _filePath)
-    Q_PROPERTY(QString inputText MEMBER _inputText)
+    Q_PROPERTY(int width MEMBER m_width NOTIFY widthChanged)
+    Q_PROPERTY(int height MEMBER m_height NOTIFY heightChanged)
+    Q_PROPERTY(int margin MEMBER m_margin NOTIFY marginChanged)
+    Q_PROPERTY(int eccLevel MEMBER m_eccLevel NOTIFY eccLevelChanged)
+    Q_PROPERTY(QString fileName MEMBER m_fileName NOTIFY fileNameChanged)
+    Q_PROPERTY(QString extension MEMBER m_extension)
+    Q_PROPERTY(QString filePath MEMBER m_filePath)
+    Q_PROPERTY(QString inputText MEMBER m_inputText)
     Q_PROPERTY(SCodes::SBarcodeFormat format READ format WRITE setFormat NOTIFY formatChanged)
     Q_PROPERTY(QColor foreground READ foreground WRITE setForeground NOTIFY foregroundChanged)
     Q_PROPERTY(QColor background READ background WRITE setBackground NOTIFY backgroundChanged)
 
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
-        QML_ELEMENT
-#endif
+    #if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
+    QML_ELEMENT
+    #endif
 
 public:
-    explicit SBarcodeGenerator(QQuickItem *parent = nullptr);
-    ~SBarcodeGenerator() override {};
 
+    /*!
+     * \fn explicit SBarcodeGenerator(QObject *parent)
+     * \brief Constructor.
+     * \param QObject *parent - a pointer to the parent object.
+     */
+    explicit SBarcodeGenerator(QQuickItem *parent = nullptr);
+
+    /*!
+     * \fn ~SBarcodeGenerator() override
+     * \brief Destructor.
+     */
+    ~SBarcodeGenerator() override { };
+
+    /*!
+     * \fn SCodes::SBarcodeFormat format() const
+     * \brief Returns current barcode format.
+     */
     SCodes::SBarcodeFormat format() const;
+
+    /*!
+     * \fn void setFormat(SCodes::SBarcodeFormat format)
+     * \brief Sets the barcode format.
+     * \param SCodes::SBarcodeFormat format - barcode format.
+     */
     void setFormat(SCodes::SBarcodeFormat format);
 
     const QColor &foreground() const;
@@ -45,18 +69,69 @@ public:
     void setBackground(const QColor &newBackground);
 
 public slots:
+
+    /*!
+     * \fn bool generate(const QString &inputString)
+     * \brief Function for generating barcodes from given string
+     * \param const QString &inputString - string of the barcode
+     */
     bool generate(const QString &inputString);
+
+    /*!
+     * \fn void setFormat(const QString &formatName)
+     * \brief Sets the barcode format.
+     * \param const QString &formatName - barcode format string.
+     */
     void setFormat(const QString &formatName);
+
+    /*!
+     * \fn bool saveImage()
+     * \brief Saves the generated barcode image.
+     */
     bool saveImage();
 
 signals:
+
+    /*!
+     * \brief This signal is emitted when barcode generation is finished. If any error happens, sends the error string to QML.
+     * \param const QString &error - error string.
+     */
     void generationFinished(const QString &error = "");
+
+    /*!
+     * \brief This signal is emitted to send width to QML.
+     * \param int width - width.
+     */
     void widthChanged(int width);
+
+    /*!
+     * \brief This signal is emitted to send height to QML.
+     * \param int height - height.
+     */
     void heightChanged(int height);
+
+    /*!
+     * \brief This signal is emitted to send margin to QML.
+     * \param int margin - margin.
+     */
     void marginChanged(int margin);
+
+    /*!
+     * \brief This signal is emitted to send eccLevel to QML.
+     * \param int eccLevel - error correction code level.
+     */
     void eccLevelChanged(int eccLevel);
+
+    /*!
+     * \brief This signal is emitted to send fileName to QML.
+     * \param const QString &fileName - fileName.
+     */
     void fileNameChanged(const QString &fileName);
 
+    /*!
+     * \brief This signal is emitted to send barcode format to QML.
+     * \param SCodes::SBarcodeFormat format - barcode format.
+     */
     void formatChanged(SCodes::SBarcodeFormat format);
 
     void foregroundChanged();
@@ -64,17 +139,21 @@ signals:
     void backgroundChanged();
 
 private:
-    int _width = 500;
-    int _height = 500;
-    int _margin = 10;
-    int _eccLevel = -1;
 
-    QColor _foreground = "transparent";
-    QColor _background ="black";
-    QString _extension = "png";
-    QString _fileName = "code";
-    QString _filePath = "";
-    QString _inputText = "";
+    QColor m_foreground = "transparent";
+    QColor m_background ="black";
+
+    int m_width    = 500;
+    int m_height   = 500;
+    int m_margin   = 10;
+    int m_eccLevel = -1;
+
+    QString m_extension = "png";
+    QString m_fileName  = "code";
+    QString m_filePath  = "";
+    QString m_inputText = "";
+
+
     SCodes::SBarcodeFormat m_format = SCodes::SBarcodeFormat::Code128;
 
     ZXing::Matrix<int> _bitmap = ZXing::Matrix<int>();

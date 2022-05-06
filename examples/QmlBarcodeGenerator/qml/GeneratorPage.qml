@@ -4,17 +4,23 @@ import QtMultimedia 5.12
 import QtQuick.Layouts 1.12
 import com.scythestudio.scodes 1.0
 
+
+/*!
+  Barcode generator main page. All QML elements managing from here.
+  */
 ApplicationWindow {
   id: root
+
   visible: true
+
   width: 400
   height: 800
 
   SBarcodeGenerator {
     id: barcodeGenerator
 
-    onGenerationFinished: {
-      if (error == "") {
+    onGenerationFinished: function (error) {
+      if (error === "") {
         console.log(barcodeGenerator.filePath)
         image.source = "file:///" + barcodeGenerator.filePath
       } else {
@@ -25,63 +31,80 @@ ApplicationWindow {
   }
 
   Rectangle {
+    id: dashboard
+
     anchors.fill: parent
+
     height: parent.height
     width: parent.width
 
     Rectangle {
       id: inputRect
       z: 100
+
+      height: 40
+
       anchors {
         top: parent.top
         left: parent.left
         right: parent.right
       }
-      height: 40
 
       TextField {
         id: textField
+
         anchors.fill: parent
+
         selectByMouse: true
+
         placeholderText: qsTr("Input")
       }
     }
 
-    Rectangle {
-      id: imageRect
+    Image {
+      id: image
+
+      width: parent.width
+      height: image.width
+
       anchors {
-        top: inputRect.bottom
-        bottom: buttonsRect.top
         left: parent.left
         right: parent.right
+        verticalCenter: parent.verticalCenter
       }
 
-      Image {
-        id: image
-        anchors.centerIn: parent
-        width: parent.width
-        height: image.width
-        cache: false
-      }
+      cache: false
     }
 
     Rectangle {
       id: buttonsRect
+
+      height: 40
+
       anchors {
         bottom: parent.bottom
         left: parent.left
         right: parent.right
       }
-      height: 40
 
       RowLayout {
         id: buttonsLayout
+
+        spacing: 5
+
         anchors.fill: parent
 
         CButton {
           id: settingsButton
-          text: qsTr("Settings")
+
+          Layout.alignment: Qt.AlignHCenter
+          Layout.fillHeight: true
+          Layout.fillWidth: true
+          Layout.bottomMargin: 10
           Layout.leftMargin: 5
+
+          text: qsTr("Settings")
+
           onClicked: {
             settingsPopup.open()
           }
@@ -89,8 +112,16 @@ ApplicationWindow {
 
         CButton {
           id: generateButton
+
+          Layout.alignment: Qt.AlignHCenter
+          Layout.fillHeight: true
+          Layout.fillWidth: true
+          Layout.bottomMargin: 10
+
           checkable: false
+
           text: qsTr("Generate")
+
           onClicked: {
             image.source = ""
             if (textField.text === "") {
@@ -104,14 +135,22 @@ ApplicationWindow {
 
         CButton {
           id: saveButton
-          text: qsTr("Save")
+
+          Layout.alignment: Qt.AlignHCenter
+          Layout.fillHeight: true
+          Layout.fillWidth: true
+          Layout.bottomMargin: 10
           Layout.rightMargin: 5
+
+          text: qsTr("Save")
+
           onClicked: {
             if (barcodeGenerator.saveImage()) {
               saveLabel.text = "File successfully saved"
             } else {
               saveLabel.text = "There was an error while saving file"
             }
+
             imageSavedPopup.open()
           }
         }
@@ -120,79 +159,136 @@ ApplicationWindow {
 
     Popup {
       id: generatePopup
-      anchors.centerIn: parent
-      dim: true
-      modal: true
 
-      onClosed: {
-        generateButton.checked = false
-      }
+      anchors.centerIn: parent
+
+      dim: true
+
+      modal: true
 
       Label {
         id: generateLabel
+
         anchors.centerIn: parent
+      }
+
+      onClosed: {
+        generateButton.checked = false
       }
     }
 
     Popup {
       id: imageSavedPopup
-      anchors.centerIn: parent
-      dim: true
-      modal: true
 
-      onClosed: {
-        saveButton.checked = false
-      }
+      anchors.centerIn: parent
+
+      dim: true
+
+      modal: true
 
       Label {
         id: saveLabel
+
         anchors.centerIn: parent
+      }
+
+      onClosed: {
+        saveButton.checked = false
       }
     }
 
     Popup {
       id: settingsPopup
-      anchors.centerIn: parent
+
       width: parent.width * 0.6
       height: parent.height * 0.6
-      dim: true
-      modal: true
 
-      onClosed: {
-        settingsButton.checked = false
-      }
+      anchors.centerIn: parent
+
+      dim: true
+
+      modal: true
 
       ColumnLayout {
         anchors.fill: parent
+
         spacing: 5
 
         CTextField {
-          id: height
+          id: widthField
+
+          implicitWidth: parent.width
+          implicitHeight: parent.height / 8
+
           placeholderText: "Current width: " + barcodeGenerator.width
-          onEditingFinished: barcodeGenerator.width = parseInt(text)
+
+          onEditingFinished: function () {
+
+            var parsedWidth = parseInt(text)
+
+            if (isNaN(parsedWidth) != true && parsedWidth > 0) {
+              barcodeGenerator.width = parsedWidth
+            }
+          }
         }
 
         CTextField {
+          id: heightField
+
+          implicitWidth: parent.width
+          implicitHeight: parent.height / 8
+
           placeholderText: "Current height: " + barcodeGenerator.height
-          onEditingFinished: barcodeGenerator.height = parseInt(text)
+
+          onEditingFinished: function () {
+
+            var parsedHeight = parseInt(text)
+
+            if (isNaN(parsedHeight) != true && parsedHeight > 0) {
+              barcodeGenerator.height = parsedHeight
+            }
+          }
         }
 
         CTextField {
+          id: marginField
+
+          implicitWidth: parent.width
+          implicitHeight: parent.height / 8
+
           placeholderText: "Current margin: " + barcodeGenerator.margin
-          onEditingFinished: barcodeGenerator.margin = parseInt(text)
+
+          onEditingFinished: function () {
+
+            var parsedMargin = parseInt(text)
+
+            if (isNaN(parsedMargin) != true) {
+              barcodeGenerator.margin = parsedMargin
+            }
+          }
         }
 
         CTextField {
+          id: eccLevelField
+
+          implicitWidth: parent.width
+          implicitHeight: parent.height / 8
+
           placeholderText: "Current ECC Level: " + barcodeGenerator.eccLevel
-          onEditingFinished: {
+
+          onEditingFinished: function () {
             barcodeGenerator.eccLevel = text
           }
         }
 
         CComboBox {
+          id: formatDropDown
+
+          implicitWidth: parent.width
+          implicitHeight: parent.height / 8
+
           model: ListModel {
             id: formats
-
 
             ListElement {
               text: "Aztec"
@@ -242,9 +338,8 @@ ApplicationWindow {
             ListElement {
               text: "UPC-E"
             }
-
           }
-          onCurrentIndexChanged: {
+          onCurrentIndexChanged: function () {
             var formatAsText = formats.get(currentIndex).text
             // a separate method was used because of qml error
             // when try to use it as overloaded setter
@@ -253,6 +348,11 @@ ApplicationWindow {
         }
 
         CComboBox {
+          id: imageFormat
+
+          implicitWidth: parent.width
+          implicitHeight: parent.height / 8
+
           model: ListModel {
             id: extensions
 
@@ -264,17 +364,27 @@ ApplicationWindow {
               text: "jpg"
             }
           }
-          onCurrentIndexChanged: {
+          onCurrentIndexChanged: function () {
             barcodeGenerator.extension = extensions.get(currentIndex).text
           }
         }
 
         CTextField {
-          placeholderText: "Current file name: " + barcodeGenerator.fileName
+          id: fileNameField
+
+          text: qsTr(barcodeGenerator.fileName)
+
+          implicitWidth: parent.width
+          implicitHeight: parent.height / 8
+
           onEditingFinished: {
             barcodeGenerator.fileName = text
           }
         }
+      }
+
+      onClosed: {
+        settingsButton.checked = false
       }
     }
   }
