@@ -114,6 +114,8 @@ Don't forget to firstly include SBarcodeFilter.
 In the case of barcodes scanning you will need to expose SBarcodeGenerator class.
 If you are using SCodes for this case, check our [QML Barcode Generator demo](https://github.com/scytheStudio/SCodes/blob/master/examples/QmlBarcodeGenerator/qml/GeneratorPage.qml) to do that easily!
 
+To be able to build cmake-example-projects, you will need to set ANDROID_NDK environment variable in project build settings to NDK version 22 or greater(tested on NDK version 22.1.7171670).
+
 # About Scythe Studio
 SCodes project was developed and is maintained mainly by Scythe Studio company.
 We are an official Qt Service Partner and a provider of Qt Software Development services including:
