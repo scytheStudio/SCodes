@@ -24,6 +24,8 @@ class SBarcodeGenerator : public QQuickItem
     Q_PROPERTY(QString filePath MEMBER _filePath)
     Q_PROPERTY(QString inputText MEMBER _inputText)
     Q_PROPERTY(SCodes::SBarcodeFormat format READ format WRITE setFormat NOTIFY formatChanged)
+    Q_PROPERTY(QColor foreground READ foreground WRITE setForeground NOTIFY foregroundChanged)
+    Q_PROPERTY(QColor background READ background WRITE setBackground NOTIFY backgroundChanged)
 
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
         QML_ELEMENT
@@ -35,6 +37,12 @@ public:
 
     SCodes::SBarcodeFormat format() const;
     void setFormat(SCodes::SBarcodeFormat format);
+
+    const QColor &foreground() const;
+    void setForeground(const QColor &newForeground);
+
+    const QColor &background() const;
+    void setBackground(const QColor &newBackground);
 
 public slots:
     bool generate(const QString &inputString);
@@ -51,19 +59,26 @@ signals:
 
     void formatChanged(SCodes::SBarcodeFormat format);
 
+    void foregroundChanged();
+
+    void backgroundChanged();
+
 private:
     int _width = 500;
     int _height = 500;
     int _margin = 10;
     int _eccLevel = -1;
 
+    QColor _foreground = "transparent";
+    QColor _background ="black";
     QString _extension = "png";
     QString _fileName = "code";
     QString _filePath = "";
     QString _inputText = "";
     SCodes::SBarcodeFormat m_format = SCodes::SBarcodeFormat::Code128;
 
-    ZXing::Matrix<uint8_t> _bitmap = ZXing::Matrix<uint8_t>();
+    ZXing::Matrix<int> _bitmap = ZXing::Matrix<int>();
+
 };
 
 #endif // SBARCODEGENERATOR_H

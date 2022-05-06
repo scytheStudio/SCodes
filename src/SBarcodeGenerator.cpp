@@ -23,14 +23,14 @@ bool SBarcodeGenerator::generate(const QString &inputString)
         } else {
             ZXing::MultiFormatWriter writer = ZXing::MultiFormatWriter(SCodes::toZXingFormat(m_format)).setMargin(_margin).setEccLevel(_eccLevel);
 
-            _bitmap = ZXing::ToMatrix<uint8_t>(writer.encode(ZXing::TextUtfEncoding::FromUtf8(inputString.toStdString()), _width, _height));
+            _bitmap = ZXing::ToMatrix<int>(writer.encode(ZXing::TextUtfEncoding::FromUtf8(inputString.toStdString()), _width, _height),  _background.rgba(), _foreground.rgba());
 
             _filePath = QDir::tempPath() + "/" + _fileName + "." + _extension;
 
             if (_extension == "png") {
-                stbi_write_png(_filePath.toStdString().c_str(), _bitmap.width(), _bitmap.height(), 1, _bitmap.data(), 0);
+                stbi_write_png(_filePath.toStdString().c_str(), _bitmap.width(), _bitmap.height(), 4, _bitmap.data(), _bitmap.width() * 4);
             } else if (_extension == "jpg" || _extension == "jpeg") {
-                stbi_write_jpg(_filePath.toStdString().c_str(), _bitmap.width(), _bitmap.height(), 1, _bitmap.data(), 0);
+                stbi_write_jpg(_filePath.toStdString().c_str(), _bitmap.width(), _bitmap.height(), 4, _bitmap.data(),  _bitmap.width() * 4);
             }
 
             emit generationFinished();
@@ -68,6 +68,33 @@ bool SBarcodeGenerator::saveImage()
     QFile::copy(_filePath, docFolder);
 
     return true;
+}
+
+const QColor &SBarcodeGenerator::background() const
+{
+    return _background;
+}
+
+void SBarcodeGenerator::setBackground(const QColor &newBackground)
+{
+    if (_background == newBackground)
+        return;
+    _background = newBackground;
+    emit backgroundChanged();
+}
+
+const QColor &SBarcodeGenerator::foreground() const
+{
+    return _foreground;
+}
+
+void SBarcodeGenerator::setForeground(const QColor &newForeground)
+{
+    if (_foreground == newForeground)
+        return;
+    _foreground = newForeground;
+
+    emit foregroundChanged();
 }
 
 SCodes::SBarcodeFormat SBarcodeGenerator::format() const
