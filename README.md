@@ -103,18 +103,22 @@ To accept all supported formats use `SCodes.Any`.
 
 ## Note 
 
-If you use Qt version older than 5.15 you need to manually register SBarcodeFilter e.g. in main.cpp. Use this line for this purpose:
+Both build systems have their examples located in same directory. All you need to do is to just open proper file(CMakeLists.txt or *.pro file) for different build system to be used.
 
-```cpp
-qmlRegisterType<MyClass>("com.scythestudio.scodes", 1, 0, "SBarcodeFilter");
-```
 
-Don't forget to firstly include SBarcodeFilter.
+### Supported Kits for Examples
 
-In the case of barcodes scanning you will need to expose SBarcodeGenerator class.
-If you are using SCodes for this case, check our [QML Barcode Generator demo](https://github.com/scytheStudio/SCodes/blob/master/examples/QmlBarcodeGenerator/qml/GeneratorPage.qml) to do that easily!
 
-To be able to build cmake-example-projects, you will need to set ANDROID_NDK environment variable in project build settings to NDK version 22 or greater(tested on NDK version 22.1.7171670).
+| PROJECT | BUILD SYSTEM | WINDOWS-MinGW | WINDOWS-MSVC | LINUX-GCC | ANDROID |
+| ------ | ------ | ------ | ------ | ------ | ------ |
+| QmlBarcodeReader | qmake |<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|
+| QmlBarcodeGenerator | qmake |<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|
+| QmlBarcodeReader | cmake |<center>❌</center>|<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|
+| QmlBarcodeGenerator | cmake |<center>❌</center>|<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|
+
+
+To be able to build cmake based examples for android devices, you will need to set ANDROID_NDK environment variable in project build settings to NDK version 22 or greater(tested on NDK version 22.1.7171670).
+
 
 # About Scythe Studio
 SCodes project was developed and is maintained mainly by Scythe Studio company.
