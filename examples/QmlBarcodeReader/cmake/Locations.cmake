@@ -1,5 +1,5 @@
 set(COMPANY "Scythe Studio")
-set(COPYRIGHT "Copyright (c) 2022 Scythe Studio. All rights reserved.")
+set(COPYRIGHT "Copyright (c) 2022 Scythe Studio. Licensed under the Apache License, Version 2.0.")
 set(IDENTIFIER "com.scythestudio.scodes.example")
 
 # ---CONFIGURATION---
@@ -7,7 +7,7 @@ option(USE_QML "Add QML support" ON)
 option(USE_LIBS "Use external libraries" ON)
 
 # Locations - directories in project structure
-set(LIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../src)
+set(LIB_DIR ${CMAKE_SOURCE_DIR}/../../src)
 
 set(SRC_DIR ".")
 set(RES_DIR ".")

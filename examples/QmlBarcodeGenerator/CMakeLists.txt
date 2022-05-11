@@ -19,7 +19,7 @@ else()
     qt_add_resources(RSCS qml.qrc)
 endif()
 
-add_subdirectory(${LIB_DIR} ${CMAKE_CURRENT_BINARY_DIR}/SCodes)
+add_subdirectory(${LIB_DIR} ${CMAKE_BINARY_DIR}/SCodes)
 
 if(ANDROID)
     set(ANDROID_MIN_SDK_VERSION 21)

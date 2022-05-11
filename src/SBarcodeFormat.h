@@ -7,7 +7,6 @@
 
 namespace SCodes {
 Q_NAMESPACE
-  QML_ELEMENT
 
 /*!
  * \brief The SBarcodeFormat is binary enumeration class for barcode types
