@@ -7,10 +7,7 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QGuiApplication app(argc, argv);
 
-    // If you use Qt version older than 5.15 you need to manually register SBarcodeGenerator
-    #if (QT_VERSION < QT_VERSION_CHECK(5, 15, 0))
     qmlRegisterType<SBarcodeGenerator>("com.scythestudio.scodes", 1, 0, "SBarcodeGenerator");
-    #endif
 
     qmlRegisterSingletonType(QUrl("qrc:/qml/Theme.qml"), "Theme", 1, 0, "Theme");
 

@@ -17,9 +17,6 @@ class SBarcodeFilter : public QAbstractVideoFilter
     Q_PROPERTY(QString captured READ captured NOTIFY capturedChanged)
     Q_PROPERTY(QRectF captureRect READ captureRect WRITE setCaptureRect NOTIFY captureRectChanged)
     Q_PROPERTY(SCodes::SBarcodeFormats format READ format WRITE setFormat NOTIFY formatChanged)
-    #if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
-    QML_ELEMENT
-    #endif
 
 public:
 

@@ -28,10 +28,6 @@ class SBarcodeGenerator : public QQuickItem
     Q_PROPERTY(QString inputText MEMBER m_inputText)
     Q_PROPERTY(SCodes::SBarcodeFormat format READ format WRITE setFormat NOTIFY formatChanged)
 
-    #if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
-    QML_ELEMENT
-    #endif
-
 public:
 
     /*!
