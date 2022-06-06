@@ -1,7 +1,6 @@
-import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtQuick.Window 2.12
-import QtMultimedia 5.12
+import QtQuick
+import QtQuick.Controls
+import QtMultimedia
 import com.scythestudio.scodes 1.0
 
 
@@ -18,102 +17,114 @@ ApplicationWindow {
   height: Qt.platform.os == "android"
           || Qt.platform.os == "ios" ? Screen.height : camera.viewfinder.resolution.height
 
+  TestClass {
+    id: testclass
+
+    videoSink: videoOutput.videoSink
+  }
+
   Camera {
     id: camera
 
-    focus {
-      focusMode: CameraFocus.FocusContinuous
-      focusPointMode: CameraFocus.FocusPointAuto
-    }
+    Component.onCompleted: testclass.qcamera = camera
+
+    focusMode: Camera.FocusModeAutoNear
+    customFocusPoint: Qt.point(0.2, 0.2) // Focus relative to top-left corner
   }
 
+  //    videoOutput: videoOutput
+  //  }
   VideoOutput {
     id: videoOutput
-
     anchors.fill: parent
 
-    source: camera
-
-    autoOrientation: true
-
-    fillMode: VideoOutput.PreserveAspectCrop
-
-    // add barcodeFilter to videoOutput's filters to enable catching barcodes
-    filters: [barcodeFilter]
-
-    onSourceRectChanged: {
-      barcodeFilter.captureRect = videoOutput.mapRectToSource(
-            videoOutput.mapNormalizedRectToItem(Qt.rect(0.25, 0.25, 0.5, 0.5)))
-    }
-
-    ScannerOverlay {
-      id: scannerOverlay
-
-      anchors.fill: parent
-
-      captureRect: videoOutput.mapRectToItem(barcodeFilter.captureRect)
-    }
-
-    // used to get camera focus on touched point
-    MouseArea {
-      id: focusTouchArea
-
-      anchors.fill: parent
-
-      onClicked: {
-        camera.focus.customFocusPoint = Qt.point(mouse.x / width,
-                                                 mouse.y / height)
-        camera.focus.focusMode = CameraFocus.FocusMacro
-        camera.focus.focusPointMode = CameraFocus.FocusPointCustom
-      }
-    }
+    //    MouseArea {
+    //      anchors.fill: parent
+    //      onClicked: testclass.capture()
+    //    }
+    //Component.onCompleted: testclass.start()
   }
+} //  VideoOutput {//    id: videoOutput//    anchors.fill: parent
+//    //source: camera
 
-  SBarcodeFilter {
-    id: barcodeFilter
+//    //autoOrientation: true
+//    fillMode: VideoOutput.PreserveAspectCrop
 
-    // you can adjust capture rect (scan area) ne changing these Qt.rect() parameters
-    captureRect: videoOutput.mapRectToSource(
-                   videoOutput.mapNormalizedRectToItem(Qt.rect(0.25, 0.25,
-                                                               0.5, 0.5)))
+//    // add barcodeFilter to videoOutput's filters to enable catching barcodes
+//    //filters: [barcodeFilter]
+//    onSourceRectChanged: {
+//      barcodeFilter.captureRect = videoOutput.mapRectToSource(
+//            videoOutput.mapNormalizedRectToItem(Qt.rect(0.25, 0.25, 0.5, 0.5)))
+//    }
 
-    onCapturedChanged: {
-      active = false
-      console.log("captured: " + captured)
-    }
-  }
+//    Qt6ScannerOverlay {
+//      id: scannerOverlay
 
-  Rectangle {
-    id: resultScreen
+//      anchors.fill: parent
 
-    anchors.fill: parent
+//      captureRect: videoOutput.mapRectToItem(barcodeFilter.captureRect)
+//    }
 
-    visible: !barcodeFilter.active
+//    // used to get camera focus on touched point
+//    MouseArea {
+//      id: focusTouchArea
 
-    Column {
-      anchors.centerIn: parent
+//      anchors.fill: parent
 
-      spacing: 20
+//      onClicked: {
+//        camera.focus.customFocusPoint = Qt.point(mouse.x / width,
+//                                                 mouse.y / height)
+//        camera.focus.focusMode = CameraFocus.FocusMacro
+//        camera.focus.focusPointMode = CameraFocus.FocusPointCustom
+//      }
+//    }
+//  }
 
-      Text {
-        id: scanResultText
+//  //  SBarcodeFilter {
+//  //    id: barcodeFilter
 
-        anchors.horizontalCenter: parent.horizontalCenter
+//  //    // you can adjust capture rect (scan area) ne changing these Qt.rect() parameters
+//  //    captureRect: videoOutput.mapRectToSource(
+//  //                   videoOutput.mapNormalizedRectToItem(Qt.rect(0.25, 0.25,
+//  //                                                               0.5, 0.5)))
 
-        text: barcodeFilter.captured
-      }
+//  //    onCapturedChanged: {
+//  //      active = false
+//  //      console.log("captured: " + captured)
+//  //    }
+//  //  }
+//  Rectangle {
+//    id: resultScreen
 
-      Button {
-        id: scanButton
+//    anchors.fill: parent
 
-        anchors.horizontalCenter: parent.horizontalCenter
+//    visible: !barcodeFilter.active
 
-        text: qsTr("Scan again")
+//    Column {
+//      anchors.centerIn: parent
 
-        onClicked: {
-          barcodeFilter.active = true
-        }
-      }
-    }
-  }
-}
+//      spacing: 20
+
+//      Text {
+//        id: scanResultText
+
+//        anchors.horizontalCenter: parent.horizontalCenter
+
+//        text: barcodeFilter.captured
+//      }
+
+//      Button {
+//        id: scanButton
+
+//        anchors.horizontalCenter: parent.horizontalCenter
+
+//        text: qsTr("Scan again")
+
+//        onClicked: {
+//          barcodeFilter.active = true
+//        }
+//      }
+//    }
+//  }
+//}
+

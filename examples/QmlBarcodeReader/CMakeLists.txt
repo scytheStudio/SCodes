@@ -14,9 +14,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 include("cmake/Locations.cmake")
 
 if(Qt${QT_VERSION_MAJOR} STREQUAL Qt5)
-    qt5_add_resources(RSCS qml.qrc)
+    qt5_add_resources(RSCS Qt5qml.qrc)
 else()
-    qt_add_resources(RSCS qml.qrc)
+    qt_add_resources(RSCS Qt6qml.qrc)
 endif()
 
 add_subdirectory(${LIB_DIR} ${CMAKE_BINARY_DIR}/SCodes)

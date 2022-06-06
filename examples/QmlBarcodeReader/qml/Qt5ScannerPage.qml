@@ -46,7 +46,7 @@ ApplicationWindow {
             videoOutput.mapNormalizedRectToItem(Qt.rect(0.25, 0.25, 0.5, 0.5)))
     }
 
-    ScannerOverlay {
+    Qt5ScannerOverlay {
       id: scannerOverlay
 
       anchors.fill: parent

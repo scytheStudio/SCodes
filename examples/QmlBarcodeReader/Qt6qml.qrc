@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>qml/Qt6ScannerPage.qml</file>
+        <file>qml/Qt6ScannerOverlay.qml</file>
+        <file>qml/Theme.qml</file>
+    </qresource>
+</RCC>
