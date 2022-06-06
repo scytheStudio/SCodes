@@ -208,6 +208,6 @@ Item {
     toBottomAnimation.to = captureRect.height - 5
     scanIndicatorAnimation.start()
 
-    console.log(captureRect.height)
+    console.log(parent.height)
   }
 }

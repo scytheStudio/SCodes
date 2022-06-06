@@ -11,7 +11,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
-#include "qvideoframeconversionhelper_p.h"
+//#include "qvideoframeconversionhelper_p.h"
 
 namespace ZXing {
 namespace Qt {
@@ -137,67 +137,135 @@ void SBarcodeDecoder::process(const QImage capturedImage, ZXing::BarcodeFormats 
 
     if (result.isValid()) {
         setCaptured(result.text());
+        qDebug() << result.text();
     }
 
     setIsDecoding(false);
 }
 
-QImage SBarcodeDecoder::videoFrameToImage(QVideoFrame &videoFrame, const QRect &captureRect)
+QImage SBarcodeDecoder::videoFrameToImage(const QVideoFrame &videoFrame, const QRect &captureRect)
 {
-    if (videoFrame.handleType() == QAbstractVideoBuffer::NoHandle) {
-        #if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
-        QImage image = videoFrame.image();
-        #else
+    #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 
-        videoFrame.map(QAbstractVideoBuffer::ReadOnly);
-        QImage image = imageFromVideoFrame(videoFrame);
-        videoFrame.unmap();
+    auto handleType = videoFrame.handleType();
 
-        #endif
+    switch (handleType) {
+        case QAbstractVideoBuffer::NoHandle: {
 
-        if (image.isNull()) {
-            return QImage();
-        }
+            QImage image = videoFrame.image();
 
-        if (image.format() != QImage::Format_ARGB32) {
-            image = image.convertToFormat(QImage::Format_ARGB32);
-        }
+            //videoFrame.map(QAbstractVideoBuffer::ReadOnly);
+            //QImage image = imageFromVideoFrame(videoFrame);
+            //videoFrame.unmap();
 
-        return image.copy(captureRect);
+            qDebug() << "No handle";
+
+            if (image.isNull()) {
+                return QImage();
+            }
+
+            if (image.format() != QImage::Format_ARGB32) {
+                image = image.convertToFormat(QImage::Format_ARGB32);
+            }
+
+            return image.copy(captureRect);
+
+        } break;
+
+        case QAbstractVideoBuffer::GLTextureHandle: {
+
+            QImage image(videoFrame.width(), videoFrame.height(), QImage::Format_ARGB32);
+
+            GLuint textureId = static_cast<GLuint>(videoFrame.handle().toInt());
+
+            QOpenGLContext *ctx = QOpenGLContext::currentContext();
+
+            QOpenGLFunctions *f = ctx->functions();
+
+            qDebug() << "GLTEXTURE";
+
+            GLuint fbo;
+
+            f->glGenFramebuffers(1, &fbo);
+
+            GLint prevFbo;
+
+            f->glGetIntegerv(GL_FRAMEBUFFER_BINDING, &prevFbo);
+            f->glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+            f->glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureId, 0);
+            f->glReadPixels(0, 0, videoFrame.width(), videoFrame.height(), GL_RGBA, GL_UNSIGNED_BYTE, image.bits());
+            f->glBindFramebuffer(GL_FRAMEBUFFER, static_cast<GLuint>( prevFbo ) );
+
+            return image.rgbSwapped().copy(captureRect);
+
+        } break;
     }
 
-    if (videoFrame.handleType() == QAbstractVideoBuffer::GLTextureHandle) {
-        QImage image(videoFrame.width(), videoFrame.height(), QImage::Format_ARGB32);
+    #else
 
-        GLuint textureId = static_cast<GLuint>(videoFrame.handle().toInt());
+    QVideoFrame::HandleType handleType = videoFrame.handleType();
 
-        QOpenGLContext *ctx = QOpenGLContext::currentContext();
+    switch (handleType) {
+        case QVideoFrame::NoHandle: {
 
-        QOpenGLFunctions *f = ctx->functions();
+            //qDebug() << "NoHandle";
 
-        GLuint fbo;
+            QImage image = videoFrame.toImage();
 
-        f->glGenFramebuffers(1, &fbo);
+            if (image.isNull()) {
+                return QImage();
+            }
 
-        GLint prevFbo;
+            if (image.format() != QImage::Format_ARGB32) {
+                image = image.convertToFormat(QImage::Format_ARGB32);
+            }
 
-        f->glGetIntegerv(GL_FRAMEBUFFER_BINDING, &prevFbo);
-        f->glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-        f->glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureId, 0);
-        f->glReadPixels(0, 0, videoFrame.width(), videoFrame.height(), GL_RGBA, GL_UNSIGNED_BYTE, image.bits());
-        f->glBindFramebuffer(GL_FRAMEBUFFER, static_cast<GLuint>( prevFbo ) );
+            return image.copy(captureRect);
 
-        return image.rgbSwapped().copy(captureRect);
+        } break;
+        case QVideoFrame::RhiTextureHandle: {
+
+            qDebug() << "RhiTextureHandle";
+
+            QImage image(videoFrame.width(), videoFrame.height(), QImage::Format_ARGB32);
+
+            GLuint textureId = static_cast<GLuint>(1); // handle type enum 1 #videoFrame.handle().toInt()
+
+            QOpenGLContext *ctx = QOpenGLContext::currentContext();
+
+            QOpenGLFunctions *f = ctx->functions();
+
+            GLuint fbo;
+
+            f->glGenFramebuffers(1, &fbo);
+
+            GLint prevFbo;
+
+            f->glGetIntegerv(GL_FRAMEBUFFER_BINDING, &prevFbo);
+            f->glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+            f->glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureId, 0);
+            f->glReadPixels(0, 0, videoFrame.width(), videoFrame.height(), GL_RGBA, GL_UNSIGNED_BYTE, image.bits());
+            f->glBindFramebuffer(GL_FRAMEBUFFER, static_cast<GLuint>( prevFbo ) );
+
+            return image.rgbSwapped().copy(captureRect);
+
+        } break;
     }
+
+    #endif
 
     return QImage();
 } // SBarcodeDecoder::videoFrameToImage
 
+
+/*
 QImage SBarcodeDecoder::imageFromVideoFrame(const QVideoFrame &videoFrame)
 {
     uchar *ARGB32Bits = new uchar[(videoFrame.width() * videoFrame.height()) * 4];
 
     QImage::Format imageFormat = videoFrame.imageFormatFromPixelFormat(videoFrame.pixelFormat());
+
+    qDebug() << "IMAGE FORMAT: " << imageFormat;
 
     if (imageFormat == QImage::Format_Invalid) {
         switch (videoFrame.pixelFormat()) {
@@ -238,4 +306,4 @@ QImage SBarcodeDecoder::imageFromVideoFrame(const QVideoFrame &videoFrame)
              videoFrame.width(),
              videoFrame.height(),
              imageFormat);
-} // SBarcodeDecoder::imageFromVideoFrame
+}*/ // SBarcodeDecoder::imageFromVideoFrame

@@ -12,28 +12,24 @@ ApplicationWindow {
 
   visible: true
 
-  //width: Qt.platform.os === "android"
-  //        || Qt.platform.os === "ios" ? Screen.width : camera.viewfinder.resolution.width
-  //height: Qt.platform.os === "android"
-  //        || Qt.platform.os === "ios" ? Screen.height : camera.viewfinder.resolution.height
-  TestClass {
-    id: testclass
+  //width: Qt.platform.os === "android" || Qt.platform.os === "ios" ? Screen.width : camera.viewfinder.resolution.height
+  //height: Qt.platform.os === "android" || Qt.platform.os === "ios" ? Screen.height : camera.viewfinder.resolution.height
+  SBarcodeScanner {
+    id: barcodeScanner
 
     videoSink: videoOutput.videoSink
 
-    captureRect: Qt.rect(width / 4, height / 4, width / 2, height / 2)
-    // you can adjust capture rect (scan area) ne changing these Qt.rect() parameters
-    // captureRect: videoOutput.mapRectToSource(videoOutput.mapNormalizedRectToItem(Qt.rect(0.25, 0.25,  0.5, 0.5)))
-    onCapturedChanged: {
-      //active = false
-      console.log("captured: " + captured)
+    onCapturedChanged: function (captured) {
+      scanResultText.text = captured
+      resultScreen.visible = true
+      barcodeScanner.pauseProcessing()
     }
   }
 
   Camera {
     id: camera
 
-    Component.onCompleted: testclass.qcamera = camera
+    Component.onCompleted: barcodeScanner.camera = camera
 
     focusMode: Camera.FocusModeAutoNear
     customFocusPoint: Qt.point(0.2, 0.2) // Focus relative to top-left corner
@@ -47,11 +43,7 @@ ApplicationWindow {
     fillMode: VideoOutput.PreserveAspectCrop
 
     onSourceRectChanged: {
-
-      testclass.captureRect = Qt.rect(parent.width / 4, parent.height / 4,
-                                      parent.width / 2, parent.height / 2)
-      //testclass.captureRect = videoOutput.mapRectToSource(videoOutput.mapNormalizedRectToItem(Qt.rect(0.25, 0.25, 0.5, 0.5)))
-      console.log(testclass.captureRect)
+      console.log(barcodeScanner.captureRect)
     }
   }
 
@@ -60,9 +52,8 @@ ApplicationWindow {
 
     anchors.fill: parent
 
-    captureRect: Qt.rect(
-                   parent.width / 4, parent.height / 4, parent.width / 2,
-                   parent.height / 2) //videoOutput.mapRectToItem(testclass.captureRect)
+    captureRect: Qt.rect(parent.width / 4, parent.height / 4, parent.width / 2,
+                         parent.height / 2)
   }
 
   MouseArea {
@@ -83,7 +74,7 @@ ApplicationWindow {
 
     anchors.fill: parent
 
-    visible: false //!barcodeFilter.active
+    visible: false
 
     Column {
       anchors.centerIn: parent
@@ -95,33 +86,40 @@ ApplicationWindow {
 
         anchors.horizontalCenter: parent.horizontalCenter
 
-        //text: testclass.captured()
+        color: Theme.textColor
       }
 
       Button {
         id: scanButton
 
+        implicitWidth: 100
+        implicitHeight: 50
+
         anchors.horizontalCenter: parent.horizontalCenter
 
-        text: qsTr("Scan again")
+        Text {
+          anchors.centerIn: parent
+
+          text: qsTr("Scan again")
+
+          color: Theme.textColor
+        }
 
         onClicked: {
-
-          //barcodeFilter.active = true
+          resultScreen.visible = false
+          barcodeScanner.continueProcessing()
         }
       }
     }
   }
 
   onHeightChanged: {
-    testclass.captureRect = Qt.rect(
-          width / 4, height / 4, width / 2,
-          height / 2) //videoOutput.mapRectToItem(testclass.captureRect)
+    barcodeScanner.captureRect = Qt.rect(width / 4, height / 4, width / 2,
+                                         height / 2)
   }
 
   onWidthChanged: {
-    testclass.captureRect = Qt.rect(
-          width / 4, height / 4, width / 2,
-          height / 2) //videoOutput.mapRectToItem(testclass.captureRect)
+    barcodeScanner.captureRect = Qt.rect(width / 4, height / 4, width / 2,
+                                         height / 2)
   }
 }

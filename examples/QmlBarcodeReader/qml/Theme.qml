@@ -10,4 +10,5 @@ QtObject {
   id: root
 
   readonly property color borderColor: "#218165"
+  readonly property color textColor: "#000000"
 }

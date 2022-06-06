@@ -52,6 +52,7 @@ public:
           QtConcurrent::run(processImage, _filter->getDecoder(), croppedCapturedImage,
             SCodes::toZXingFormat(_filter->format()));
 
+
         return *input;
     }
 
@@ -75,6 +76,7 @@ SBarcodeFilter::SBarcodeFilter(QObject *parent)
 
 QVideoFilterRunnable *SBarcodeFilter::createFilterRunnable()
 {
+    qDebug() << "FILTER CREATED!";
     return new SBarcodeFilterRunnable(this);
 }
 
@@ -103,6 +105,7 @@ void SBarcodeFilter::clean()
 
 QRectF SBarcodeFilter::captureRect() const
 {
+    qDebug() << m_captureRect;
     return m_captureRect;
 }
 

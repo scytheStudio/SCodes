@@ -1,5 +1,7 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
+
+#include "SBarcodeDecoder.h"
 #include "TestClass.h"
 
 int main(int argc, char *argv[])

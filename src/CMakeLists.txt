@@ -24,6 +24,13 @@ file(GLOB SOURCE_CPP
     "*.cpp"
 )
 
+if(QT_VERSION_MAJOR EQUAL 6)
+    list(FILTER SOURCE_CPP EXCLUDE REGEX "SBarcodeFilter.")
+    list(FILTER SOURCE_CPP EXCLUDE REGEX "SBarcodeGenerator.")
+else()
+    list(FILTER SOURCE_CPP EXCLUDE REGEX "SBarcodeScanner.")
+endif()
+
 add_library(${PROJECT_NAME} STATIC ${SOURCE_CPP})
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
