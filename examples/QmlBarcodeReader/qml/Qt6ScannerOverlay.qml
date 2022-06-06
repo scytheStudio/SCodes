@@ -207,5 +207,7 @@ Item {
     toTopAnimation.to = 5
     toBottomAnimation.to = captureRect.height - 5
     scanIndicatorAnimation.start()
+
+    console.log(captureRect.height)
   }
 }
