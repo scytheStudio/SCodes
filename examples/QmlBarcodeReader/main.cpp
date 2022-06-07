@@ -1,6 +1,7 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 
+
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     #include "SBarcodeFilter.h"
 #else
