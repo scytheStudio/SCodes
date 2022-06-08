@@ -1,6 +1,0 @@
-<RCC>
-    <qresource prefix="/">
-        <file>qml/qt6main.qml</file>
-        <file>qml/qt5main.qml</file>
-    </qresource>
-</RCC>
