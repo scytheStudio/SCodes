@@ -4,6 +4,9 @@
 #include <QObject>
 #include <QVideoFrame>
 
+#include <QOpenGLContext>
+#include <QOpenGLFunctions>
+
 #include "SBarcodeFormat.h"
 
 /*!
@@ -84,7 +87,10 @@ private:
 
     QString m_captured = "";
 
+
     /*!
+     *
+     *
      * \fn void setCaptured(const QString &captured)
      * \brief Sets captured barcode string.
      * \param const QString &captured - captured barcode string.

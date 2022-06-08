@@ -8,6 +8,10 @@
 #include <QMediaCaptureSession>
 #include <QVideoSink>
 
+#include <QFuture>
+#include <QThreadPool>
+#include <QtConcurrent>
+
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
@@ -16,6 +20,9 @@
 #include <QOpenGLFunctions>
 
 #include "SBarcodeDecoder.h"
+
+#include <QDateTime>
+
 
 using namespace ZXing;
 
@@ -53,6 +60,8 @@ private:
     QPointer<QVideoSink> m_videoSink;
     QRectF m_captureRect;
     QString m_captured = "";
+    QFuture<void> imageFuture;
+    QThreadPool *threadPool;
 
     QImageCapture *m_imgcapture     = nullptr;
     QMediaCaptureSession *m_capture = nullptr;
@@ -67,6 +76,8 @@ signals:
     void captureRectChanged(const QRectF &captureRect);
     void capturedChanged(const QString &captured);
 
+private slots:
+    void imageProcess(const QVideoFrame &frame);
 };
 
 #endif // SBARCODESCANNER_H

@@ -3,6 +3,8 @@ import QtQuick.Controls
 import QtMultimedia
 import com.scythestudio.scodes 1.0
 
+// QRectF(576,432 1152x864)
+
 
 /*!
   Barcode scanner main page. All QML elements managing from here.
@@ -12,12 +14,18 @@ ApplicationWindow {
 
   visible: true
 
-  //width: Qt.platform.os === "android" || Qt.platform.os === "ios" ? Screen.width : camera.viewfinder.resolution.height
-  //height: Qt.platform.os === "android" || Qt.platform.os === "ios" ? Screen.height : camera.viewfinder.resolution.height
+  width: Qt.platform.os === "android"
+         || Qt.platform.os === "ios" ? Screen.width : 1280 //camera.viewfinder.resolution.width
+  height: Qt.platform.os === "android"
+          || Qt.platform.os === "ios" ? Screen.height : 720 //camera.viewfinder.resolution.height
+
   SBarcodeScanner {
     id: barcodeScanner
 
     videoSink: videoOutput.videoSink
+
+    captureRect: Qt.rect(parent.width / 4, parent.height / 4, parent.width / 2,
+                         parent.height / 2)
 
     onCapturedChanged: function (captured) {
       scanResultText.text = captured
@@ -32,7 +40,7 @@ ApplicationWindow {
     Component.onCompleted: barcodeScanner.camera = camera
 
     focusMode: Camera.FocusModeAutoNear
-    customFocusPoint: Qt.point(0.2, 0.2) // Focus relative to top-left corner
+    customFocusPoint: Qt.point(0.2, 0.2)
   }
 
   VideoOutput {

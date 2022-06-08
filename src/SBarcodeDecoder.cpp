@@ -13,6 +13,8 @@
 
 //#include "qvideoframeconversionhelper_p.h"
 
+#include <QOffscreenSurface>
+
 namespace ZXing {
 namespace Qt {
 using ZXing::DecodeHints;
@@ -117,7 +119,7 @@ void SBarcodeDecoder::setIsDecoding(bool isDecoding)
     emit isDecodingChanged(m_isDecoding);
 }
 
-bool SBarcodeDecoder::isDecoding() const
+bool SBarcodeDecoder::  isDecoding() const
 {
     return m_isDecoding;
 }
@@ -158,8 +160,6 @@ QImage SBarcodeDecoder::videoFrameToImage(const QVideoFrame &videoFrame, const Q
             //QImage image = imageFromVideoFrame(videoFrame);
             //videoFrame.unmap();
 
-            qDebug() << "No handle";
-
             if (image.isNull()) {
                 return QImage();
             }
@@ -181,8 +181,6 @@ QImage SBarcodeDecoder::videoFrameToImage(const QVideoFrame &videoFrame, const Q
             QOpenGLContext *ctx = QOpenGLContext::currentContext();
 
             QOpenGLFunctions *f = ctx->functions();
-
-            qDebug() << "GLTEXTURE";
 
             GLuint fbo;
 
@@ -208,8 +206,7 @@ QImage SBarcodeDecoder::videoFrameToImage(const QVideoFrame &videoFrame, const Q
     switch (handleType) {
         case QVideoFrame::NoHandle: {
 
-            //qDebug() << "NoHandle";
-
+            qDebug() << "NoHandle";
             QImage image = videoFrame.toImage();
 
             if (image.isNull()) {
@@ -225,15 +222,24 @@ QImage SBarcodeDecoder::videoFrameToImage(const QVideoFrame &videoFrame, const Q
         } break;
         case QVideoFrame::RhiTextureHandle: {
 
+        // DAK
             qDebug() << "RhiTextureHandle";
 
-            QImage image(videoFrame.width(), videoFrame.height(), QImage::Format_ARGB32);
+            QVideoFrame* frame = const_cast<QVideoFrame*>(&videoFrame);
+            frame->map(QVideoFrame::ReadOnly);
 
-            GLuint textureId = static_cast<GLuint>(1); // handle type enum 1 #videoFrame.handle().toInt()
+            QImage image(frame->width(), frame->height(), QImage::Format_ARGB32);
+
+            GLuint textureId = static_cast<GLuint>(0); // handle type enum 1 #videoFrame.handle().toInt()
 
             QOpenGLContext *ctx = QOpenGLContext::currentContext();
 
-            QOpenGLFunctions *f = ctx->functions();
+//            auto *surface = new QOffscreenSurface;
+//            surface->setFormat(QSurfaceFormat::FormatOption);
+//            surface->create();
+//            ctx->makeCurrent(surface);
+
+            QOpenGLFunctions *f = ctx->functions();  // boom!
 
             GLuint fbo;
 
@@ -244,8 +250,10 @@ QImage SBarcodeDecoder::videoFrameToImage(const QVideoFrame &videoFrame, const Q
             f->glGetIntegerv(GL_FRAMEBUFFER_BINDING, &prevFbo);
             f->glBindFramebuffer(GL_FRAMEBUFFER, fbo);
             f->glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureId, 0);
-            f->glReadPixels(0, 0, videoFrame.width(), videoFrame.height(), GL_RGBA, GL_UNSIGNED_BYTE, image.bits());
+            f->glReadPixels(0, 0, frame->width(), frame->height(), GL_RGBA, GL_UNSIGNED_BYTE, image.bits());
             f->glBindFramebuffer(GL_FRAMEBUFFER, static_cast<GLuint>( prevFbo ) );
+
+            //frame.unmap();
 
             return image.rgbSwapped().copy(captureRect);
 
