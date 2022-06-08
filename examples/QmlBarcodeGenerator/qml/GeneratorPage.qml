@@ -58,7 +58,16 @@ ApplicationWindow {
         right: parent.right
       }
 
-      TextField {
+      //      TextField {
+      //        id: textField
+
+      //        anchors.fill: parent
+
+      //        selectByMouse: true
+
+      //        placeholderText: qsTr("Input")
+      //      }
+      CTextField {
         id: textField
 
         anchors.fill: parent
@@ -106,10 +115,7 @@ ApplicationWindow {
           id: settingsButton
 
           Layout.alignment: Qt.AlignHCenter
-          Layout.fillHeight: true
-          Layout.fillWidth: true
           Layout.bottomMargin: 10
-          Layout.leftMargin: 5
 
           text: qsTr("Settings")
 
@@ -122,10 +128,7 @@ ApplicationWindow {
           id: generateButton
 
           Layout.alignment: Qt.AlignHCenter
-          Layout.fillHeight: true
-          Layout.fillWidth: true
           Layout.bottomMargin: 10
-
           checkable: false
 
           text: qsTr("Generate")
@@ -145,10 +148,7 @@ ApplicationWindow {
           id: saveButton
 
           Layout.alignment: Qt.AlignHCenter
-          Layout.fillHeight: true
-          Layout.fillWidth: true
           Layout.bottomMargin: 10
-          Layout.rightMargin: 5
 
           text: qsTr("Save")
 

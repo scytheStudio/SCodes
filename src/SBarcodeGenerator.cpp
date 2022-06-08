@@ -78,8 +78,6 @@ bool SBarcodeGenerator::saveImage()
     QtAndroidPrivate::requestPermission(QString("android.permission.WRITE_EXTERNAL_STORAGE"));
 
     #endif
-
-
     #endif
 
     QString docFolder = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) + "/" + m_fileName + "."
