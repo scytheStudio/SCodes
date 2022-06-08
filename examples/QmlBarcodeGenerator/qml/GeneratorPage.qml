@@ -16,6 +16,14 @@ ApplicationWindow {
   width: 400
   height: 800
 
+  MouseArea {
+    id: hideKeyboard
+    anchors.fill: parent
+    onClicked: {
+      Qt.inputMethod.hide()
+    }
+  }
+
   SBarcodeGenerator {
     id: barcodeGenerator
 

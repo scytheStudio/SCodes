@@ -1,8 +1,14 @@
 #include "SBarcodeGenerator.h"
 #include <QStandardPaths>
+
 #ifdef Q_OS_ANDROID
-# include <QtAndroid>
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+    #include <QtAndroid>
+#else
+    #include <QtCore/private/qandroidextras_p.h>
 #endif
+#endif
+
 #include "MultiFormatWriter.h"
 #include "TextUtfEncoding.h"
 
@@ -56,6 +62,8 @@ bool SBarcodeGenerator::saveImage()
     }
 
     #ifdef Q_OS_ANDROID
+
+    #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     if (QtAndroid::checkPermission(QString("android.permission.WRITE_EXTERNAL_STORAGE")) ==
       QtAndroid::PermissionResult::Denied)
     {
@@ -65,6 +73,13 @@ bool SBarcodeGenerator::saveImage()
             return false;
         }
     }
+    #else
+
+    QtAndroidPrivate::requestPermission(QString("android.permission.WRITE_EXTERNAL_STORAGE"));
+
+    #endif
+
+
     #endif
 
     QString docFolder = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) + "/" + m_fileName + "."

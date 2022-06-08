@@ -201,7 +201,7 @@ QImage SBarcodeDecoder::videoFrameToImage(const QVideoFrame &videoFrame, const Q
 
     #else
 
-    QVideoFrame::HandleType handleType = videoFrame.handleType();
+    auto handleType = videoFrame.handleType();
 
     switch (handleType) {
         case QVideoFrame::NoHandle: {
@@ -222,38 +222,32 @@ QImage SBarcodeDecoder::videoFrameToImage(const QVideoFrame &videoFrame, const Q
         } break;
         case QVideoFrame::RhiTextureHandle: {
 
-        // DAK
             qDebug() << "RhiTextureHandle";
 
-            QVideoFrame* frame = const_cast<QVideoFrame*>(&videoFrame);
-            frame->map(QVideoFrame::ReadOnly);
+            QImage image(videoFrame.width(), videoFrame.height(), QImage::Format_ARGB32);
 
-            QImage image(frame->width(), frame->height(), QImage::Format_ARGB32);
-
-            GLuint textureId = static_cast<GLuint>(0); // handle type enum 1 #videoFrame.handle().toInt()
+            GLuint textureId = static_cast<GLuint>(1); // handle type enum 1 #videoFrame.handle().toInt()
 
             QOpenGLContext *ctx = QOpenGLContext::currentContext();
 
-//            auto *surface = new QOffscreenSurface;
-//            surface->setFormat(QSurfaceFormat::FormatOption);
-//            surface->create();
-//            ctx->makeCurrent(surface);
+            if(ctx == nullptr)
+            {
+                qDebug() << "CTX is NULL";
+            }
 
-            QOpenGLFunctions *f = ctx->functions();  // boom!
+//            QOpenGLFunctions *f = ctx->functions();
 
-            GLuint fbo;
+//            GLuint fbo;
 
-            f->glGenFramebuffers(1, &fbo);
+//            f->glGenFramebuffers(1, &fbo);
 
-            GLint prevFbo;
+//            GLint prevFbo;
 
-            f->glGetIntegerv(GL_FRAMEBUFFER_BINDING, &prevFbo);
-            f->glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-            f->glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureId, 0);
-            f->glReadPixels(0, 0, frame->width(), frame->height(), GL_RGBA, GL_UNSIGNED_BYTE, image.bits());
-            f->glBindFramebuffer(GL_FRAMEBUFFER, static_cast<GLuint>( prevFbo ) );
-
-            //frame.unmap();
+//            f->glGetIntegerv(GL_FRAMEBUFFER_BINDING, &prevFbo);
+//            f->glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+//            f->glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureId, 0);
+//            f->glReadPixels(0, 0, videoFrame.width(), videoFrame.height(), GL_RGBA, GL_UNSIGNED_BYTE, image.bits());
+//            f->glBindFramebuffer(GL_FRAMEBUFFER, static_cast<GLuint>( prevFbo ) );
 
             return image.rgbSwapped().copy(captureRect);
 
