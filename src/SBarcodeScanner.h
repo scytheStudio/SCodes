@@ -30,73 +30,137 @@ public:
     explicit SBarcodeScanner(QObject *parent = nullptr);
     ~SBarcodeScanner() override;
 
-    //! \return Sink of video output.
+    /*!
+     * \fn QVideoSink *videoSink() const
+     * \brief Function for getting sink of video output
+     */
     QVideoSink *videoSink() const;
-    //! Set sink of video output.
+
+    /*!
+     * \fn void setVideoSink(QVideoSink *videoSink)
+     * \brief Function for setting sink of video output
+     * \param const QVideoSink *videoSink - video sink
+     */
     void setVideoSink(QVideoSink *videoSink);
 
-    //! \return Get capture area.
+    /*!
+    * \fn QRectF captureRect() const
+    * \brief Function for getting capture area
+    */
     QRectF captureRect() const;
-    //! Set capture area.
+
+    /*!
+     * \fn void setCaptureRect(const QRectF &captureRect)
+     * \brief Function for setting capture area
+     * \param const QRectF &captureRect - capture area
+     */
     void setCaptureRect(const QRectF &captureRect);
 
-    //! \return Captured string.
+    /*!
+    * \fn QString captured() const
+    * \brief Function for getting captured string
+    */
     QString captured() const;
 
 public slots:
-    //! Pause the image processing.
+    /*!
+    * \fn void pauseProcessing()
+    * \brief Function for pause image processing
+    */
     void pauseProcessing();
-    //! Continue the image processing.
+    /*!
+    * \fn void pauseProcessing()
+    * \brief Function for continue image processing
+    */
     void continueProcessing();
 
 private:
-    //! Decoder instance.
+    /*!
+    * \brief Decoder instance
+    */
     SBarcodeDecoder m_decoder;
 
-    //! Camera instance.
+    /*!
+    * \brief Camera instance
+    */
     QCamera *camera;
 
-    //! Pointer to a sink
+    /*!
+    * \brief Pointer to a sink
+    */
     QPointer<QVideoSink> m_videoSink;
 
-    //! Capture area.
+    /*!
+    * \brief Capture area
+    */
     QRectF m_captureRect;
 
-    //! Captured string.
+    /*!
+    * \brief Captured string
+    */
     QString m_captured = "";
 
-    //! Instance of capture session
+    /*!
+    * \brief Camera session instance
+    */
     QMediaCaptureSession m_capture;
 
-    //! Set captured string
+    /*!
+    * \fn void setCaptured(const QString &captured)
+    * \brief Function for setting capture string
+    * \param const QString &captured - captured string
+    */
     void setCaptured(const QString &captured);
 
-    //! Image handle slot
+    /*!
+    * \fn void handleFrameCaptured(const QVideoFrame &frame)
+    * \brief Function for handling video frame
+    * \param const QVideoFrame &frame - video frame
+    */
     void handleFrameCaptured(const QVideoFrame &frame);
 
 signals:
-    //! Signal emitted when camera changed
+    /*!
+     * \brief This signal emitted when camera changed
+     */
     void cameraChanged();
 
-    //! Signal emitted when sink changed
+    /*!
+     * \brief This signal is emitted when sink changed
+     */
     void videoSinkChanged();
 
-    //! Signal emitted when capture area changed
+    /*!
+     * \brief This signal is emitted when capture area changed
+     * \param const QRectF &captureRect - capture area
+     */
     void captureRectChanged(const QRectF &captureRect);
 
-    //! Signal emitted when captured string changed
+    /*!
+     * \brief This signal is emitted when captured string changed
+     * \param const QString &captured - captured string
+     */
     void capturedChanged(const QString &captured);
 
 private slots:
-    //! Slot for image processing
+    /*!
+    * \fn void imageProcess(const QVideoFrame &frame)
+    * \brief Function for image processing
+    * \param const QVideoFrame &frame - video frame
+    */
     void imageProcess(const QVideoFrame &frame);
 
 private slots:
-    //! Init camera.
+    /*!
+    * \fn void initCam()
+    * \brief Function for initialization of camera
+    */
     void initCam();
-    //! Stop camera.
+    /*!
+    * \fn void stopCam()
+    * \brief Function for stopping camera
+    */
     void stopCam();
-    //! Video frame changed.
 
 };
 

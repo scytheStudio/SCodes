@@ -31,51 +31,15 @@ ApplicationWindow {
       barcodeScanner.pauseProcessing()
     }
   }
-  //  Frame {
-  //    id: frames
-  //    videoSink: videoOutput.videoSink
-  //  }
 
-  //  Camera {
-  //    id: camera
-
-  //    Component.onCompleted: barcodeScanner.camera = camera
-
-  //    focusMode: Camera.FocusModeAutoNear
-  //    customFocusPoint: Qt.point(0.2, 0.2)
-  //  }
-
-  //  VideoOutput {
-  //    id: videoOutput
-
-  //    anchors.fill: parent
-
-  //    fillMode: VideoOutput.PreserveAspectCrop
-
-  //    onSourceRectChanged: {
-  //      console.log(barcodeScanner.captureRect)
-  //    }
-  //  }
   VideoOutput {
     id: videoOutput
+
+    width: root.width
 
     anchors.fill: parent
 
     focus: visible
-    width: root.width
-    //    transform: [
-    //      Scale {
-    //        origin.x: root.width / 2
-    //        origin.y: root.height / 2
-    //        xScale: barcodeScanner.xScale
-    //        yScale: barcodeScanner.yScale
-    //      },
-    //      Rotation {
-    //        origin.x: root.width / 2
-    //        origin.y: root.height / 2
-    //        angle: barcodeScanner.angle
-    //      }
-    //    ]
   }
 
   Qt6ScannerOverlay {
