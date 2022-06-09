@@ -1,81 +1,70 @@
 #include "SBarcodeScanner.h"
 
-SBarcodeScanner::SBarcodeScanner(QObject *parent) {
+SBarcodeScanner::SBarcodeScanner(QObject *parent)
+    : QVideoSink( parent )
+    ,	camera( nullptr ) {
 
     connect(&m_decoder, &SBarcodeDecoder::capturedChanged, this, &SBarcodeScanner::setCaptured);
+    connect(this, &QVideoSink::videoFrameChanged, this, &SBarcodeScanner::handleFrameCaptured);
 
+    initCam();
 
-    //threadPool = new QThreadPool(this);
-    //threadPool->setMaxThreadCount(2);
+}
 
+SBarcodeScanner::~SBarcodeScanner()
+{
+    stopCam();
+}
+
+void SBarcodeScanner::initCam() {
+    camera = new QCamera(this);
+
+    const auto settings = camera->cameraDevice().videoFormats();
+
+    int i = 0;
+    const auto s = settings.at(i);
+
+    camera->setFocusMode(QCamera::FocusModeAuto);
+    camera->setCameraFormat(s);
+
+    m_capture.setCamera(camera);
+    m_capture.setVideoSink(this);
+
+    camera->start();
+}
+
+void SBarcodeScanner::stopCam()
+{
+    camera->stop();
+    disconnect(camera, 0, 0, 0);
+    camera->setParent(nullptr);
+    delete camera;
+    camera = nullptr;
 }
 
 
 void SBarcodeScanner::handleFrameCaptured(const QVideoFrame &frame) {
 
-    if(imageFuture.isRunning() == false) {
+    imageProcess(frame);
 
-        imageFuture = QtConcurrent::run(&SBarcodeScanner::imageProcess, this, frame);
-
-        qDebug() << QDateTime::currentDateTime() << "|" << cnt++ << imageFuture.isRunning();
+    if(m_videoSink) {
+        m_videoSink->setVideoFrame(frame);
     }
-
 }
-
 
 void SBarcodeScanner::imageProcess(const QVideoFrame &frame) {
 
     const QImage img = m_decoder.videoFrameToImage(frame, captureRect().toRect());
-
     m_decoder.process(img, SCodes::toZXingFormat(SCodes::SBarcodeFormat::Basic));
 }
 
-void SBarcodeScanner::setCamera(QObject *cameraObject) {
-    if (q_camera == cameraObject) {
-        return;
-    }
-
-    if(m_capture) {
-        m_capture->deleteLater();
-    }
-
-    q_camera = cameraObject;
-
-    if(q_camera) {
-
-        if(QCamera *camera = qobject_cast<QCamera *>(q_camera)) {
-
-            m_capture = new QMediaCaptureSession(this);
-
-            m_capture->setCamera(camera);
-            m_imgcapture = new QImageCapture(this);
-            m_capture->setImageCapture(m_imgcapture);
-
-            m_capture->setVideoOutput(m_videoSink);
-            connect(m_videoSink, &QVideoSink::videoFrameChanged, this, &SBarcodeScanner::handleFrameCaptured);
-
-        } else {
-
-            m_capture = nullptr;
-        }
-    emit cameraChanged();
-   }
-}
-
-QObject *SBarcodeScanner::camera() const {
-    return q_camera;
-}
-
-void SBarcodeScanner::capture() {
-    m_imgcapture->capture();
-}
 
 void SBarcodeScanner::pauseProcessing() {
-    disconnect(m_videoSink, &QVideoSink::videoFrameChanged, this, &SBarcodeScanner::handleFrameCaptured);
+    disconnect(this, &QVideoSink::videoFrameChanged, this, &SBarcodeScanner::handleFrameCaptured);
 }
 
 void SBarcodeScanner::continueProcessing() {
-    connect(m_videoSink, &QVideoSink::videoFrameChanged, this, &SBarcodeScanner::handleFrameCaptured);
+    connect(this, &QVideoSink::videoFrameChanged, this, &SBarcodeScanner::handleFrameCaptured);
 }
 
 void SBarcodeScanner::setCaptured(const QString &captured)
@@ -83,9 +72,7 @@ void SBarcodeScanner::setCaptured(const QString &captured)
     if (m_captured == captured) {
         return;
     }
-
     m_captured = captured;
-
     emit capturedChanged(m_captured);
 }
 

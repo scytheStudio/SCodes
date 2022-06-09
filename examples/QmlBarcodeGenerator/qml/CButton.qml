@@ -11,7 +11,7 @@ Button {
   id: root
 
   height: 100
-  implicitWidth: Screen.width / 4
+  implicitWidth: appWindow.width / 4
 
   checkable: true
 

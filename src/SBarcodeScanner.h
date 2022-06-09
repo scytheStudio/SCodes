@@ -9,7 +9,6 @@
 #include <QVideoSink>
 
 #include <QFuture>
-#include <QThreadPool>
 #include <QtConcurrent>
 
 #include <QGuiApplication>
@@ -21,63 +20,84 @@
 
 #include "SBarcodeDecoder.h"
 
-#include <QDateTime>
-
-
-using namespace ZXing;
-
-class SBarcodeScanner : public QObject
+class SBarcodeScanner : public QVideoSink
 {
     Q_OBJECT
-    Q_PROPERTY(QObject* camera READ camera WRITE setCamera NOTIFY cameraChanged)
     Q_PROPERTY(QVideoSink* videoSink READ videoSink WRITE setVideoSink NOTIFY videoSinkChanged)
     Q_PROPERTY(QRectF captureRect READ captureRect WRITE setCaptureRect NOTIFY captureRectChanged)
 
 public:
-
-    int cnt=0;
-
     explicit SBarcodeScanner(QObject *parent = nullptr);
+    ~SBarcodeScanner() override;
 
-    QObject *camera() const;
+    //! \return Sink of video output.
     QVideoSink *videoSink() const;
-    QRectF captureRect() const;
-    QString captured() const;
-
-    void capture();
-    void setCamera(QObject *cameraObject);
+    //! Set sink of video output.
     void setVideoSink(QVideoSink *videoSink);
+
+    //! \return Get capture area.
+    QRectF captureRect() const;
+    //! Set capture area.
     void setCaptureRect(const QRectF &captureRect);
 
+    //! \return Captured string.
+    QString captured() const;
+
 public slots:
+    //! Pause the image processing.
     void pauseProcessing();
+    //! Continue the image processing.
     void continueProcessing();
 
 private:
+    //! Decoder instance.
     SBarcodeDecoder m_decoder;
 
-    QPointer<QObject> q_camera;
+    //! Camera instance.
+    QCamera *camera;
+
+    //! Pointer to a sink
     QPointer<QVideoSink> m_videoSink;
+
+    //! Capture area.
     QRectF m_captureRect;
+
+    //! Captured string.
     QString m_captured = "";
-    QFuture<void> imageFuture;
-    QThreadPool *threadPool;
 
-    QImageCapture *m_imgcapture     = nullptr;
-    QMediaCaptureSession *m_capture = nullptr;
+    //! Instance of capture session
+    QMediaCaptureSession m_capture;
 
+    //! Set captured string
     void setCaptured(const QString &captured);
+
+    //! Image handle slot
     void handleFrameCaptured(const QVideoFrame &frame);
 
 signals:
+    //! Signal emitted when camera changed
     void cameraChanged();
+
+    //! Signal emitted when sink changed
     void videoSinkChanged();
-    void imageChanged(const QImage &image);
+
+    //! Signal emitted when capture area changed
     void captureRectChanged(const QRectF &captureRect);
+
+    //! Signal emitted when captured string changed
     void capturedChanged(const QString &captured);
 
 private slots:
+    //! Slot for image processing
     void imageProcess(const QVideoFrame &frame);
+
+private slots:
+    //! Init camera.
+    void initCam();
+    //! Stop camera.
+    void stopCam();
+    //! Video frame changed.
+
 };
 
 #endif // SBARCODESCANNER_H

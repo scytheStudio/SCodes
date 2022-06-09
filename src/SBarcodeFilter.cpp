@@ -15,7 +15,6 @@ class SBarcodeFilterRunnable : public QVideoFilterRunnable
 {
 public:
 
-        int cnt=0;
     /*!
      * \fn SBarcodeFilterRunnable(SBarcodeFilter *filter)
      * \brief Constructor.
@@ -46,8 +45,6 @@ public:
         if (_filter->getImageFuture().isRunning()) {
             return *input;
         }
-
-        qDebug() << QDateTime::currentDateTime() << cnt++;
 
         const QImage croppedCapturedImage =
           SBarcodeDecoder::videoFrameToImage(*input, _filter->captureRect().toRect());
@@ -108,7 +105,6 @@ void SBarcodeFilter::clean()
 
 QRectF SBarcodeFilter::captureRect() const
 {
-    qDebug() << m_captureRect;
     return m_captureRect;
 }
 

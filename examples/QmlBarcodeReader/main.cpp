@@ -5,6 +5,7 @@
     #include "SBarcodeFilter.h"
 #else
     #include "SBarcodeScanner.h"
+    //#include "Frame.h"
 #endif
 
 int main(int argc, char *argv[])
@@ -24,6 +25,7 @@ int main(int argc, char *argv[])
     engine.load(QUrl(QStringLiteral("qrc:/qml/Qt5ScannerPage.qml")));
 #else
     qmlRegisterType<SBarcodeScanner>("com.scythestudio.scodes", 1, 0, "SBarcodeScanner");
+    //qmlRegisterType<Frame>("com.scythestudio.scodes", 1, 0, "Frame");
     engine.load(QUrl(QStringLiteral("qrc:/qml/Qt6ScannerPage.qml")));
 #endif
 

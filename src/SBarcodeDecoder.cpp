@@ -147,6 +147,7 @@ void SBarcodeDecoder::process(const QImage capturedImage, ZXing::BarcodeFormats 
 
 QImage SBarcodeDecoder::videoFrameToImage(const QVideoFrame &videoFrame, const QRect &captureRect)
 {
+
     #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 
     auto handleType = videoFrame.handleType();
@@ -206,7 +207,6 @@ QImage SBarcodeDecoder::videoFrameToImage(const QVideoFrame &videoFrame, const Q
     switch (handleType) {
         case QVideoFrame::NoHandle: {
 
-            qDebug() << "NoHandle";
             QImage image = videoFrame.toImage();
 
             if (image.isNull()) {
@@ -220,9 +220,7 @@ QImage SBarcodeDecoder::videoFrameToImage(const QVideoFrame &videoFrame, const Q
             return image.copy(captureRect);
 
         } break;
-        case QVideoFrame::RhiTextureHandle: {
-
-            qDebug() << "RhiTextureHandle";
+        case QVideoFrame::RhiTextureHandle: { // NOP
 
             QImage image(videoFrame.width(), videoFrame.height(), QImage::Format_ARGB32);
 
@@ -230,26 +228,21 @@ QImage SBarcodeDecoder::videoFrameToImage(const QVideoFrame &videoFrame, const Q
 
             QOpenGLContext *ctx = QOpenGLContext::currentContext();
 
-            if(ctx == nullptr)
-            {
-                qDebug() << "CTX is NULL";
-            }
+            QOpenGLFunctions *f = ctx->functions();
 
-//            QOpenGLFunctions *f = ctx->functions();
+            GLuint fbo;
 
-//            GLuint fbo;
+            f->glGenFramebuffers(1, &fbo);
 
-//            f->glGenFramebuffers(1, &fbo);
+            GLint prevFbo;
 
-//            GLint prevFbo;
+            f->glGetIntegerv(GL_FRAMEBUFFER_BINDING, &prevFbo);
+            f->glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+            f->glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureId, 0);
+            f->glReadPixels(0, 0, videoFrame.width(), videoFrame.height(), GL_RGBA, GL_UNSIGNED_BYTE, image.bits());
+            f->glBindFramebuffer(GL_FRAMEBUFFER, static_cast<GLuint>( prevFbo ) );
 
-//            f->glGetIntegerv(GL_FRAMEBUFFER_BINDING, &prevFbo);
-//            f->glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-//            f->glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureId, 0);
-//            f->glReadPixels(0, 0, videoFrame.width(), videoFrame.height(), GL_RGBA, GL_UNSIGNED_BYTE, image.bits());
-//            f->glBindFramebuffer(GL_FRAMEBUFFER, static_cast<GLuint>( prevFbo ) );
-
-            return image.rgbSwapped().copy(captureRect);
+            return image.rgbSwapped().copy(captureRect);            
 
         } break;
     }

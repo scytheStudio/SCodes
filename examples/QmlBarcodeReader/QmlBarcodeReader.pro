@@ -8,7 +8,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     main.cpp
 
-RESOURCES += qml.qrc
+equals(QT_MAJOR_VERSION, 6) {
+    RESOURCES += Qt6qml.qrc
+}
+
+equals(QT_MAJOR_VERSION, 5) {
+    RESOURCES += Qt5qml.qrc
+}
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

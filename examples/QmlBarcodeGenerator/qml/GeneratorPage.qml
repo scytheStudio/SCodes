@@ -9,7 +9,7 @@ import com.scythestudio.scodes 1.0
   Barcode generator main page. All QML elements managing from here.
   */
 ApplicationWindow {
-  id: root
+  id: appWindow
 
   visible: true
 

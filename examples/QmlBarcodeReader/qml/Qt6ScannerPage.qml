@@ -3,8 +3,6 @@ import QtQuick.Controls
 import QtMultimedia
 import com.scythestudio.scodes 1.0
 
-// QRectF(576,432 1152x864)
-
 
 /*!
   Barcode scanner main page. All QML elements managing from here.
@@ -33,26 +31,51 @@ ApplicationWindow {
       barcodeScanner.pauseProcessing()
     }
   }
+  //  Frame {
+  //    id: frames
+  //    videoSink: videoOutput.videoSink
+  //  }
 
-  Camera {
-    id: camera
+  //  Camera {
+  //    id: camera
 
-    Component.onCompleted: barcodeScanner.camera = camera
+  //    Component.onCompleted: barcodeScanner.camera = camera
 
-    focusMode: Camera.FocusModeAutoNear
-    customFocusPoint: Qt.point(0.2, 0.2)
-  }
+  //    focusMode: Camera.FocusModeAutoNear
+  //    customFocusPoint: Qt.point(0.2, 0.2)
+  //  }
 
+  //  VideoOutput {
+  //    id: videoOutput
+
+  //    anchors.fill: parent
+
+  //    fillMode: VideoOutput.PreserveAspectCrop
+
+  //    onSourceRectChanged: {
+  //      console.log(barcodeScanner.captureRect)
+  //    }
+  //  }
   VideoOutput {
     id: videoOutput
 
     anchors.fill: parent
 
-    fillMode: VideoOutput.PreserveAspectCrop
-
-    onSourceRectChanged: {
-      console.log(barcodeScanner.captureRect)
-    }
+    focus: visible
+    width: root.width
+    //    transform: [
+    //      Scale {
+    //        origin.x: root.width / 2
+    //        origin.y: root.height / 2
+    //        xScale: barcodeScanner.xScale
+    //        yScale: barcodeScanner.yScale
+    //      },
+    //      Rotation {
+    //        origin.x: root.width / 2
+    //        origin.y: root.height / 2
+    //        angle: barcodeScanner.angle
+    //      }
+    //    ]
   }
 
   Qt6ScannerOverlay {
@@ -63,7 +86,6 @@ ApplicationWindow {
     captureRect: Qt.rect(parent.width / 4, parent.height / 4, parent.width / 2,
                          parent.height / 2)
   }
-
   MouseArea {
     id: focusTouchArea
 

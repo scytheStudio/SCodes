@@ -87,7 +87,6 @@ private:
 
     QString m_captured = "";
 
-
     /*!
      *
      *

@@ -1,8 +1,5 @@
 QT += multimedia concurrent
 
-android {
-    QT += androidextras
-}
 
 CONFIG += qmltypes
 QML_IMPORT_NAME = com.scythestudio.scodes
@@ -13,9 +10,32 @@ INCLUDEPATH += \
     $$PWD/zxing-cpp/core/src/ \
     $$PWD/zxing-cpp/thirdparty/stb/
 
+
+equals(QT_MAJOR_VERSION, 6) {
+    HEADERS += \
+        $$PWD/SBarcodeScanner.h
+
+    SOURCES += \
+        $$PWD/SBarcodeScanner.cpp
+    android {
+        QT += gui-private
+    }
+}
+
+equals(QT_MAJOR_VERSION, 5) {
+    HEADERS += \
+        $$PWD/SBarcodeFilter.h
+
+    SOURCES += \
+        $$PWD/SBarcodeFilter.cpp
+
+    android {
+        QT += androidextras
+    }
+}
+
 HEADERS += \
     $$PWD/SBarcodeDecoder.h \
-    $$PWD/SBarcodeFilter.h \
     $$PWD/SBarcodeFormat.h \
     $$PWD/SBarcodeGenerator.h \
     $$PWD/qvideoframeconversionhelper_p.h \
@@ -173,7 +193,6 @@ HEADERS += \
 
 SOURCES += \
     $$PWD/SBarcodeDecoder.cpp \
-    $$PWD/SBarcodeFilter.cpp \
     $$PWD/SBarcodeFormat.cpp \
     $$PWD/SBarcodeGenerator.cpp \
     $$PWD/zxing-cpp/core/src/BarcodeFormat.cpp \
