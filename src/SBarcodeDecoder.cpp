@@ -139,7 +139,6 @@ void SBarcodeDecoder::process(const QImage capturedImage, ZXing::BarcodeFormats 
 
     if (result.isValid()) {
         setCaptured(result.text());
-        qDebug() << result.text();
     }
 
     setIsDecoding(false);
@@ -152,57 +151,59 @@ QImage SBarcodeDecoder::videoFrameToImage(const QVideoFrame &videoFrame, const Q
 
     auto handleType = videoFrame.handleType();
 
-    switch (handleType) {
-        case QAbstractVideoBuffer::NoHandle: {
+    qDebug() << handleType;
 
-            QImage image = videoFrame.image();
+    if (handleType == QAbstractVideoBuffer::NoHandle) {
+        #if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
+        QImage image = videoFrame.image();
+        #else
 
-            //videoFrame.map(QAbstractVideoBuffer::ReadOnly);
-            //QImage image = imageFromVideoFrame(videoFrame);
-            //videoFrame.unmap();
+        videoFrame.map(QAbstractVideoBuffer::ReadOnly);
+        QImage image = imageFromVideoFrame(videoFrame);
+        videoFrame.unmap();
 
-            if (image.isNull()) {
-                return QImage();
-            }
+        #endif
 
-            if (image.format() != QImage::Format_ARGB32) {
-                image = image.convertToFormat(QImage::Format_ARGB32);
-            }
+        if (image.isNull()) {
+            return QImage();
+        }
 
-            return image.copy(captureRect);
+        if (image.format() != QImage::Format_ARGB32) {
+            image = image.convertToFormat(QImage::Format_ARGB32);
+        }
 
-        } break;
+        return image.copy(captureRect);
+    }
 
-        case QAbstractVideoBuffer::GLTextureHandle: {
+    if (handleType == QAbstractVideoBuffer::GLTextureHandle) {
+        QImage image(videoFrame.width(), videoFrame.height(), QImage::Format_ARGB32);
 
-            QImage image(videoFrame.width(), videoFrame.height(), QImage::Format_ARGB32);
+        GLuint textureId = static_cast<GLuint>(videoFrame.handle().toInt());
 
-            GLuint textureId = static_cast<GLuint>(videoFrame.handle().toInt());
+        QOpenGLContext *ctx = QOpenGLContext::currentContext();
 
-            QOpenGLContext *ctx = QOpenGLContext::currentContext();
+        QOpenGLFunctions *f = ctx->functions();
 
-            QOpenGLFunctions *f = ctx->functions();
+        GLuint fbo;
 
-            GLuint fbo;
+        f->glGenFramebuffers(1, &fbo);
 
-            f->glGenFramebuffers(1, &fbo);
+        GLint prevFbo;
 
-            GLint prevFbo;
+        f->glGetIntegerv(GL_FRAMEBUFFER_BINDING, &prevFbo);
+        f->glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+        f->glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureId, 0);
+        f->glReadPixels(0, 0, videoFrame.width(), videoFrame.height(), GL_RGBA, GL_UNSIGNED_BYTE, image.bits());
+        f->glBindFramebuffer(GL_FRAMEBUFFER, static_cast<GLuint>( prevFbo ) );
 
-            f->glGetIntegerv(GL_FRAMEBUFFER_BINDING, &prevFbo);
-            f->glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-            f->glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureId, 0);
-            f->glReadPixels(0, 0, videoFrame.width(), videoFrame.height(), GL_RGBA, GL_UNSIGNED_BYTE, image.bits());
-            f->glBindFramebuffer(GL_FRAMEBUFFER, static_cast<GLuint>( prevFbo ) );
-
-            return image.rgbSwapped().copy(captureRect);
-
-        } break;
+        return image.rgbSwapped().copy(captureRect);
     }
 
     #else
 
     auto handleType = videoFrame.handleType();
+
+    qDebug() << handleType;
 
     switch (handleType) {
         case QVideoFrame::NoHandle: {

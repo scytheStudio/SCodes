@@ -45,7 +45,15 @@ void SBarcodeScanner::stopCam()
 
 void SBarcodeScanner::handleFrameCaptured(const QVideoFrame &frame) {
 
-    imageProcess(frame);
+    qDebug() << frame.handleType() << QOpenGLContext::openGLModuleType();
+
+    if(imageFuture.isRunning() == 0) {
+
+        imageFuture = QtConcurrent::run(&SBarcodeScanner::imageProcess, this, frame);
+
+    }
+
+    //imageProcess(frame);
 
     if(m_videoSink) {
         m_videoSink->setVideoFrame(frame);
@@ -92,7 +100,6 @@ void SBarcodeScanner::setCaptureRect(const QRectF &captureRect)
         return;
     }
     m_captureRect = captureRect;
-
     emit captureRectChanged(m_captureRect);
 }
 

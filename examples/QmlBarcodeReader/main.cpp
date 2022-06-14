@@ -5,11 +5,12 @@
     #include "SBarcodeFilter.h"
 #else
     #include "SBarcodeScanner.h"
-    //#include "Frame.h"
 #endif
 
 int main(int argc, char *argv[])
 {
+    QCoreApplication::setAttribute(Qt::AA_UseDesktopOpenGL);
+
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 #endif
@@ -24,7 +25,6 @@ int main(int argc, char *argv[])
     engine.load(QUrl(QStringLiteral("qrc:/qml/Qt5ScannerPage.qml")));
 #else
     qmlRegisterType<SBarcodeScanner>("com.scythestudio.scodes", 1, 0, "SBarcodeScanner");
-    //qmlRegisterType<Frame>("com.scythestudio.scodes", 1, 0, "Frame");
     engine.load(QUrl(QStringLiteral("qrc:/qml/Qt6ScannerPage.qml")));
 #endif
 

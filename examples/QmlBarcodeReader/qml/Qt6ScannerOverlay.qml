@@ -1,6 +1,5 @@
 import QtQuick
-
-//import QtGraphicalEffects
+import Qt5Compat.GraphicalEffects
 
 
 /*!
@@ -145,7 +144,6 @@ Item {
     Rectangle {
       id: scanIndicator
 
-      //y: captureZoneCorners.height/2
       width: parent.width
       height: 1
 
@@ -176,19 +174,19 @@ Item {
       }
     }
 
-    //    RectangularGlow {
-    //      id: effect
+    RectangularGlow {
+      id: effect
 
-    //      width: scanIndicator.width / 2
-    //      height: scanIndicator.height
+      width: scanIndicator.width / 2
+      height: scanIndicator.height
 
-    //      anchors.centerIn: scanIndicator
+      anchors.centerIn: scanIndicator
 
-    //      glowRadius: 50
-    //      spread: 0.2
-    //      color: Theme.borderColor
-    //      cornerRadius: glowRadius
-    //    }
+      glowRadius: 50
+      spread: 0.2
+      color: Theme.borderColor
+      cornerRadius: glowRadius
+    }
   }
 
   Text {
