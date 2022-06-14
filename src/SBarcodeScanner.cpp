@@ -1,8 +1,8 @@
 #include "SBarcodeScanner.h"
 
 SBarcodeScanner::SBarcodeScanner(QObject *parent)
-    : QVideoSink( parent )
-    ,	camera( nullptr ) {
+    : QVideoSink(parent)
+    ,	camera(nullptr) {
 
     connect(&m_decoder, &SBarcodeDecoder::capturedChanged, this, &SBarcodeScanner::setCaptured);
     connect(this, &QVideoSink::videoFrameChanged, this, &SBarcodeScanner::handleFrameCaptured);
@@ -42,18 +42,9 @@ void SBarcodeScanner::stopCam()
     camera = nullptr;
 }
 
-
 void SBarcodeScanner::handleFrameCaptured(const QVideoFrame &frame) {
 
-    qDebug() << frame.handleType() << QOpenGLContext::openGLModuleType();
-
-    if(imageFuture.isRunning() == 0) {
-
-        imageFuture = QtConcurrent::run(&SBarcodeScanner::imageProcess, this, frame);
-
-    }
-
-    //imageProcess(frame);
+    imageProcess(frame);
 
     if(m_videoSink) {
         m_videoSink->setVideoFrame(frame);
@@ -64,6 +55,7 @@ void SBarcodeScanner::handleFrameCaptured(const QVideoFrame &frame) {
 void SBarcodeScanner::imageProcess(const QVideoFrame &frame) {
 
     const QImage img = m_decoder.videoFrameToImage(frame, captureRect().toRect());
+
     m_decoder.process(img, SCodes::toZXingFormat(SCodes::SBarcodeFormat::Basic));
 }
 

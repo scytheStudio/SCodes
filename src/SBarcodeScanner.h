@@ -34,7 +34,6 @@ public:
     explicit SBarcodeScanner(QObject *parent = nullptr);
     ~SBarcodeScanner() override;
 
-    QFuture<void> imageFuture;
     /*!
      * \fn QVideoSink *videoSink() const
      * \brief Function for getting sink of video output
