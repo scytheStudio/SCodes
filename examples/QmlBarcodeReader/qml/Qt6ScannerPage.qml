@@ -13,17 +13,17 @@ ApplicationWindow {
   visible: true
 
   width: Qt.platform.os === "android"
-         || Qt.platform.os === "ios" ? Screen.width : 1280 //camera.viewfinder.resolution.width
+         || Qt.platform.os === "ios" ? Screen.width : 1280
   height: Qt.platform.os === "android"
-          || Qt.platform.os === "ios" ? Screen.height : 720 //camera.viewfinder.resolution.height
+          || Qt.platform.os === "ios" ? Screen.height : 720
 
   SBarcodeScanner {
     id: barcodeScanner
 
     videoSink: videoOutput.videoSink
 
-    captureRect: Qt.rect(parent.width / 4, parent.height / 4, parent.width / 2,
-                         parent.height / 2)
+    captureRect: Qt.rect(root.width / 4, root.height / 4, root.width / 2,
+                         root.height / 2)
 
     onCapturedChanged: function (captured) {
       scanResultText.text = captured
@@ -40,6 +40,8 @@ ApplicationWindow {
     anchors.fill: parent
 
     focus: visible
+
+    fillMode: VideoOutput.PreserveAspectCrop
   }
 
   Qt6ScannerOverlay {
@@ -47,20 +49,7 @@ ApplicationWindow {
 
     anchors.fill: parent
 
-    captureRect: Qt.rect(parent.width / 4, parent.height / 4, parent.width / 2,
-                         parent.height / 2)
-  }
-  MouseArea {
-    id: focusTouchArea
-
-    anchors.fill: parent
-
-    onClicked: {
-      camera.focus.customFocusPoint = Qt.point(mouse.x / width,
-                                               mouse.y / height)
-      camera.focus.focusMode = CameraFocus.FocusMacro
-      camera.focus.focusPointMode = CameraFocus.FocusPointCustom
-    }
+    captureRect: barcodeScanner.captureRect
   }
 
   Rectangle {

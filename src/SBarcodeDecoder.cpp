@@ -220,7 +220,7 @@ QImage SBarcodeDecoder::videoFrameToImage(const QVideoFrame &videoFrame, const Q
             return image.copy(captureRect);
 
         } break;
-        case QVideoFrame::RhiTextureHandle: { // NOP
+        case QVideoFrame::RhiTextureHandle: { // NOP, videoFrame.handleType always returns NoHandle
 
             QImage image(videoFrame.width(), videoFrame.height(), QImage::Format_ARGB32);
 

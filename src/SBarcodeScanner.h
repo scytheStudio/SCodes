@@ -15,6 +15,10 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 
+#include <QThreadPool>
+#include <QFuture>
+#include <QtConcurrent>
+
 #include <QOpenGLContext>
 #include <QOpenGLFunctions>
 

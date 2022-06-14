@@ -50,6 +50,7 @@ void SBarcodeScanner::handleFrameCaptured(const QVideoFrame &frame) {
     if(m_videoSink) {
         m_videoSink->setVideoFrame(frame);
     }
+
 }
 
 void SBarcodeScanner::imageProcess(const QVideoFrame &frame) {
@@ -91,6 +92,7 @@ void SBarcodeScanner::setCaptureRect(const QRectF &captureRect)
         return;
     }
     m_captureRect = captureRect;
+
     emit captureRectChanged(m_captureRect);
 }
 
