@@ -7,13 +7,25 @@ SBarcodeScanner::SBarcodeScanner(QObject *parent)
     connect(&m_decoder, &SBarcodeDecoder::capturedChanged, this, &SBarcodeScanner::setCaptured);
     connect(this, &QVideoSink::videoFrameChanged, this, &SBarcodeScanner::handleFrameCaptured);
 
-    initCam();
+    worker = new Worker(this);
+    worker->moveToThread(&workerThread);
+    connect(&workerThread, &QThread::finished, worker, &QObject::deleteLater);
+    connect(this, &SBarcodeScanner::process, worker, &Worker::process);
+    workerThread.start();
 
+    initCam();
 }
 
 SBarcodeScanner::~SBarcodeScanner()
 {
+    workerThread.quit();
+    workerThread.wait();
     stopCam();
+}
+
+SBarcodeDecoder *SBarcodeScanner::getDecoder()
+{
+    return &m_decoder;
 }
 
 void SBarcodeScanner::initCam() {
@@ -44,19 +56,20 @@ void SBarcodeScanner::stopCam()
 
 void SBarcodeScanner::handleFrameCaptured(const QVideoFrame &frame) {
 
-    imageProcess(frame);
+    emit process(frame.toImage().convertToFormat(QImage::Format_ARGB32));
 
     if(m_videoSink) {
         m_videoSink->setVideoFrame(frame);
     }
 
+    pauseProcessing();
 }
 
-void SBarcodeScanner::imageProcess(const QVideoFrame &frame) {
+void SBarcodeScanner::imageProcess(SBarcodeDecoder *decoder, const QImage &image, ZXing::BarcodeFormats formats) {
 
-    const QImage img = m_decoder.videoFrameToImage(frame, captureRect().toRect());
+    m_decoder.process(image, SCodes::toZXingFormat(SCodes::SBarcodeFormat::Basic));
 
-    m_decoder.process(img, SCodes::toZXingFormat(SCodes::SBarcodeFormat::Basic));
+    continueProcessing();
 }
 
 

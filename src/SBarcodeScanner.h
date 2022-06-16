@@ -24,6 +24,8 @@
 
 #include "SBarcodeDecoder.h"
 
+class Worker;
+
 class SBarcodeScanner : public QVideoSink
 {
     Q_OBJECT
@@ -34,6 +36,7 @@ public:
     explicit SBarcodeScanner(QObject *parent = nullptr);
     ~SBarcodeScanner() override;
 
+    SBarcodeDecoder *getDecoder() ;
     /*!
      * \fn QVideoSink *videoSink() const
      * \brief Function for getting sink of video output
@@ -78,6 +81,13 @@ public slots:
     */
     void continueProcessing();
 
+    /*!
+    * \fn void imageProcess(const QVideoFrame &frame)
+    * \brief Function for image processing
+    * \param const QVideoFrame &frame - video frame
+    */
+    void imageProcess(SBarcodeDecoder *decoder, const QImage &image, ZXing::BarcodeFormats formats);
+
 private:
     /*!
     * \brief Decoder instance
@@ -110,6 +120,16 @@ private:
     QMediaCaptureSession m_capture;
 
     /*!
+     * \brief An instance of a thread
+     */
+    QThread workerThread;
+
+    /*!
+     * \brief A pointer of a Worker class
+     */
+    Worker *worker;
+
+    /*!
     * \fn void setCaptured(const QString &captured)
     * \brief Function for setting capture string
     * \param const QString &captured - captured string
@@ -130,6 +150,11 @@ signals:
     void cameraChanged();
 
     /*!
+     * \brief This signal emitted for running process in a thread
+     */
+    void process(const QImage &image);
+
+    /*!
      * \brief This signal is emitted when sink changed
      */
     void videoSinkChanged();
@@ -148,14 +173,6 @@ signals:
 
 private slots:
     /*!
-    * \fn void imageProcess(const QVideoFrame &frame)
-    * \brief Function for image processing
-    * \param const QVideoFrame &frame - video frame
-    */
-    void imageProcess(const QVideoFrame &frame);
-
-private slots:
-    /*!
     * \fn void initCam()
     * \brief Function for initialization of camera
     */
@@ -166,6 +183,32 @@ private slots:
     */
     void stopCam();
 
+};
+
+class Worker : public QObject
+{
+    Q_OBJECT
+private:
+    SBarcodeScanner *_scanner;
+
+public:
+    /*!
+     * \fn Worker(SBarcodeScanner *scanner)
+     * \brief Constructor.
+     * \param SBarcodeScanner *_scanner - a pointer to scanner class.
+     */
+    Worker(SBarcodeScanner *scanner) : _scanner{scanner} { ; }
+
+public slots:
+
+    /*!
+    * \fn void process(const QImage &image)
+    * \param const QImage &image - captured image
+    * \brief An interface for processing image
+    */
+    void process(const QImage &image) {
+        _scanner->imageProcess(_scanner->getDecoder(), image, SCodes::toZXingFormat(SCodes::SBarcodeFormat::Basic));
+    }
 };
 
 #endif // SBARCODESCANNER_H
