@@ -209,6 +209,7 @@ public slots:
     void process(const QImage &image) {
         _scanner->imageProcess(_scanner->getDecoder(), image, SCodes::toZXingFormat(SCodes::SBarcodeFormat::Basic));
     }
+
 };
 
 #endif // SBARCODESCANNER_H

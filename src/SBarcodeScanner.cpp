@@ -56,7 +56,7 @@ void SBarcodeScanner::stopCam()
 
 void SBarcodeScanner::handleFrameCaptured(const QVideoFrame &frame) {
 
-    emit process(frame.toImage().convertToFormat(QImage::Format_ARGB32));
+    emit process(m_decoder.videoFrameToImage(frame, captureRect().toRect()));
 
     if(m_videoSink) {
         m_videoSink->setVideoFrame(frame);
@@ -67,11 +67,10 @@ void SBarcodeScanner::handleFrameCaptured(const QVideoFrame &frame) {
 
 void SBarcodeScanner::imageProcess(SBarcodeDecoder *decoder, const QImage &image, ZXing::BarcodeFormats formats) {
 
-    m_decoder.process(image, SCodes::toZXingFormat(SCodes::SBarcodeFormat::Basic));
+    decoder->process(image, formats);
 
     continueProcessing();
 }
-
 
 void SBarcodeScanner::pauseProcessing() {
     disconnect(this, &QVideoSink::videoFrameChanged, this, &SBarcodeScanner::handleFrameCaptured);

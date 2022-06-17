@@ -151,8 +151,6 @@ QImage SBarcodeDecoder::videoFrameToImage(const QVideoFrame &videoFrame, const Q
 
     auto handleType = videoFrame.handleType();
 
-    qDebug() << handleType;
-
     if (handleType == QAbstractVideoBuffer::NoHandle) {
         #if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
         QImage image = videoFrame.image();
@@ -203,103 +201,22 @@ QImage SBarcodeDecoder::videoFrameToImage(const QVideoFrame &videoFrame, const Q
 
     auto handleType = videoFrame.handleType();
 
-    qDebug() << handleType;
+    if (handleType == QVideoFrame::NoHandle) {
 
-    switch (handleType) {
-        case QVideoFrame::NoHandle: {
+        QImage image = videoFrame.toImage();
 
-            QImage image = videoFrame.toImage();
+        if (image.isNull()) {
+            return QImage();
+        }
 
-            if (image.isNull()) {
-                return QImage();
-            }
+        if (image.format() != QImage::Format_ARGB32) {
+            image = image.convertToFormat(QImage::Format_ARGB32);
+        }
 
-            if (image.format() != QImage::Format_ARGB32) {
-                image = image.convertToFormat(QImage::Format_ARGB32);
-            }
-
-            return image.copy(captureRect);
-
-        } break;
-        case QVideoFrame::RhiTextureHandle: { // NOP, videoFrame.handleType always returns NoHandle
-
-            QImage image(videoFrame.width(), videoFrame.height(), QImage::Format_ARGB32);
-
-            GLuint textureId = static_cast<GLuint>(1); // handle type enum 1 #videoFrame.handle().toInt()
-
-            QOpenGLContext *ctx = QOpenGLContext::currentContext();
-
-            QOpenGLFunctions *f = ctx->functions();
-
-            GLuint fbo;
-
-            f->glGenFramebuffers(1, &fbo);
-
-            GLint prevFbo;
-
-            f->glGetIntegerv(GL_FRAMEBUFFER_BINDING, &prevFbo);
-            f->glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-            f->glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureId, 0);
-            f->glReadPixels(0, 0, videoFrame.width(), videoFrame.height(), GL_RGBA, GL_UNSIGNED_BYTE, image.bits());
-            f->glBindFramebuffer(GL_FRAMEBUFFER, static_cast<GLuint>( prevFbo ) );
-
-            return image.rgbSwapped().copy(captureRect);            
-
-        } break;
+        return image.copy(captureRect);
     }
 
     #endif
 
     return QImage();
 } // SBarcodeDecoder::videoFrameToImage
-
-
-/*
-QImage SBarcodeDecoder::imageFromVideoFrame(const QVideoFrame &videoFrame)
-{
-    uchar *ARGB32Bits = new uchar[(videoFrame.width() * videoFrame.height()) * 4];
-
-    QImage::Format imageFormat = videoFrame.imageFormatFromPixelFormat(videoFrame.pixelFormat());
-
-    qDebug() << "IMAGE FORMAT: " << imageFormat;
-
-    if (imageFormat == QImage::Format_Invalid) {
-        switch (videoFrame.pixelFormat()) {
-            case QVideoFrame::Format_YUYV: qt_convert_YUYV_to_ARGB32(videoFrame, ARGB32Bits);
-                break;
-            case QVideoFrame::Format_NV12: qt_convert_NV12_to_ARGB32(videoFrame, ARGB32Bits);
-                break;
-            case QVideoFrame::Format_YUV420P: qt_convert_YUV420P_to_ARGB32(videoFrame, ARGB32Bits);
-                break;
-            case QVideoFrame::Format_YV12: qt_convert_YV12_to_ARGB32(videoFrame, ARGB32Bits);
-                break;
-            case QVideoFrame::Format_AYUV444: qt_convert_AYUV444_to_ARGB32(videoFrame, ARGB32Bits);
-                break;
-            case QVideoFrame::Format_YUV444: qt_convert_YUV444_to_ARGB32(videoFrame, ARGB32Bits);
-                break;
-            case QVideoFrame::Format_UYVY: qt_convert_UYVY_to_ARGB32(videoFrame, ARGB32Bits);
-                break;
-            case QVideoFrame::Format_NV21: qt_convert_NV21_to_ARGB32(videoFrame, ARGB32Bits);
-                break;
-            case QVideoFrame::Format_BGRA32: qt_convert_BGRA32_to_ARGB32(videoFrame, ARGB32Bits);
-                break;
-            case QVideoFrame::Format_BGR24: qt_convert_BGR24_to_ARGB32(videoFrame, ARGB32Bits);
-                break;
-            case QVideoFrame::Format_BGR565: qt_convert_BGR565_to_ARGB32(videoFrame, ARGB32Bits);
-                break;
-            case QVideoFrame::Format_BGR555: qt_convert_BGR555_to_ARGB32(videoFrame, ARGB32Bits);
-                break;
-            default: break;
-        }
-
-        return QImage(ARGB32Bits,
-                 videoFrame.width(),
-                 videoFrame.height(),
-                 QImage::Format_ARGB32);
-    }
-
-    return QImage(videoFrame.bits(),
-             videoFrame.width(),
-             videoFrame.height(),
-             imageFormat);
-}*/ // SBarcodeDecoder::imageFromVideoFrame
