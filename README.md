@@ -5,7 +5,7 @@
 
 This project is Qt & Qml wrapper for [ZXing-C++ Library](https://github.com/nu-book/zxing-cpp) that is used for decoding and generating 1D and 2D barcodes. This particular C++ ZXing port is one of the most recent C++ versions of popular ZXing library using modern compilers.
 
-The goal of this project was to create convenient filter allowing to process video frame from phone camera. Thanks to SCodes you can start scanning barcodes in few steps. We used Qt 5.15 to built both wrapper and example application, but it's compatible with older Qt versions as well. Feel free to read ["How to scan barcodes in Qt Qml application" blog post](https://scythe-studio.com/blog/how-to-scan-barcodes-in-qt-qml-application) if you are interested in the details behind scanning mechanism. This blog post contains step by step tutorial on how to do that.
+Thanks to SCodes you can start scanning barcodes in few steps. We used Qt 5.15 and also Qt 6.3 to built both wrapper and example applications, but it's compatible with older Qt versions as well. Feel free to read ["How to scan barcodes in Qt Qml application" blog post](https://scythe-studio.com/blog/how-to-scan-barcodes-in-qt-qml-application) if you are interested in the details behind scanning mechanism. This blog post contains step by step tutorial on how to do that.
 
 SCodes supports generating barcodes as well. It is covered in ["How to generate barcode in Qt Qml" application blog post](https://scythe-studio.com/en/blog/how-to-generate-barcode-in-qt-qml-application).
 
@@ -71,19 +71,19 @@ All you need to do is to follow these steps.
 3. Add to your project SCodes library
 
 ```cmake
-add_subdirectory(SCodes)
+    add_subdirectory(SCodes)
 ```
 
 4. Link SCodes library to your library or executable. 
 
 ```cmake 
-target_link_libraries(${PROJECT_NAME} PUBLIC SCodes)
+    target_link_libraries(${PROJECT_NAME} PUBLIC SCodes)
 ```
 
 5. Import SCodes in your Qml file 
 
 ```qml
-import com.scythestudio.scodes 1.0
+    import com.scythestudio.scodes 1.0
 ```
 
 6. You are done. Get inspired by [QML Barcode Reader demo](https://github.com/scytheStudio/SCodes/blob/master/examples/QmlBarcodeReader/qml/ScannerPage.qml) to test wrapper.
@@ -106,19 +106,27 @@ To accept all supported formats use `SCodes.Any`.
 Both build systems have their examples located in same directory. All you need to do is to just open proper file(CMakeLists.txt or *.pro file) for different build system to be used.
 
 
-### Supported Kits for Examples
+### The examples tested on below kits:
 
+|  |  |  |  |  |  |
+|  |  |  |  |  |  -
+| <td colspan=2><td colspan=2><b>Qt 5.15.2 or less
+| Example | Build System | MinGW | Msvc | Gcc | Android | - | -|
+| Reader    | qmake |<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|
+| Generator | qmake |<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|
+| Reader    | cmake |<center>❌ </center>|<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|
+| Generator | cmake |<center>❌ </center>|<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|
 
-| PROJECT | BUILD SYSTEM | WINDOWS-MinGW | WINDOWS-MSVC | LINUX-GCC | ANDROID |
-| ------ | ------ | ------ | ------ | ------ | ------ |
-| QmlBarcodeReader | qmake |<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|
-| QmlBarcodeGenerator | qmake |<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|
-| QmlBarcodeReader | cmake |<center>❌</center>|<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|
-| QmlBarcodeGenerator | cmake |<center>❌</center>|<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|
+|  |  |  |  |  |  |
+|  |  |  |  |  | - 
+| <td colspan=2><td colspan=2><b>Qt 6.3.0
+| Example | Build System | MinGW | Msvc | Gcc | Android |
+| Reader    | qmake |<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|
+| Generator | qmake |<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|
+| Reader    | cmake |<center>✔ </center>|<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|
+| Generator | cmake |<center>✔ </center>|<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|
 
-
-To be able to build cmake based examples for android devices, you will need to set ANDROID_NDK environment variable in project build settings to NDK version 22 or greater(tested on NDK version 22.1.7171670).
-
+Please ensure that proper Java & NDK version installed on your system. This examples tested w/ Java 11 and 22.1.7171670 Android NDK version.
 
 # About Scythe Studio
 SCodes project was developed and is maintained mainly by Scythe Studio company.
@@ -129,4 +137,4 @@ We are an official Qt Service Partner and a provider of Qt Software Development 
 - Qt and C++ consulting
 - UI/UX designing
 
-Do not hesitate visting https://scythe-studio.com to discover our capabilities and learn more about Qt Software Development from [Scythe Studio Blog](https://scythe-studio.com/en/blog).
+Do not hesitate visiting https://scythe-studio.com to discover our capabilities and learn more about Qt Software Development from [Scythe Studio Blog](https://scythe-studio.com/en/blog).

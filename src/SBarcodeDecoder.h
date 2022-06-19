@@ -49,7 +49,7 @@ public:
      * \param QVideoFrame &videoFrame - frame of video data.
      * \param const QRect &captureRect - capture area rectangle.
      */
-    QImage videoFrameToImage(const QVideoFrame &videoFrame, const QRect &captureRect);
+    static QImage videoFrameToImage(const QVideoFrame &videoFrame, const QRect &captureRect);
 
 public slots:
 
