@@ -110,21 +110,21 @@ Both build systems have their examples located in same directory. All you need t
 
 ####Qt5.15.2 or less,
 
-| Example | Build System | MinGW | Msvc | Gcc | Android |
-|||||||
-| Reader    | qmake |<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|
-| Generator | qmake |<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|
-| Reader    | cmake |<center>❌ </center>|<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|
-| Generator | cmake |<center>❌ </center>|<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|
+| PROJECT | BUILD SYSTEM | WINDOWS-MinGW | WINDOWS-MSVC | LINUX-GCC | ANDROID |
+| ------ | ------ | ------ | ------ | ------ | ------ |
+| QmlBarcodeReader | qmake |<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|
+| QmlBarcodeGenerator | qmake |<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|
+| QmlBarcodeReader | cmake |<center>❌</center>|<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|
+| QmlBarcodeGenerator | cmake |<center>❌</center>|<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|
 
 ####Qt6.3.0,
 
-| Example | Build System | MinGW | Msvc | Gcc | Android |
-|||||||
-| Reader    | qmake |<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|
-| Generator | qmake |<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|
-| Reader    | cmake |<center>✔ </center>|<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|
-| Generator | cmake |<center>✔ </center>|<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|
+| PROJECT | BUILD SYSTEM | WINDOWS-MinGW | WINDOWS-MSVC | LINUX-GCC | ANDROID |
+| ------ | ------ | ------ | ------ | ------ | ------ |
+| QmlBarcodeReader | qmake |<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|
+| QmlBarcodeGenerator | qmake |<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|
+| QmlBarcodeReader | cmake |<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|
+| QmlBarcodeGenerator | cmake |<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|
 
 Please ensure that proper Java & NDK version installed on your system. This examples tested w/ Java 11 and 22.1.7171670 Android NDK version.
 
