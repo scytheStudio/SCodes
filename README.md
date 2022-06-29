@@ -168,7 +168,7 @@ Both build systems have their examples located in same directory. All you need t
 
 ### The examples tested on below kits:
 
-####Qt5.15.2 or less,
+#### Qt5.15.2 or less,
 
 | PROJECT | BUILD SYSTEM | WINDOWS-MinGW | WINDOWS-MSVC | LINUX-GCC | ANDROID |
 | ------ | ------ | ------ | ------ | ------ | ------ |
@@ -177,7 +177,7 @@ Both build systems have their examples located in same directory. All you need t
 | QmlBarcodeReader | cmake |<center>❌</center>|<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|
 | QmlBarcodeGenerator | cmake |<center>❌</center>|<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|
 
-####Qt6.3.0,
+#### Qt6.3.0,
 
 | PROJECT | BUILD SYSTEM | WINDOWS-MinGW | WINDOWS-MSVC | LINUX-GCC | ANDROID |
 | ------ | ------ | ------ | ------ | ------ | ------ |
