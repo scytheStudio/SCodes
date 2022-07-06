@@ -129,6 +129,8 @@ private:
      */
     Worker *worker;
 
+    bool m_processing = 1; // new
+
     /*!
     * \fn void setCaptured(const QString &captured)
     * \brief Function for setting capture string
