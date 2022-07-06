@@ -81,6 +81,7 @@ public slots:
     */
     void continueProcessing();
 
+    void setProcessing(bool p); // new
     /*!
     * \fn void imageProcess(const QVideoFrame &frame)
     * \brief Function for image processing

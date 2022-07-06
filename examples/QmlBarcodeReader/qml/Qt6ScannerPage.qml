@@ -28,7 +28,7 @@ ApplicationWindow {
     onCapturedChanged: function (captured) {
       scanResultText.text = captured
       resultScreen.visible = true
-      barcodeFilter.pauseProcessing()
+      barcodeFilter.setProcessing(0)
     }
   }
 
@@ -90,8 +90,8 @@ ApplicationWindow {
 
         onClicked: {
           resultScreen.visible = false
+          barcodeFilter.setProcessing(1)
           barcodeFilter.continueProcessing()
-
         }
       }
     }
