@@ -77,7 +77,6 @@ void SBarcodeScannerQt6::handleFrameCaptured(const QVideoFrame &frame) {
         }
     }
     pauseProcessing();
-    //m_processing = 0;
 }
 
 void SBarcodeScannerQt6::imageProcess(SBarcodeDecoder *decoder, const QImage &image, ZXing::BarcodeFormats formats) {
@@ -85,7 +84,6 @@ void SBarcodeScannerQt6::imageProcess(SBarcodeDecoder *decoder, const QImage &im
     decoder->process(image, formats);
 
     continueProcessing();
-    //m_processing = 1;
 
 }
 
