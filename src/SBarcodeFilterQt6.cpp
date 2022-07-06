@@ -65,23 +65,30 @@ void SBarcodeScannerQt6::stopCam()
 
 void SBarcodeScannerQt6::handleFrameCaptured(const QVideoFrame &frame) {
 
-    qDebug() << captureRect();
+    qDebug() << m_processing;
 
-    emit process(m_decoder.videoFrameToImage(frame, captureRect().toRect()));
+    if(m_processing) {
+        emit process(m_decoder.videoFrameToImage(frame, captureRect().toRect()));
 
-    if(m_videoSink) {
-        m_videoSink->setVideoFrame(frame);
+        if(m_videoSink) {
+            m_videoSink->setVideoFrame(frame);
+        }
     }
-
-    pauseProcessing();
+    //pauseProcessing();
+    m_processing = 0;
 }
 
 void SBarcodeScannerQt6::imageProcess(SBarcodeDecoder *decoder, const QImage &image, ZXing::BarcodeFormats formats) {
 
     decoder->process(image, formats);
 
-    continueProcessing();
+    //continueProcessing();
+    m_processing = 1;
 
+}
+
+void SBarcodeScannerQt6::setProcessing(bool p) {
+    m_processing = p;
 }
 
 void SBarcodeScannerQt6::pauseProcessing() {

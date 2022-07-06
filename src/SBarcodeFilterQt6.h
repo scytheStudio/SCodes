@@ -81,6 +81,7 @@ public slots:
     */
     void continueProcessing();
 
+    void setProcessing(bool p); // new
     /*!
     * \fn void imageProcess(const QVideoFrame &frame)
     * \brief Function for image processing
@@ -128,6 +129,8 @@ private:
      * \brief A pointer of a Worker class
      */
     Worker *worker;
+
+    bool m_processing = 1; // new
 
     /*!
     * \fn void setCaptured(const QString &captured)
