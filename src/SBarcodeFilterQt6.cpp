@@ -68,8 +68,6 @@ void SBarcodeScannerQt6::handleFrameCaptured(const QVideoFrame &frame) {
 
     if(m_processing) {
 
-        qDebug() << m_processing;
-
         emit process(m_decoder.videoFrameToImage(frame, captureRect().toRect()));
 
         if(m_videoSink) {
@@ -84,7 +82,6 @@ void SBarcodeScannerQt6::imageProcess(SBarcodeDecoder *decoder, const QImage &im
     decoder->process(image, formats);
 
     continueProcessing();
-
 }
 
 void SBarcodeScannerQt6::setProcessing(bool p) {
