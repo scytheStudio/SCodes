@@ -17,8 +17,8 @@ ApplicationWindow {
   height: Qt.platform.os === "android"
           || Qt.platform.os === "ios" ? Screen.height : 720
 
-  SBarcodeScanner {
-    id: barcodeScanner
+  SBarcodeFilter {
+    id: barcodeFilter
 
     videoSink: videoOutput.videoSink
 
@@ -28,7 +28,7 @@ ApplicationWindow {
     onCapturedChanged: function (captured) {
       scanResultText.text = captured
       resultScreen.visible = true
-      barcodeScanner.pauseProcessing()
+      barcodeFilter.pauseProcessing()
     }
   }
 
@@ -49,7 +49,7 @@ ApplicationWindow {
 
     anchors.fill: parent
 
-    captureRect: barcodeScanner.captureRect
+    captureRect: barcodeFilter.captureRect
   }
 
   Rectangle {
@@ -90,7 +90,7 @@ ApplicationWindow {
 
         onClicked: {
           resultScreen.visible = false
-          barcodeScanner.continueProcessing()
+          barcodeFilter.continueProcessing()
 
         }
       }
@@ -98,12 +98,12 @@ ApplicationWindow {
   }
 
   onHeightChanged: {
-    barcodeScanner.captureRect = Qt.rect(width / 4, height / 4, width / 2,
+    barcodeFilter.captureRect = Qt.rect(width / 4, height / 4, width / 2,
                                          height / 2)
   }
 
   onWidthChanged: {
-    barcodeScanner.captureRect = Qt.rect(width / 4, height / 4, width / 2,
+    barcodeFilter.captureRect = Qt.rect(width / 4, height / 4, width / 2,
                                          height / 2)
   }
 }

@@ -1,34 +1,34 @@
-#include "SBarcodeScanner.h"
+#include "SBarcodeFilterQt6.h"
 
-SBarcodeScanner::SBarcodeScanner(QObject *parent)
+SBarcodeScannerQt6::SBarcodeScannerQt6(QObject *parent)
     : QVideoSink(parent)
     ,	camera(nullptr) {
 
-    connect(&m_decoder, &SBarcodeDecoder::capturedChanged, this, &SBarcodeScanner::setCaptured);
-    connect(this, &QVideoSink::videoFrameChanged, this, &SBarcodeScanner::handleFrameCaptured);
+    connect(&m_decoder, &SBarcodeDecoder::capturedChanged, this, &SBarcodeScannerQt6::setCaptured);
+    connect(this, &QVideoSink::videoFrameChanged, this, &SBarcodeScannerQt6::handleFrameCaptured);
 
     worker = new Worker(this);
     worker->moveToThread(&workerThread);
     connect(&workerThread, &QThread::finished, worker, &QObject::deleteLater);
-    connect(this, &SBarcodeScanner::process, worker, &Worker::process);
+    connect(this, &SBarcodeScannerQt6::process, worker, &Worker::process);
     workerThread.start();
 
     initCam();
 }
 
-SBarcodeScanner::~SBarcodeScanner()
+SBarcodeScannerQt6::~SBarcodeScannerQt6()
 {
     workerThread.quit();
     workerThread.wait();
     stopCam();
 }
 
-SBarcodeDecoder *SBarcodeScanner::getDecoder()
+SBarcodeDecoder *SBarcodeScannerQt6::getDecoder()
 {
     return &m_decoder;
 }
 
-void SBarcodeScanner::initCam() {
+void SBarcodeScannerQt6::initCam() {
     camera = new QCamera(this);
 
     const auto settings = camera->cameraDevice().videoFormats();
@@ -54,7 +54,7 @@ void SBarcodeScanner::initCam() {
     camera->start();
 }
 
-void SBarcodeScanner::stopCam()
+void SBarcodeScannerQt6::stopCam()
 {
     camera->stop();
     disconnect(camera, 0, 0, 0);
@@ -63,7 +63,7 @@ void SBarcodeScanner::stopCam()
     camera = nullptr;
 }
 
-void SBarcodeScanner::handleFrameCaptured(const QVideoFrame &frame) {
+void SBarcodeScannerQt6::handleFrameCaptured(const QVideoFrame &frame) {
 
     qDebug() << captureRect();
 
@@ -76,7 +76,7 @@ void SBarcodeScanner::handleFrameCaptured(const QVideoFrame &frame) {
     pauseProcessing();
 }
 
-void SBarcodeScanner::imageProcess(SBarcodeDecoder *decoder, const QImage &image, ZXing::BarcodeFormats formats) {
+void SBarcodeScannerQt6::imageProcess(SBarcodeDecoder *decoder, const QImage &image, ZXing::BarcodeFormats formats) {
 
     decoder->process(image, formats);
 
@@ -84,15 +84,15 @@ void SBarcodeScanner::imageProcess(SBarcodeDecoder *decoder, const QImage &image
 
 }
 
-void SBarcodeScanner::pauseProcessing() {
-    disconnect(this, &QVideoSink::videoFrameChanged, this, &SBarcodeScanner::handleFrameCaptured);
+void SBarcodeScannerQt6::pauseProcessing() {
+    disconnect(this, &QVideoSink::videoFrameChanged, this, &SBarcodeScannerQt6::handleFrameCaptured);
 }
 
-void SBarcodeScanner::continueProcessing() {
-    connect(this, &QVideoSink::videoFrameChanged, this, &SBarcodeScanner::handleFrameCaptured);
+void SBarcodeScannerQt6::continueProcessing() {
+    connect(this, &QVideoSink::videoFrameChanged, this, &SBarcodeScannerQt6::handleFrameCaptured);
 }
 
-void SBarcodeScanner::setCaptured(const QString &captured)
+void SBarcodeScannerQt6::setCaptured(const QString &captured)
 {
     if (m_captured == captured) {
         return;
@@ -101,16 +101,16 @@ void SBarcodeScanner::setCaptured(const QString &captured)
     emit capturedChanged(m_captured);
 }
 
-QString SBarcodeScanner::captured() const
+QString SBarcodeScannerQt6::captured() const
 {
     return m_captured;
 }
 
-QRectF SBarcodeScanner::captureRect() const {
+QRectF SBarcodeScannerQt6::captureRect() const {
     return m_captureRect;
 }
 
-void SBarcodeScanner::setCaptureRect(const QRectF &captureRect)
+void SBarcodeScannerQt6::setCaptureRect(const QRectF &captureRect)
 {
     if (captureRect == m_captureRect) {
         return;
@@ -119,11 +119,11 @@ void SBarcodeScanner::setCaptureRect(const QRectF &captureRect)
     emit captureRectChanged(m_captureRect);
 }
 
-QVideoSink *SBarcodeScanner::videoSink() const {
+QVideoSink *SBarcodeScannerQt6::videoSink() const {
     return m_videoSink.get();
 }
 
-void SBarcodeScanner::setVideoSink(QVideoSink *videoSink) {
+void SBarcodeScannerQt6::setVideoSink(QVideoSink *videoSink) {
     if (m_videoSink == videoSink) {
         return;
     }

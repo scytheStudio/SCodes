@@ -26,15 +26,15 @@
 
 class Worker;
 
-class SBarcodeScanner : public QVideoSink
+class SBarcodeScannerQt6 : public QVideoSink
 {
     Q_OBJECT
     Q_PROPERTY(QVideoSink* videoSink READ videoSink WRITE setVideoSink NOTIFY videoSinkChanged)
     Q_PROPERTY(QRectF captureRect READ captureRect WRITE setCaptureRect NOTIFY captureRectChanged)
 
 public:
-    explicit SBarcodeScanner(QObject *parent = nullptr);
-    ~SBarcodeScanner() override;
+    explicit SBarcodeScannerQt6(QObject *parent = nullptr);
+    ~SBarcodeScannerQt6() override;
 
     SBarcodeDecoder *getDecoder() ;
     /*!
@@ -189,7 +189,7 @@ class Worker : public QObject
 {
     Q_OBJECT
 private:
-    SBarcodeScanner *_scanner;
+    SBarcodeScannerQt6 *_scanner;
 
 public:
     /*!
@@ -197,7 +197,7 @@ public:
      * \brief Constructor.
      * \param SBarcodeScanner *_scanner - a pointer to scanner class.
      */
-    Worker(SBarcodeScanner *scanner) : _scanner{scanner} { ; }
+    Worker(SBarcodeScannerQt6 *scanner) : _scanner{scanner} { ; }
 
 public slots:
 
