@@ -9,6 +9,10 @@
 
 #include "SBarcodeFormat.h"
 
+// Default camera resolution width/height
+#define DEFAULT_RES_W 1080
+#define DEFAULT_RES_H 1920
+
 /*!
  * \brief The SBarcodeDecoder class for decoding barcodes to human readable string
  */
@@ -51,6 +55,14 @@ public:
      */
     static QImage videoFrameToImage(const QVideoFrame &videoFrame, const QRect &captureRect);
 
+    /*!
+     * \fn void setResolution(const int &w, const int &h)
+     * \brief Update camera resolution values
+     * \param w - width of the resolution
+     * \param h - heigth of the resolution
+     */
+    void setResolution(const int &w, const int &h);
+
 public slots:
 
     /*!
@@ -76,6 +88,7 @@ signals:
     void capturedChanged(const QString &captured);
 
 private:
+
     bool m_isDecoding = false;
 
     QString m_captured = "";

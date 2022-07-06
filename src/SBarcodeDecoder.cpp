@@ -84,6 +84,9 @@ std::ostream& operator << (std::ostream& os, const std::vector<ZXing::ResultPoin
     return os;
 }
 
+static int m_resolutionWidth = DEFAULT_RES_W;
+static int m_resolutionHeight = DEFAULT_RES_H;
+
 SBarcodeDecoder::SBarcodeDecoder(QObject *parent) : QObject(parent)
 { }
 
@@ -213,10 +216,21 @@ QImage SBarcodeDecoder::videoFrameToImage(const QVideoFrame &videoFrame, const Q
             image = image.convertToFormat(QImage::Format_ARGB32);
         }
 
+        // that's because qml videooutput has no mapNormalizedRectToItem method
+#ifdef Q_OS_ANDROID
+        return image.copy(m_resolutionHeight/4, m_resolutionWidth/4, m_resolutionHeight/2, m_resolutionWidth/2);
+#else
         return image.copy(captureRect);
+#endif
     }
 
     #endif
 
     return QImage();
+}
+
+void SBarcodeDecoder::setResolution(const int &w, const int &h)
+{
+    m_resolutionWidth = w;
+    m_resolutionHeight = h;
 } // SBarcodeDecoder::videoFrameToImage

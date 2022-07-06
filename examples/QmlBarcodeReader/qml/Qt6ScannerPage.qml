@@ -91,6 +91,7 @@ ApplicationWindow {
         onClicked: {
           resultScreen.visible = false
           barcodeScanner.continueProcessing()
+
         }
       }
     }

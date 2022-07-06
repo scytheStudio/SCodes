@@ -33,8 +33,17 @@ void SBarcodeScanner::initCam() {
 
     const auto settings = camera->cameraDevice().videoFormats();
 
+#ifdef Q_OS_ANDROID
+    int i = camera->cameraDevice().videoFormats().size() - 1;
+    const auto s = settings.at(i);
+#else
     int i = 0;
     const auto s = settings.at(i);
+#endif
+
+    int w = settings.at(i).resolution().width();
+    int h = settings.at(i).resolution().height();
+    m_decoder.setResolution(w, h);
 
     camera->setFocusMode(QCamera::FocusModeAuto);
     camera->setCameraFormat(s);
@@ -56,6 +65,8 @@ void SBarcodeScanner::stopCam()
 
 void SBarcodeScanner::handleFrameCaptured(const QVideoFrame &frame) {
 
+    qDebug() << captureRect();
+
     emit process(m_decoder.videoFrameToImage(frame, captureRect().toRect()));
 
     if(m_videoSink) {
@@ -70,6 +81,7 @@ void SBarcodeScanner::imageProcess(SBarcodeDecoder *decoder, const QImage &image
     decoder->process(image, formats);
 
     continueProcessing();
+
 }
 
 void SBarcodeScanner::pauseProcessing() {
