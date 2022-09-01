@@ -4,7 +4,7 @@
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     #include "SBarcodeFilter.h"
 #else
-    #include "SBarcodeFilterQt6.h"
+    #include "SBarcodeScanner.h"
 #endif
 
 int main(int argc, char *argv[])
@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<SBarcodeFilter>("com.scythestudio.scodes", 1, 0, "SBarcodeScanner");
     engine.load(QUrl(QStringLiteral("qrc:/qml/Qt5ScannerPage.qml")));
 #else
-    qmlRegisterType<SBarcodeScannerQt6>("com.scythestudio.scodes", 1, 0, "SBarcodeScanner");
+    qmlRegisterType<SBarcodeScanner>("com.scythestudio.scodes", 1, 0, "SBarcodeScanner");
     engine.load(QUrl(QStringLiteral("qrc:/qml/Qt6ScannerPage.qml")));
 #endif
 

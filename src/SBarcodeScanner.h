@@ -3,22 +3,12 @@
 
 #include <QObject>
 #include <QCamera>
-
 #include <QImageCapture>
 #include <QMediaCaptureSession>
 #include <QVideoSink>
-
-#include <QFuture>
-#include <QtConcurrent>
-
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
-
-#include <QThreadPool>
-#include <QFuture>
-#include <QtConcurrent>
-
 #include <QOpenGLContext>
 #include <QOpenGLFunctions>
 
@@ -26,17 +16,19 @@
 
 class Worker;
 
-class SBarcodeScannerQt6 : public QVideoSink
+class SBarcodeScanner : public QVideoSink
 {
     Q_OBJECT
+
     Q_PROPERTY(QVideoSink* videoSink READ videoSink WRITE setVideoSink NOTIFY videoSinkChanged)
     Q_PROPERTY(QRectF captureRect READ captureRect WRITE setCaptureRect NOTIFY captureRectChanged)
 
 public:
-    explicit SBarcodeScannerQt6(QObject *parent = nullptr);
-    ~SBarcodeScannerQt6() override;
+    explicit SBarcodeScanner(QObject *parent = nullptr);
+    ~SBarcodeScanner() override;
 
     SBarcodeDecoder *getDecoder() ;
+
     /*!
      * \fn QVideoSink *videoSink() const
      * \brief Function for getting sink of video output
@@ -75,6 +67,7 @@ public slots:
     * \brief Function for pause image processing
     */
     void pauseProcessing();
+
     /*!
     * \fn void pauseProcessing()
     * \brief Function for continue image processing
@@ -85,7 +78,8 @@ public slots:
     * \fn void setProcessing(bool p)
     * \brief Function for setting process status
     */
-    void setProcessing(bool p); // new
+    void setProcessing(bool p);
+
     /*!
     * \fn void imageProcess(const QVideoFrame &frame)
     * \brief Function for image processing
@@ -134,7 +128,7 @@ private:
      */
     Worker *worker;
 
-    bool m_processing = 1; // new
+    bool m_processing = true;
 
     /*!
     * \fn void setCaptured(const QString &captured)
@@ -184,19 +178,20 @@ private slots:
     * \brief Function for initialization of camera
     */
     void initCam();
+
     /*!
     * \fn void stopCam()
     * \brief Function for stopping camera
     */
     void stopCam();
-
 };
 
 class Worker : public QObject
 {
     Q_OBJECT
+
 private:
-    SBarcodeScannerQt6 *_scanner;
+    SBarcodeScanner *_scanner;
 
 public:
     /*!
@@ -204,7 +199,7 @@ public:
      * \brief Constructor.
      * \param SBarcodeScanner *_scanner - a pointer to scanner class.
      */
-    Worker(SBarcodeScannerQt6 *scanner) : _scanner{scanner} { ; }
+    Worker(SBarcodeScanner *scanner) : _scanner{scanner} { ; }
 
 public slots:
 

@@ -3,7 +3,6 @@ import QtQuick.Controls
 import QtMultimedia
 import com.scythestudio.scodes 1.0
 
-
 /*!
   Barcode scanner main page. All QML elements managing from here.
   */

@@ -42,8 +42,7 @@ ApplicationWindow {
     filters: [barcodeScanner]
 
     onSourceRectChanged: {
-      barcodeScanner.captureRect = videoOutput.mapRectToSource(
-            videoOutput.mapNormalizedRectToItem(Qt.rect(0.25, 0.25, 0.5, 0.5)))
+      barcodeScanner.captureRect = videoOutput.mapRectToSource(videoOutput.mapNormalizedRectToItem(Qt.rect(0.25, 0.25, 0.5, 0.5)))
     }
 
     Qt5ScannerOverlay {
@@ -73,9 +72,7 @@ ApplicationWindow {
     id: barcodeScanner
 
     // you can adjust capture rect (scan area) ne changing these Qt.rect() parameters
-    captureRect: videoOutput.mapRectToSource(
-                   videoOutput.mapNormalizedRectToItem(Qt.rect(0.25, 0.25,
-                                                               0.5, 0.5)))
+    captureRect: videoOutput.mapRectToSource(videoOutput.mapNormalizedRectToItem(Qt.rect(0.25, 0.25, 0.5, 0.5)))
 
     onCapturedChanged: {
       active = false
