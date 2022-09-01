@@ -65,7 +65,7 @@ All you need to do is to follow these steps.
 1. Add SCodes as submodule, by typing `git submodule add git@gitlab.com:scythestudio/scodes.git`
 2. Update submodule `git submodule update --recursive --init` (you can also put wrapper files to your project manually without adding submodule)
 3. Add `include(scodes/src/SCodes.pri)` to your .pro file
-4. If you want to use barcode reader functionality you need to register `SBarcodeFilter` class for Qt5 and `SBarcodeScanner` class for Qt6. For both version, seperate them with if directive to register([how to register reader class](#register-reader)). As for barcode generator functionality you just need to register `SBarcodeGenerator` class([how to register generator class](#register-generator)).
+4. If you want to use barcode reader functionality you need to register `SBarcodeFilter` class for Qt5 or `SBarcodeScanner` class for Qt6. For both version, seperate them with if directive to register as we did in barcode reader example([how to register reader class](#register-reader)). As for barcode generator functionality you just need to register `SBarcodeGenerator` class([how to register generator class](#register-generator)).
 5. Import SCodes in your Qml file `import com.scythestudio.scodes 1.0`
 6. Import multimedia module `import QtMultimedia 5.15` for Qt5 or `import QtMultimedia` for Qt6.
 7. If build fails, try to add `CONFIG += c++17` to your .pro file
@@ -101,7 +101,7 @@ Registering the barcode reader classes with if directive:
 
 ```c++
     #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-        qmlRegisterType<SBarcodeFilter>("com.scythestudio.scodes", 1, 0, "SBarcodeFilter");
+        qmlRegisterType<SBarcodeFilter>("com.scythestudio.scodes", 1, 0, "SBarcodeScanner");
     #else
         qmlRegisterType<SBarcodeScanner>("com.scythestudio.scodes", 1, 0, "SBarcodeScanner");
     #endif
