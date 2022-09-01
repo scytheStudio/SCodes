@@ -21,10 +21,10 @@ int main(int argc, char *argv[])
     qmlRegisterSingletonType(QUrl("qrc:/qml/Theme.qml"), "Theme", 1, 0, "Theme");
 
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    qmlRegisterType<SBarcodeFilter>("com.scythestudio.scodes", 1, 0, "SBarcodeFilter");
+    qmlRegisterType<SBarcodeFilter>("com.scythestudio.scodes", 1, 0, "SBarcodeScanner");
     engine.load(QUrl(QStringLiteral("qrc:/qml/Qt5ScannerPage.qml")));
 #else
-    qmlRegisterType<SBarcodeScannerQt6>("com.scythestudio.scodes", 1, 0, "SBarcodeFilter");
+    qmlRegisterType<SBarcodeScannerQt6>("com.scythestudio.scodes", 1, 0, "SBarcodeScanner");
     engine.load(QUrl(QStringLiteral("qrc:/qml/Qt6ScannerPage.qml")));
 #endif
 

@@ -2,7 +2,6 @@ pragma Singleton
 
 import QtQuick 2.12
 
-
 /**
   Contains common used colors
   */

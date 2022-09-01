@@ -7,7 +7,7 @@ This project is Qt & Qml wrapper for [ZXing-C++ Library](https://github.com/nu-b
 
 Thanks to SCodes you can start scanning barcodes in few steps. We used Qt 5.15.2 and Qt 6.3.0 to built wrapper and example applications, but it's compatible with older Qt versions as well.
 
-Implementation of same method for both Qt version is not seems possible([check why](#porting)). We have ported the SCodes wrapper to Qt6 by following the multimeadia [changes](https://doc-snapshots.qt.io/qt6-6.3/qtmultimedia-changes-qt6.html).
+Implementation of same method for both Qt version does not seems possible([check why](#porting)). We have ported the SCodes wrapper to Qt6 by following the multimedia [changes](https://doc-snapshots.qt.io/qt6-6.3/qtmultimedia-changes-qt6.html).
 
 ---
 
@@ -59,7 +59,7 @@ SCodes supports generating barcodes as well. It is covered in ["How to generate 
 
 Above blog posts contains step by step tutorial on how to do that for Qt5 version. For Qt6 ([see here](#porting)).
 
-### QMake
+### qmake
 All you need to do is to follow these steps.
 
 1. Add SCodes as submodule, by typing `git submodule add git@gitlab.com:scythestudio/scodes.git`
@@ -77,13 +77,13 @@ All you need to do is to follow these steps.
 2. Update submodule `git submodule update --recursive --init` (you can also put wrapper files to your project manually without adding submodule)
 3. Add to your project SCodes library
 
-    ```cmake
+    ```CMake
         add_subdirectory(SCodes)
     ```
 
 4. Link SCodes library to your library or executable. 
 
-    ```cmake 
+    ```CMake 
         target_link_libraries(${PROJECT_NAME} PUBLIC SCodes)
     ```
 
@@ -174,8 +174,8 @@ Both build systems have their examples located in same directory. All you need t
 | ------ | ------ | ------ | ------ | ------ | ------ |
 | QmlBarcodeReader | qmake |<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|
 | QmlBarcodeGenerator | qmake |<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|
-| QmlBarcodeReader | cmake |<center>❌</center>|<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|
-| QmlBarcodeGenerator | cmake |<center>❌</center>|<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|
+| QmlBarcodeReader | CMake |<center>❌</center>|<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|
+| QmlBarcodeGenerator | CMake |<center>❌</center>|<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|
 
 #### Qt6.3.0,
 
@@ -183,8 +183,8 @@ Both build systems have their examples located in same directory. All you need t
 | ------ | ------ | ------ | ------ | ------ | ------ |
 | QmlBarcodeReader | qmake |<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|
 | QmlBarcodeGenerator | qmake |<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|
-| QmlBarcodeReader | cmake |<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|
-| QmlBarcodeGenerator | cmake |<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|
+| QmlBarcodeReader | CMake |<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|
+| QmlBarcodeGenerator | CMake |<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|<center>✔️</center>|
 
 Please ensure that proper Java & NDK version installed on your system. This examples tested w/ Java 11 and 22.1.7171670 Android NDK version.
 

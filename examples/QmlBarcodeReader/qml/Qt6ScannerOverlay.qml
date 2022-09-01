@@ -36,6 +36,7 @@ Item {
 
     Rectangle {
       id: topLeftCornerV
+
       anchors {
         top: parent.top
         left: parent.left
@@ -144,12 +145,12 @@ Item {
     Rectangle {
       id: scanIndicator
 
-      width: parent.width
-      height: 1
-
       anchors {
         horizontalCenter: parent.horizontalCenter
       }
+
+      width: parent.width
+      height: 1
 
       color: Theme.borderColor
 
@@ -160,6 +161,7 @@ Item {
 
         PropertyAnimation {
           id: toTopAnimation
+
           target: scanIndicator
           property: "y"
           duration: 2000
@@ -167,6 +169,7 @@ Item {
 
         PropertyAnimation {
           id: toBottomAnimation
+
           target: scanIndicator
           property: "y"
           duration: 2000
@@ -177,10 +180,10 @@ Item {
     RectangularGlow {
       id: effect
 
+      anchors.centerIn: scanIndicator
+
       width: scanIndicator.width / 2
       height: scanIndicator.height
-
-      anchors.centerIn: scanIndicator
 
       glowRadius: 50
       spread: 0.2

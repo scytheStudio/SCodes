@@ -10,37 +10,33 @@ import com.scythestudio.scodes 1.0
 ApplicationWindow {
   id: root
 
+  width: Qt.platform.os === "android" || Qt.platform.os === "ios" ? Screen.width : 1280
+  height: Qt.platform.os === "android" || Qt.platform.os === "ios" ? Screen.height : 720
+
   visible: true
 
-  width: Qt.platform.os === "android"
-         || Qt.platform.os === "ios" ? Screen.width : 1280
-  height: Qt.platform.os === "android"
-          || Qt.platform.os === "ios" ? Screen.height : 720
-
-  SBarcodeFilter {
-    id: barcodeFilter
+  SBarcodeScanner {
+    id: barcodeScanner
 
     videoSink: videoOutput.videoSink
 
-    captureRect: Qt.rect(root.width / 4, root.height / 4, root.width / 2,
-                         root.height / 2)
+    captureRect: Qt.rect(root.width / 4, root.height / 4, root.width / 2, root.height / 2)
 
     onCapturedChanged: function (captured) {
       scanResultText.text = captured
       resultScreen.visible = true
-      barcodeFilter.setProcessing(0)
+      barcodeScanner.setProcessing(0)
     }
   }
 
   VideoOutput {
     id: videoOutput
 
-    width: root.width
-
     anchors.fill: parent
 
-    focus: visible
+    width: root.width
 
+    focus: visible
     fillMode: VideoOutput.PreserveAspectCrop
   }
 
@@ -49,7 +45,7 @@ ApplicationWindow {
 
     anchors.fill: parent
 
-    captureRect: barcodeFilter.captureRect
+    captureRect: barcodeScanner.captureRect
   }
 
   Rectangle {
@@ -75,35 +71,32 @@ ApplicationWindow {
       Button {
         id: scanButton
 
+        anchors.horizontalCenter: parent.horizontalCenter
+
         implicitWidth: 100
         implicitHeight: 50
-
-        anchors.horizontalCenter: parent.horizontalCenter
 
         Text {
           anchors.centerIn: parent
 
           text: qsTr("Scan again")
-
           color: Theme.textColor
         }
 
         onClicked: {
           resultScreen.visible = false
-          barcodeFilter.setProcessing(1)
-          barcodeFilter.continueProcessing()
+          barcodeScanner.setProcessing(1)
+          barcodeScanner.continueProcessing()
         }
       }
     }
   }
 
   onHeightChanged: {
-    barcodeFilter.captureRect = Qt.rect(width / 4, height / 4, width / 2,
-                                         height / 2)
+    barcodeScanner.captureRect = Qt.rect(width / 4, height / 4, width / 2, height / 2)
   }
 
   onWidthChanged: {
-    barcodeFilter.captureRect = Qt.rect(width / 4, height / 4, width / 2,
-                                         height / 2)
+    barcodeScanner.captureRect = Qt.rect(width / 4, height / 4, width / 2, height / 2)
   }
 }
