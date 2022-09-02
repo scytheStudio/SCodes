@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QCamera>
+#include <QThread>>
 #include <QImageCapture>
 #include <QMediaCaptureSession>
 #include <QVideoSink>
