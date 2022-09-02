@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include <QCamera>
-#include <QThread>>
+#include <QThread>
 #include <QImageCapture>
 #include <QMediaCaptureSession>
 #include <QVideoSink>
@@ -17,6 +17,9 @@
 
 class Worker;
 
+/*!
+ * \brief The SBarcodeScanner class is a custom class that allows image processing with the cooperation of QML VideoOutput type.
+ */
 class SBarcodeScanner : public QVideoSink
 {
     Q_OBJECT
@@ -44,9 +47,9 @@ public:
     void setVideoSink(QVideoSink *videoSink);
 
     /*!
-    * \fn QRectF captureRect() const
-    * \brief Function for getting capture area
-    */
+     * \fn QRectF captureRect() const
+     * \brief Function for getting capture area
+     */
     QRectF captureRect() const;
 
     /*!
@@ -57,66 +60,66 @@ public:
     void setCaptureRect(const QRectF &captureRect);
 
     /*!
-    * \fn QString captured() const
-    * \brief Function for getting captured string
-    */
+     * \fn QString captured() const
+     * \brief Function for getting captured string
+     */
     QString captured() const;
 
 public slots:
     /*!
-    * \fn void pauseProcessing()
-    * \brief Function for pause image processing
-    */
+     * \fn void pauseProcessing()
+     * \brief Function for pause image processing
+     */
     void pauseProcessing();
 
     /*!
-    * \fn void pauseProcessing()
-    * \brief Function for continue image processing
-    */
+     * \fn void continueProcessing()
+     * \brief Function for continue image processing
+     */
     void continueProcessing();
 
     /*!
-    * \fn void setProcessing(bool p)
-    * \brief Function for setting process status
-    */
+     * \fn void setProcessing(bool p)
+     * \brief Function for setting process status
+     */
     void setProcessing(bool p);
 
     /*!
-    * \fn void imageProcess(const QVideoFrame &frame)
-    * \brief Function for image processing
-    * \param const QVideoFrame &frame - video frame
-    */
+     * \fn void imageProcess(const QVideoFrame &frame)
+     * \brief Function for image processing
+     * \param const QVideoFrame &frame - video frame
+     */
     void imageProcess(SBarcodeDecoder *decoder, const QImage &image, ZXing::BarcodeFormats formats);
 
 private:
     /*!
-    * \brief Decoder instance
-    */
+     * \brief Decoder instance
+     */
     SBarcodeDecoder m_decoder;
 
     /*!
-    * \brief Camera instance
-    */
+     * \brief Camera instance
+     */
     QCamera *camera;
 
     /*!
-    * \brief Pointer to a sink
-    */
+     * \brief Pointer to a sink
+     */
     QPointer<QVideoSink> m_videoSink;
 
     /*!
-    * \brief Capture area
-    */
+     * \brief Capture area
+     */
     QRectF m_captureRect;
 
     /*!
-    * \brief Captured string
-    */
+     * \brief Captured string
+     */
     QString m_captured = "";
 
     /*!
-    * \brief Camera session instance
-    */
+     * \brief Camera session instance
+     */
     QMediaCaptureSession m_capture;
 
     /*!
@@ -129,20 +132,23 @@ private:
      */
     Worker *worker;
 
+    /*!
+     * \brief Indicates the processing state
+     */
     bool m_processing = true;
 
     /*!
-    * \fn void setCaptured(const QString &captured)
-    * \brief Function for setting capture string
-    * \param const QString &captured - captured string
-    */
+     * \fn void setCaptured(const QString &captured)
+     * \brief Function for setting capture string
+     * \param const QString &captured - captured string
+     */
     void setCaptured(const QString &captured);
 
     /*!
-    * \fn void handleFrameCaptured(const QVideoFrame &frame)
-    * \brief Function for handling video frame
-    * \param const QVideoFrame &frame - video frame
-    */
+     * \fn void handleFrameCaptured(const QVideoFrame &frame)
+     * \brief Function for handling video frame
+     * \param const QVideoFrame &frame - video frame
+     */
     void handleFrameCaptured(const QVideoFrame &frame);
 
 signals:
@@ -175,23 +181,29 @@ signals:
 
 private slots:
     /*!
-    * \fn void initCam()
-    * \brief Function for initialization of camera
-    */
+     * \fn void initCam()
+     * \brief Function for initialization of camera
+     */
     void initCam();
 
     /*!
-    * \fn void stopCam()
-    * \brief Function for stopping camera
-    */
+     * \fn void stopCam()
+     * \brief Function for stopping camera
+     */
     void stopCam();
 };
 
+/*!
+ * \brief The Worker class allows you to run `SBarcodeScanner::imageProcess` method in a different thread
+ */
 class Worker : public QObject
 {
     Q_OBJECT
 
 private:
+    /*!
+     * \brief A pointer of SBarcodeScanner
+     */
     SBarcodeScanner *_scanner;
 
 public:

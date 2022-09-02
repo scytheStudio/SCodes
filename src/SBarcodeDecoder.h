@@ -21,7 +21,6 @@ class SBarcodeDecoder : public QObject
     Q_OBJECT
 
 public:
-
     /*!
      * \fn explicit SBarcodeDecoder(QObject *parent)
      * \brief Constructor.
@@ -64,7 +63,6 @@ public:
     void setResolution(const int &w, const int &h);
 
 public slots:
-
     /*!
      * \fn void process(const QImage capturedImage, ZXing::BarcodeFormats formats)
      * \brief Processes the image to scan the given barcode format types.
@@ -74,7 +72,6 @@ public slots:
     void process(const QImage capturedImage, ZXing::BarcodeFormats formats);
 
 signals:
-
     /*!
      * \brief This signal is emitted to send decoding state to QML.
      * \param bool isDecoding - decoding state.
@@ -88,14 +85,17 @@ signals:
     void capturedChanged(const QString &captured);
 
 private:
-
+    /*!
+     * \brief Indicates the decoding state
+     */
     bool m_isDecoding = false;
 
+    /*!
+     * \brief Captured string from barcode
+     */
     QString m_captured = "";
 
     /*!
-     *
-     *
      * \fn void setCaptured(const QString &captured)
      * \brief Sets captured barcode string.
      * \param const QString &captured - captured barcode string.

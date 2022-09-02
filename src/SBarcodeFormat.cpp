@@ -1,5 +1,8 @@
 #include "SBarcodeFormat.h"
 
+/*!
+ *  Provide access to ZXing::BarcodeFormat's with SCodes::SBarcodeFormat keys
+ */
 namespace {
 const QMap<SCodes::SBarcodeFormat, ZXing::BarcodeFormat> k_formatsTranslations
 {

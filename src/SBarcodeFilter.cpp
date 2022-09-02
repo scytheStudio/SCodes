@@ -11,6 +11,9 @@ void processImage(SBarcodeDecoder *decoder, const QImage &image, ZXing::BarcodeF
     decoder->process(image, formats);
 }
 
+/*!
+ * \brief Inherited from QVideoFilterRunnable class and provide `SBarcodeFilterRunnable::run` method in order to asynchronously process the input video frame
+ */
 class SBarcodeFilterRunnable : public QVideoFilterRunnable
 {
 public:
