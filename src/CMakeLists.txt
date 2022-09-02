@@ -27,7 +27,7 @@ file(GLOB SOURCE_CPP
 if(QT_VERSION_MAJOR EQUAL 6)
     list(FILTER SOURCE_CPP EXCLUDE REGEX "SBarcodeFilter.cpp")
 else()
-    list(FILTER SOURCE_CPP EXCLUDE REGEX "SBarcodeFilterQt6.cpp")
+    list(FILTER SOURCE_CPP EXCLUDE REGEX "SBarcodeFilter.cpp")
 endif()
 
 add_library(${PROJECT_NAME} STATIC ${SOURCE_CPP})
