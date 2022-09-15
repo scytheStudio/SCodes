@@ -24,6 +24,12 @@ file(GLOB SOURCE_CPP
     "*.cpp"
 )
 
+if(QT_VERSION_MAJOR EQUAL 6)
+    list(FILTER SOURCE_CPP EXCLUDE REGEX "SBarcodeFilter.cpp")
+else()
+    list(FILTER SOURCE_CPP EXCLUDE REGEX "SBarcodeScanner.cpp")
+endif()
+
 add_library(${PROJECT_NAME} STATIC ${SOURCE_CPP})
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
@@ -36,7 +42,13 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/zxing-cpp/thirdparty/stb)
 
 if (ANDROID)
-    find_package(Qt${QT_VERSION_MAJOR} COMPONENTS AndroidExtras REQUIRED)
-    target_link_libraries(${PROJECT_NAME} PUBLIC Qt${QT_VERSION_MAJOR}::AndroidExtras)
+
+    if(QT_VERSION_MAJOR EQUAL 5)
+        find_package(Qt${QT_VERSION_MAJOR} COMPONENTS AndroidExtras REQUIRED)
+        target_link_libraries(${PROJECT_NAME} PUBLIC Qt${QT_VERSION_MAJOR}::AndroidExtras)
+    else()
+        target_link_libraries(${PROJECT_NAME} PUBLIC Qt::CorePrivate)
+    endif()
+
     target_link_libraries(${PROJECT_NAME} PUBLIC EGL GLESv2)
 endif()

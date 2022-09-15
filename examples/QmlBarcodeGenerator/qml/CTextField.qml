@@ -10,6 +10,8 @@ TextField {
 
   selectByMouse: true
 
+  leftPadding: 5
+
   background: Rectangle {
     radius: 2
 

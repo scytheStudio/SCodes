@@ -1,19 +1,33 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
-#include "SBarcodeFilter.h"
+
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+    #include "SBarcodeFilter.h"
+#else
+    #include "SBarcodeScanner.h"
+#endif
 
 int main(int argc, char *argv[])
 {
+    QCoreApplication::setAttribute(Qt::AA_UseDesktopOpenGL);
+
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+#endif
     QGuiApplication app(argc, argv);
-
-    qmlRegisterType<SBarcodeFilter>("com.scythestudio.scodes", 1, 0, "SBarcodeFilter");
-
-    qmlRegisterSingletonType(QUrl("qrc:/qml/Theme.qml"), "Theme", 1, 0, "Theme");
 
     QQmlApplicationEngine engine;
 
-    engine.load(QUrl(QStringLiteral("qrc:/qml/ScannerPage.qml")));
+    qmlRegisterSingletonType(QUrl("qrc:/qml/Theme.qml"), "Theme", 1, 0, "Theme");
+
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+    qmlRegisterType<SBarcodeFilter>("com.scythestudio.scodes", 1, 0, "SBarcodeScanner");
+    engine.load(QUrl(QStringLiteral("qrc:/qml/Qt5ScannerPage.qml")));
+#else
+    qmlRegisterType<SBarcodeScanner>("com.scythestudio.scodes", 1, 0, "SBarcodeScanner");
+    engine.load(QUrl(QStringLiteral("qrc:/qml/Qt6ScannerPage.qml")));
+#endif
+
     if (engine.rootObjects().isEmpty()) {
         return -1;
     }

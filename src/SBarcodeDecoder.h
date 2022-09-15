@@ -4,7 +4,14 @@
 #include <QObject>
 #include <QVideoFrame>
 
+#include <QOpenGLContext>
+#include <QOpenGLFunctions>
+
 #include "SBarcodeFormat.h"
+
+// Default camera resolution width/height
+#define DEFAULT_RES_W 1080
+#define DEFAULT_RES_H 1920
 
 /*!
  * \brief The SBarcodeDecoder class for decoding barcodes to human readable string
@@ -14,7 +21,6 @@ class SBarcodeDecoder : public QObject
     Q_OBJECT
 
 public:
-
     /*!
      * \fn explicit SBarcodeDecoder(QObject *parent)
      * \brief Constructor.
@@ -46,17 +52,17 @@ public:
      * \param QVideoFrame &videoFrame - frame of video data.
      * \param const QRect &captureRect - capture area rectangle.
      */
-    static QImage videoFrameToImage(QVideoFrame &videoFrame, const QRect &captureRect);
+    static QImage videoFrameToImage(const QVideoFrame &videoFrame, const QRect &captureRect);
 
     /*!
-     * \fn static QImage imageFromVideoFrame(const QVideoFrame &videoFrame)
-     * \brief Returns image from video frame.
-     * \param const QVideoFrame &videoFrame - frame of video data.
+     * \fn void setResolution(const int &w, const int &h)
+     * \brief Update camera resolution values
+     * \param w - width of the resolution
+     * \param h - heigth of the resolution
      */
-    static QImage imageFromVideoFrame(const QVideoFrame &videoFrame);
+    void setResolution(const int &w, const int &h);
 
 public slots:
-
     /*!
      * \fn void process(const QImage capturedImage, ZXing::BarcodeFormats formats)
      * \brief Processes the image to scan the given barcode format types.
@@ -66,7 +72,6 @@ public slots:
     void process(const QImage capturedImage, ZXing::BarcodeFormats formats);
 
 signals:
-
     /*!
      * \brief This signal is emitted to send decoding state to QML.
      * \param bool isDecoding - decoding state.
@@ -80,8 +85,14 @@ signals:
     void capturedChanged(const QString &captured);
 
 private:
+    /*!
+     * \brief Indicates the decoding state
+     */
     bool m_isDecoding = false;
 
+    /*!
+     * \brief Captured string from barcode
+     */
     QString m_captured = "";
 
     /*!

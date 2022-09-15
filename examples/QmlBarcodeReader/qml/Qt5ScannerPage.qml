@@ -38,20 +38,19 @@ ApplicationWindow {
 
     fillMode: VideoOutput.PreserveAspectCrop
 
-    // add barcodeFilter to videoOutput's filters to enable catching barcodes
-    filters: [barcodeFilter]
+    // add barcodeScanner to videoOutput's filters to enable catching barcodes
+    filters: [barcodeScanner]
 
     onSourceRectChanged: {
-      barcodeFilter.captureRect = videoOutput.mapRectToSource(
-            videoOutput.mapNormalizedRectToItem(Qt.rect(0.25, 0.25, 0.5, 0.5)))
+      barcodeScanner.captureRect = videoOutput.mapRectToSource(videoOutput.mapNormalizedRectToItem(Qt.rect(0.25, 0.25, 0.5, 0.5)))
     }
 
-    ScannerOverlay {
+    Qt5ScannerOverlay {
       id: scannerOverlay
 
       anchors.fill: parent
 
-      captureRect: videoOutput.mapRectToItem(barcodeFilter.captureRect)
+      captureRect: videoOutput.mapRectToItem(barcodeScanner.captureRect)
     }
 
     // used to get camera focus on touched point
@@ -69,13 +68,11 @@ ApplicationWindow {
     }
   }
 
-  SBarcodeFilter {
-    id: barcodeFilter
+  SBarcodeScanner {
+    id: barcodeScanner
 
     // you can adjust capture rect (scan area) ne changing these Qt.rect() parameters
-    captureRect: videoOutput.mapRectToSource(
-                   videoOutput.mapNormalizedRectToItem(Qt.rect(0.25, 0.25,
-                                                               0.5, 0.5)))
+    captureRect: videoOutput.mapRectToSource(videoOutput.mapNormalizedRectToItem(Qt.rect(0.25, 0.25, 0.5, 0.5)))
 
     onCapturedChanged: {
       active = false
@@ -88,7 +85,7 @@ ApplicationWindow {
 
     anchors.fill: parent
 
-    visible: !barcodeFilter.active
+    visible: !barcodeScanner.active
 
     Column {
       anchors.centerIn: parent
@@ -100,7 +97,7 @@ ApplicationWindow {
 
         anchors.horizontalCenter: parent.horizontalCenter
 
-        text: barcodeFilter.captured
+        text: barcodeScanner.captured
       }
 
       Button {
@@ -111,7 +108,7 @@ ApplicationWindow {
         text: qsTr("Scan again")
 
         onClicked: {
-          barcodeFilter.active = true
+          barcodeScanner.active = true
         }
       }
     }

@@ -41,7 +41,7 @@ public:
      * \fn ~SBarcodeGenerator() override
      * \brief Destructor.
      */
-    ~SBarcodeGenerator() override { };
+    ~SBarcodeGenerator() override { }
 
     /*!
      * \fn SCodes::SBarcodeFormat format() const

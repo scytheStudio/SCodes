@@ -5,14 +5,17 @@
 #include <QtMultimedia/qvideoframe.h>
 #include <QOpenGLContext>
 #include <QOpenGLFunctions>
+#include <QOffscreenSurface>
 #include <iostream>
 
 #include <ReadBarcode.h>
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
-#include "qvideoframeconversionhelper_p.h"
 
+/*!
+ * \brief Provide a interface to access `ZXing::ReadBarcode` method
+ */
 namespace ZXing {
 namespace Qt {
 using ZXing::DecodeHints;
@@ -26,18 +29,36 @@ QDebug operator << (QDebug dbg, const T& v)
     return dbg.noquote() << QString::fromStdString(ToString(v));
 }
 
+/*!
+ * \brief Encapsulates the result of decoding a barcode within an image
+ */
 class Result : private ZXing::Result
 {
 public:
+    /*!
+     * \fn explicit Result(ZXing::Result&& r) : ZXing::Result(std::move(r))
+     * \brief Constructor
+     * \param ZXing::Result&& r - Result class
+     */
     explicit Result(ZXing::Result&& r) : ZXing::Result(std::move(r)){ }
 
     using ZXing::Result::format;
     using ZXing::Result::isValid;
     using ZXing::Result::status;
 
+    /*!
+     * \fn inline QString text() const
+     * \return scanned result human readable text
+     */
     inline QString text() const { return QString::fromWCharArray(ZXing::Result::text().c_str()); }
 };
 
+/*!
+ * \fn Result ReadBarcode(const QImage& img, const DecodeHints& hints = { })
+ * \brief Interface for calling ZXing::ReadBarcode method to get result as a text.
+ * \param const QImage& img - referance of the image to be processed
+ * \param const DecodeHints& hints - barcode decode hints
+ */
 Result ReadBarcode(const QImage& img, const DecodeHints& hints = { })
 {
     auto ImgFmtFromQImg = [](const QImage& img){
@@ -82,6 +103,9 @@ std::ostream& operator << (std::ostream& os, const std::vector<ZXing::ResultPoin
     return os;
 }
 
+static int m_resolutionWidth = DEFAULT_RES_W;
+static int m_resolutionHeight = DEFAULT_RES_H;
+
 SBarcodeDecoder::SBarcodeDecoder(QObject *parent) : QObject(parent)
 { }
 
@@ -117,7 +141,7 @@ void SBarcodeDecoder::setIsDecoding(bool isDecoding)
     emit isDecodingChanged(m_isDecoding);
 }
 
-bool SBarcodeDecoder::isDecoding() const
+bool SBarcodeDecoder::  isDecoding() const
 {
     return m_isDecoding;
 }
@@ -142,9 +166,14 @@ void SBarcodeDecoder::process(const QImage capturedImage, ZXing::BarcodeFormats 
     setIsDecoding(false);
 }
 
-QImage SBarcodeDecoder::videoFrameToImage(QVideoFrame &videoFrame, const QRect &captureRect)
+QImage SBarcodeDecoder::videoFrameToImage(const QVideoFrame &videoFrame, const QRect &captureRect)
 {
-    if (videoFrame.handleType() == QAbstractVideoBuffer::NoHandle) {
+
+    #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+
+    auto handleType = videoFrame.handleType();
+
+    if (handleType == QAbstractVideoBuffer::NoHandle) {
         #if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
         QImage image = videoFrame.image();
         #else
@@ -166,7 +195,7 @@ QImage SBarcodeDecoder::videoFrameToImage(QVideoFrame &videoFrame, const QRect &
         return image.copy(captureRect);
     }
 
-    if (videoFrame.handleType() == QAbstractVideoBuffer::GLTextureHandle) {
+    if (handleType == QAbstractVideoBuffer::GLTextureHandle) {
         QImage image(videoFrame.width(), videoFrame.height(), QImage::Format_ARGB32);
 
         GLuint textureId = static_cast<GLuint>(videoFrame.handle().toInt());
@@ -190,52 +219,37 @@ QImage SBarcodeDecoder::videoFrameToImage(QVideoFrame &videoFrame, const QRect &
         return image.rgbSwapped().copy(captureRect);
     }
 
-    return QImage();
-} // SBarcodeDecoder::videoFrameToImage
+    #else
 
-QImage SBarcodeDecoder::imageFromVideoFrame(const QVideoFrame &videoFrame)
-{
-    uchar *ARGB32Bits = new uchar[(videoFrame.width() * videoFrame.height()) * 4];
+    auto handleType = videoFrame.handleType();
 
-    QImage::Format imageFormat = videoFrame.imageFormatFromPixelFormat(videoFrame.pixelFormat());
+    if (handleType == QVideoFrame::NoHandle) {
 
-    if (imageFormat == QImage::Format_Invalid) {
-        switch (videoFrame.pixelFormat()) {
-            case QVideoFrame::Format_YUYV: qt_convert_YUYV_to_ARGB32(videoFrame, ARGB32Bits);
-                break;
-            case QVideoFrame::Format_NV12: qt_convert_NV12_to_ARGB32(videoFrame, ARGB32Bits);
-                break;
-            case QVideoFrame::Format_YUV420P: qt_convert_YUV420P_to_ARGB32(videoFrame, ARGB32Bits);
-                break;
-            case QVideoFrame::Format_YV12: qt_convert_YV12_to_ARGB32(videoFrame, ARGB32Bits);
-                break;
-            case QVideoFrame::Format_AYUV444: qt_convert_AYUV444_to_ARGB32(videoFrame, ARGB32Bits);
-                break;
-            case QVideoFrame::Format_YUV444: qt_convert_YUV444_to_ARGB32(videoFrame, ARGB32Bits);
-                break;
-            case QVideoFrame::Format_UYVY: qt_convert_UYVY_to_ARGB32(videoFrame, ARGB32Bits);
-                break;
-            case QVideoFrame::Format_NV21: qt_convert_NV21_to_ARGB32(videoFrame, ARGB32Bits);
-                break;
-            case QVideoFrame::Format_BGRA32: qt_convert_BGRA32_to_ARGB32(videoFrame, ARGB32Bits);
-                break;
-            case QVideoFrame::Format_BGR24: qt_convert_BGR24_to_ARGB32(videoFrame, ARGB32Bits);
-                break;
-            case QVideoFrame::Format_BGR565: qt_convert_BGR565_to_ARGB32(videoFrame, ARGB32Bits);
-                break;
-            case QVideoFrame::Format_BGR555: qt_convert_BGR555_to_ARGB32(videoFrame, ARGB32Bits);
-                break;
-            default: break;
+        QImage image = videoFrame.toImage();
+
+        if (image.isNull()) {
+            return QImage();
         }
 
-        return QImage(ARGB32Bits,
-                 videoFrame.width(),
-                 videoFrame.height(),
-                 QImage::Format_ARGB32);
+        if (image.format() != QImage::Format_ARGB32) {
+            image = image.convertToFormat(QImage::Format_ARGB32);
+        }
+
+        // that's because qml videooutput has no mapNormalizedRectToItem method
+#ifdef Q_OS_ANDROID
+        return image.copy(m_resolutionHeight/4, m_resolutionWidth/4, m_resolutionHeight/2, m_resolutionWidth/2);
+#else
+        return image.copy(captureRect);
+#endif
     }
 
-    return QImage(videoFrame.bits(),
-             videoFrame.width(),
-             videoFrame.height(),
-             imageFormat);
-} // SBarcodeDecoder::imageFromVideoFrame
+    #endif
+
+    return QImage();
+}
+
+void SBarcodeDecoder::setResolution(const int &w, const int &h)
+{
+    m_resolutionWidth = w;
+    m_resolutionHeight = h;
+} // SBarcodeDecoder::videoFrameToImage

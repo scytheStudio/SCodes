@@ -14,28 +14,40 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 include("cmake/Locations.cmake")
 
 if(Qt${QT_VERSION_MAJOR} STREQUAL Qt5)
-    qt5_add_resources(RSCS qml.qrc)
+    qt5_add_resources(RSCS Qt5qml.qrc)
 else()
-    qt_add_resources(RSCS qml.qrc)
+    qt_add_resources(RSCS Qt6qml.qrc)
 endif()
 
 add_subdirectory(${LIB_DIR} ${CMAKE_BINARY_DIR}/SCodes)
 
 if(ANDROID)
-    set(ANDROID_MIN_SDK_VERSION 21)
-    set(ANDROID_ABI "armeabi-v7a")
-    set(QT_ANDROID_PACKAGE_SOURCE_DIR ${PROJECT_SOURCE_DIR}/android)
 
-    file(GLOB_RECURSE ANDROID_SOURCES
-      ${QT_ANDROID_PACKAGE_SOURCE_DIR}/AndroidManifest.xml
-      ${QT_ANDROID_PACKAGE_SOURCE_DIR}/build.gradle
-      ${QT_ANDROID_PACKAGE_SOURCE_DIR}/gradle/wrapper/gradle-wrapper.jar
-      ${QT_ANDROID_PACKAGE_SOURCE_DIR}/gradle/wrapper/gradle-wrapper.properties
-      ${QT_ANDROID_PACKAGE_SOURCE_DIR}/gradlew
-      ${QT_ANDROID_PACKAGE_SOURCE_DIR}/res/values/libs.xml
-    )
+    if(Qt${QT_VERSION_MAJOR} STREQUAL Qt5)
 
+        set(ANDROID_MIN_SDK_VERSION 21)
+        set(ANDROID_ABI "armeabi-v7a")
+        set(QT_ANDROID_PACKAGE_SOURCE_DIR ${PROJECT_SOURCE_DIR}/android)
+
+        file(GLOB_RECURSE ANDROID_SOURCES
+          ${QT_ANDROID_PACKAGE_SOURCE_DIR}/AndroidManifest.xml
+          ${QT_ANDROID_PACKAGE_SOURCE_DIR}/build.gradle
+          ${QT_ANDROID_PACKAGE_SOURCE_DIR}/gradle/wrapper/gradle-wrapper.jar
+          ${QT_ANDROID_PACKAGE_SOURCE_DIR}/gradle/wrapper/gradle-wrapper.properties
+          ${QT_ANDROID_PACKAGE_SOURCE_DIR}/gradlew
+          ${QT_ANDROID_PACKAGE_SOURCE_DIR}/res/values/libs.xml
+        )
     add_library(${PROJECT_NAME} SHARED main.cpp ${RSCS} ${ANDROID_SOURCES})
+
+    else()
+
+        qt_add_executable(${PROJECT_NAME} MANUAL_FINALIZATION main.cpp ${RSCS})
+
+        set_target_properties(${PROJECT_NAME} PROPERTIES
+            QT_ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android"
+        )
+
+    endif()
 
 else()
 
@@ -44,3 +56,10 @@ else()
 endif()
 
 target_link_libraries(${PROJECT_NAME} PRIVATE ${REQUIRED_QT_LIBS} SCodes)
+
+
+if(QT_VERSION_MAJOR EQUAL 6)
+    qt_import_qml_plugins(${PROJECT_NAME})
+    qt_finalize_executable(${PROJECT_NAME})
+    qt_finalize_project(${PROJECT_NAME})
+endif()
