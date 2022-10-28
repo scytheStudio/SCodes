@@ -10,12 +10,17 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set(USE_BINARIES OFF)
+set(USE_BINARIES ON)
 
 set(SCODES_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../src")
 
 #Check this file for any *_DIR variable definitions and other
 include("cmake/Locations.cmake")
+
+find_package(QT NAMES Qt5 COMPONENTS Core Multimedia Concurrent Quick  REQUIRED)
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Multimedia Concurrent Quick REQUIRED)
+find_package(Threads REQUIRED)
+
 
 if(Qt${QT_VERSION_MAJOR} STREQUAL Qt5)
     qt5_add_resources(RSCS Qt5qml.qrc)
@@ -62,8 +67,18 @@ else()
 endif()
 
 if(USE_BINARIES)
-    target_include_directories(${PROJECT_NAME} PUBLIC ${SCODES_DIR} ${SCODES_DIR}/zxing-cpp/core/src)
-    target_link_libraries(${PROJECT_NAME} PRIVATE ${REQUIRED_QT_LIBS} ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/qt5/macOS/libZXing.a ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/qt5/macOS/libSCodes.a)
+
+    find_package(Qt${QT_VERSION_MAJOR} COMPONENTS AndroidExtras REQUIRED)
+    target_link_libraries(${PROJECT_NAME} PUBLIC Qt${QT_VERSION_MAJOR}::AndroidExtras Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Multimedia Qt${QT_VERSION_MAJOR}::Quick)
+
+    target_link_libraries(${PROJECT_NAME} PUBLIC EGL GLESv2)
+    target_link_libraries(${PROJECT_NAME} PUBLIC Threads::Threads)
+
+    target_include_directories(${PROJECT_NAME} PUBLIC ${SCODES_DIR} ${SCODES_DIR}/zxing-cpp/core/src ${SCODES_DIR}/zxing-cpp/thirdparty/stb)
+    target_link_libraries(${PROJECT_NAME} PUBLIC ${REQUIRED_QT_LIBS} ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/qt5/android/libZXing.a ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/qt5/android/libSCodes.a)
+
+
+
 else()
     target_link_libraries(${PROJECT_NAME} PRIVATE ${REQUIRED_QT_LIBS} SCodes)
 endif()
