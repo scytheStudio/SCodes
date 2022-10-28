@@ -8,29 +8,38 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-if (NOT DEFINED BUILD_SHARED_LIBS)
+if(NOT DEFINED USE_BINARIES)
+    set(USE_BINARIES OFF)
+endif()
+
+if(NOT DEFINED BUILD_SHARED_LIBS AND NOT USE_BINARIES)
     set(BUILD_SHARED_LIBS ON)
 endif()
 
-set(BUILD_UNIT_TESTS OFF)
-set(BUILD_BLACKBOX_TESTS OFF)
-set(BUILD_EXAMPLES OFF)
-add_subdirectory(zxing-cpp)
+set(BUILD_WRITERS ON)
+if(USE_BINARIES)
+    add_subdirectory(zxing-cpp/core)
+else()
+    add_subdirectory(zxing-cpp)
+endif()
 
 find_package(QT NAMES Qt5 Qt6 COMPONENTS Core Multimedia Concurrent Quick REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Multimedia Concurrent Quick REQUIRED)
 
-file(GLOB SOURCE_CPP
-    "*.cpp"
-)
+list(APPEND SOURCE_FILES
+    "SBarcodeGenerator.h" "SBarcodeGenerator.cpp"
+    "SBarcodeFormat.h" "SBarcodeFormat.cpp"
+    "SBarcodeDecoder.h" "SBarcodeDecoder.cpp")
 
 if(QT_VERSION_MAJOR EQUAL 6)
-    list(FILTER SOURCE_CPP EXCLUDE REGEX "SBarcodeFilter.cpp")
+    list(APPEND SOURCE_FILES
+        "SBarcodeScanner.h" "SBarcodeScanner.cpp")
 else()
-    list(FILTER SOURCE_CPP EXCLUDE REGEX "SBarcodeScanner.cpp")
+    list(APPEND SOURCE_FILES
+        "SBarcodeFilter.h" "SBarcodeFilter.cpp")
 endif()
 
-add_library(${PROJECT_NAME} STATIC ${SOURCE_CPP})
+add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES})
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
     QT_QML_MODULE_VERSION 1.0

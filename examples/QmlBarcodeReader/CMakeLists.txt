@@ -10,6 +10,10 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+set(USE_BINARIES OFF)
+
+set(SCODES_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../src")
+
 #Check this file for any *_DIR variable definitions and other
 include("cmake/Locations.cmake")
 
@@ -19,7 +23,9 @@ else()
     qt_add_resources(RSCS Qt6qml.qrc)
 endif()
 
-add_subdirectory(${LIB_DIR} ${CMAKE_BINARY_DIR}/SCodes)
+if(NOT USE_BINARIES)
+    add_subdirectory(${LIB_DIR} ${CMAKE_BINARY_DIR}/SCodes)
+endif()
 
 if(ANDROID)
 
@@ -37,7 +43,7 @@ if(ANDROID)
           ${QT_ANDROID_PACKAGE_SOURCE_DIR}/gradlew
           ${QT_ANDROID_PACKAGE_SOURCE_DIR}/res/values/libs.xml
         )
-    add_library(${PROJECT_NAME} SHARED main.cpp ${RSCS} ${ANDROID_SOURCES})
+        add_library(${PROJECT_NAME} SHARED main.cpp ${RSCS} ${ANDROID_SOURCES})
 
     else()
 
@@ -55,8 +61,12 @@ else()
 
 endif()
 
-target_link_libraries(${PROJECT_NAME} PRIVATE ${REQUIRED_QT_LIBS} SCodes)
-
+if(USE_BINARIES)
+    target_include_directories(${PROJECT_NAME} PUBLIC ${SCODES_DIR} ${SCODES_DIR}/zxing-cpp/core/src)
+    target_link_libraries(${PROJECT_NAME} PRIVATE ${REQUIRED_QT_LIBS} ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/qt5/macOS/libZXing.a ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/qt5/macOS/libSCodes.a)
+else()
+    target_link_libraries(${PROJECT_NAME} PRIVATE ${REQUIRED_QT_LIBS} SCodes)
+endif()
 
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_import_qml_plugins(${PROJECT_NAME})
