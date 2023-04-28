@@ -1,5 +1,3 @@
-
-
 ![SCodes ](/assets/scodes.png)
 # SCodes
 
@@ -65,7 +63,7 @@ All you need to do is to follow these steps.
 1. Add SCodes as submodule, by typing `git submodule add git@gitlab.com:scythestudio/scodes.git`
 2. Update submodule `git submodule update --recursive --init` (you can also put wrapper files to your project manually without adding submodule)
 3. Add `include(scodes/src/SCodes.pri)` to your .pro file
-4. If you want to use barcode reader functionality you need to register `SBarcodeFilter` class for Qt5 or `SBarcodeScanner` class for Qt6. For both version, seperate them with if directive to register as we did in barcode reader example([how to register reader class](#register-reader)). As for barcode generator functionality you just need to register `SBarcodeGenerator` class([how to register generator class](#register-generator)).
+4. If you want to use barcode reader functionality you need to register `SBarcodeFilter` class for Qt5 or `SBarcodeScanner` class for Qt6. For both version, separate them with if directive to register as we did in barcode reader example([how to register reader class](#register-reader)). As for barcode generator functionality you just need to register `SBarcodeGenerator` class([how to register generator class](#register-generator)).
 5. Import SCodes in your Qml file `import com.scythestudio.scodes 1.0`
 6. Import multimedia module `import QtMultimedia 5.15` for Qt5 or `import QtMultimedia` for Qt6.
 7. If build fails, try to add `CONFIG += c++17` to your .pro file
@@ -119,7 +117,7 @@ Qt's multimedia library has major changes. The most importants are, changes in Q
 
 SCodes library is using `SBarcodeFilter` class for Qt5 and `SBarcodesScanner` class for Qt6 version. 
 
-VideoOutput QML element has major changes and it is not possible to use same QML files for       both version. If you want to implement barcode reader functionality for both version you need to create two seperate QML file too(that's because of QML VideoOutput changes in multimedia module of Qt6). Check our [QmlBarcodeReader example](https://github.com/scytheStudio/SCodes/tree/master/examples/QmlBarcodeReader) for more details. 
+VideoOutput QML element has major changes and it is not possible to use same QML files for       both version. If you want to implement barcode reader functionality for both version you need to create two separate QML file too(that's because of QML VideoOutput changes in multimedia module of Qt6). Check our [QmlBarcodeReader example](https://github.com/scytheStudio/SCodes/tree/master/examples/QmlBarcodeReader) for more details. 
 
 `SBarcodeFilter.cpp` and `SBarcodesScanner.cpp` files included/excluded according to the Qt version in the [SCodes CMakeLists file](https://github.com/scytheStudio/SCodes/blob/master/src/CMakeLists.txt). The idea of excluding the related class according to Qt version is prevent to get error from not existing libraries when you compile the project for Qt6(e.g. QVideoFilterRunnable, QAbstractVideoFilter). Likewise in Qt5 for QVideoSink.
 
@@ -133,7 +131,7 @@ Right after that camera started.
     camera->start();
 ```
 
-Also, in the constuctor, `Worker` object that dependent on scanner variable passed to workerThread instance. So, we can access to resources of the scanner object.
+Also, in the constructor, `Worker` object that dependent on scanner variable passed to workerThread instance. So, we can access to resources of the scanner object.
 ```c++
     worker->moveToThread(&workerThread); 
 ```
