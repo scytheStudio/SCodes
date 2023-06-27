@@ -31,6 +31,12 @@ SBarcodeDecoder *SBarcodeScanner::getDecoder()
 void SBarcodeScanner::initCam() {
     camera = new QCamera(this);
 
+    if(camera->error())
+    {
+        qDebug() << "[SCodes] initCam() Failed: " << camera->errorString();
+        return;
+    }
+
     const auto settings = camera->cameraDevice().videoFormats();
 
 #ifdef Q_OS_ANDROID
