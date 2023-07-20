@@ -220,32 +220,27 @@ QImage SBarcodeDecoder::videoFrameToImage(const QVideoFrame &videoFrame, const Q
     }
 
     #else
+    // The CPU / GPU buffer check is done internally, or so it seems
+    QImage image = videoFrame.toImage();
 
-    auto handleType = videoFrame.handleType();
-
-    if (handleType == QVideoFrame::NoHandle) {
-
-        QImage image = videoFrame.toImage();
-
-        if (image.isNull()) {
-            return QImage();
-        }
-
-        if (image.format() != QImage::Format_ARGB32) {
-            image = image.convertToFormat(QImage::Format_ARGB32);
-        }
-
-        // that's because qml videooutput has no mapNormalizedRectToItem method
-#ifdef Q_OS_ANDROID
-        return image.copy(m_resolutionHeight/4, m_resolutionWidth/4, m_resolutionHeight/2, m_resolutionWidth/2);
-#else
-        return image.copy(captureRect);
-#endif
+    if (image.isNull()) {
+        return QImage();
     }
 
-    #endif
+    if (image.format() != QImage::Format_ARGB32) {
+        image = image.convertToFormat(QImage::Format_ARGB32);
+    }
 
-    return QImage();
+    // that's because qml videooutput has no mapNormalizedRectToItem method
+#ifdef Q_OS_ANDROID
+    return image.copy(m_resolutionHeight/4, m_resolutionWidth/4, m_resolutionHeight/2, m_resolutionWidth/2);
+#else
+    return image.copy(captureRect);
+#endif // Q_OS_ANDROID
+
+
+#endif // QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+
 }
 
 void SBarcodeDecoder::setResolution(const int &w, const int &h)
