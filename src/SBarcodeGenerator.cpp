@@ -10,10 +10,6 @@
 #endif
 
 #include "MultiFormatWriter.h"
-#include "TextUtfEncoding.h"
-
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "stb_image_write.h"
 
 SBarcodeGenerator::SBarcodeGenerator(QQuickItem *parent)
     : QQuickItem(parent)
@@ -28,18 +24,16 @@ bool SBarcodeGenerator::generate(const QString &inputString)
             ZXing::MultiFormatWriter writer = ZXing::MultiFormatWriter(SCodes::toZXingFormat(m_format)).setMargin(
                 m_margin).setEccLevel(m_eccLevel);
 
-            _bitmap =
-              ZXing::ToMatrix<uint8_t>(writer.encode(ZXing::TextUtfEncoding::FromUtf8(inputString.toStdString()),
-                m_width, m_height));
+            _bitmap = ZXing::ToMatrix<uint8_t>(writer.encode(inputString.toStdString(), m_width, m_height));
 
             m_filePath = QDir::tempPath() + "/" + m_fileName + "." + m_extension;
 
-            if (m_extension == "png") {
-                stbi_write_png(m_filePath.toStdString().c_str(), _bitmap.width(), _bitmap.height(), 1, _bitmap.data(),
-                  0);
-            } else if (m_extension == "jpg" || m_extension == "jpeg") {
-                stbi_write_jpg(m_filePath.toStdString().c_str(), _bitmap.width(), _bitmap.height(), 1, _bitmap.data(),
-                  0);
+            auto image = QImage(_bitmap.data(), m_width, m_height, QImage::Format::Format_Grayscale8);
+
+            QFile file{m_filePath};
+
+            if(file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
+                image.save(&file);
             }
 
             emit generationFinished();
