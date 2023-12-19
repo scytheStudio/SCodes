@@ -26,6 +26,7 @@ class SBarcodeScanner : public QVideoSink
 
     Q_PROPERTY(QVideoSink* videoSink READ videoSink WRITE setVideoSink NOTIFY videoSinkChanged)
     Q_PROPERTY(QRectF captureRect READ captureRect WRITE setCaptureRect NOTIFY captureRectChanged)
+    Q_PROPERTY(bool cameraAvailable READ cameraAvailable)
 
 public:
     explicit SBarcodeScanner(QObject *parent = nullptr);
@@ -64,6 +65,12 @@ public:
      * \brief Function for getting captured string
      */
     QString captured() const;
+
+    /*!
+     * \fn bool cameraAvailable() const
+     * \brief Function for getting camera availability
+     */
+    bool cameraAvailable() const;
 
 public slots:
     /*!
