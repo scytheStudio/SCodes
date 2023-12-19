@@ -2,12 +2,12 @@
 #include <QQmlApplicationEngine>
 
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    #include "SBarcodeFilter.h"
+#include "SBarcodeFilter.h"
 #else
-    #include "SBarcodeScanner.h"
+#include "SBarcodeScanner.h"
 #endif
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_UseDesktopOpenGL);
 
@@ -19,6 +19,8 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;
 
     qmlRegisterSingletonType(QUrl("qrc:/qml/Theme.qml"), "Theme", 1, 0, "Theme");
+    qmlRegisterUncreatableMetaObject(
+        SCodes::staticMetaObject, "com.scythestudio.scodes", 1, 0, "SCodes", "Error, enum type");
 
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     qmlRegisterType<SBarcodeFilter>("com.scythestudio.scodes", 1, 0, "SBarcodeScanner");
