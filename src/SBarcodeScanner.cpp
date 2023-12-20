@@ -35,6 +35,7 @@ void SBarcodeScanner::initCam()
 
     if (camera->error()) {
         qDebug() << "Error during camera initialization: " << camera->errorString();
+        setErrorDescription(camera->errorString());
         return;
     }
 
@@ -58,6 +59,7 @@ void SBarcodeScanner::initCam()
     m_capture.setCamera(camera);
     m_capture.setVideoSink(this);
 
+    setCameraAvailable(true);
     camera->start();
 }
 
@@ -65,6 +67,7 @@ void SBarcodeScanner::stopCam()
 {
     camera->stop();
     disconnect(camera, 0, 0, 0);
+    setCameraAvailable(false);
     camera->setParent(nullptr);
     delete camera;
     camera = nullptr;
@@ -80,6 +83,16 @@ void SBarcodeScanner::handleFrameCaptured(const QVideoFrame& frame)
         }
     }
     pauseProcessing();
+}
+
+void SBarcodeScanner::setCameraAvailable(bool available)
+{
+    if (m_cameraAvailable == available) {
+        return;
+    }
+
+    m_cameraAvailable = available;
+    emit cameraAvailableChanged();
 }
 
 void SBarcodeScanner::imageProcess(
@@ -151,5 +164,20 @@ void SBarcodeScanner::setVideoSink(QVideoSink* videoSink)
 
 bool SBarcodeScanner::cameraAvailable() const
 {
-    return camera->isAvailable();
+    return m_cameraAvailable;
+}
+
+QString SBarcodeScanner::errorDescription() const
+{
+    return m_errorDescription;
+}
+
+void SBarcodeScanner::setErrorDescription(const QString& newErrorDescription)
+{
+    if (m_errorDescription == newErrorDescription) {
+        return;
+    }
+
+    m_errorDescription = newErrorDescription;
+    emit errorDescriptionChanged();
 }
