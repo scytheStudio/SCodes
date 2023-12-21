@@ -60,7 +60,7 @@ Above blog posts contains step by step tutorial on how to do that for Qt5 versio
 ### qmake
 All you need to do is to follow these steps.
 
-1. Add SCodes as submodule, by typing `git submodule add git@gitlab.com:scythestudio/scodes.git`
+1. Add SCodes as submodule, by typing `git submodule add git@github.com:scytheStudio/SCodes.git`
 2. Update submodule `git submodule update --recursive --init` (you can also put wrapper files to your project manually without adding submodule)
 3. Add `include(scodes/src/SCodes.pri)` to your .pro file
 4. If you want to use barcode reader functionality you need to register `SBarcodeFilter` class for Qt5 or `SBarcodeScanner` class for Qt6. For both version, separate them with if directive to register as we did in barcode reader example([how to register reader class](#register-reader)). As for barcode generator functionality you just need to register `SBarcodeGenerator` class([how to register generator class](#register-generator)).

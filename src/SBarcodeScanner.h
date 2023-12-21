@@ -26,6 +26,8 @@ class SBarcodeScanner : public QVideoSink
 
     Q_PROPERTY(QVideoSink* videoSink READ videoSink WRITE setVideoSink NOTIFY videoSinkChanged)
     Q_PROPERTY(QRectF captureRect READ captureRect WRITE setCaptureRect NOTIFY captureRectChanged)
+    Q_PROPERTY(QString errorDescription READ errorDescription NOTIFY errorDescriptionChanged)
+    Q_PROPERTY(bool cameraAvailable READ cameraAvailable NOTIFY cameraAvailableChanged)
 
 public:
     explicit SBarcodeScanner(QObject *parent = nullptr);
@@ -64,6 +66,18 @@ public:
      * \brief Function for getting captured string
      */
     QString captured() const;
+
+    /*!
+     * \fn bool cameraAvailable() const
+     * \brief Function for getting camera availability
+     */
+    bool cameraAvailable() const;
+
+    /*!
+     * \fn bool errorDescription() const
+     * \brief Function for getting error description
+     */
+    QString errorDescription() const;
 
 public slots:
     /*!
@@ -138,6 +152,16 @@ private:
     bool m_processing = true;
 
     /*!
+     * \brief Indicates the camera availability state
+     */
+    bool m_cameraAvailable = false;
+
+    /*!
+     * \brief Contains error message of the scanner
+     */
+     QString m_errorDescription = "";
+
+    /*!
      * \fn void setCaptured(const QString &captured)
      * \brief Function for setting capture string
      * \param const QString &captured - captured string
@@ -150,6 +174,20 @@ private:
      * \param const QVideoFrame &frame - video frame
      */
     void handleFrameCaptured(const QVideoFrame &frame);
+
+    /*!
+     * \fn void setCameraAvailable(bool available)
+     * \brief Function setting camera availability
+     * \param bool available - camera availability status
+     */
+    void setCameraAvailable(bool available);
+
+    /*!
+     * \fn void setErrorDescription(const QString &newErrorDescription)
+     * \brief Function setting error message that occured during initialization
+     * \param const QString &newErrorDescription - error message
+     */
+    void setErrorDescription(const QString &newErrorDescription);
 
 signals:
     /*!
@@ -178,6 +216,16 @@ signals:
      * \param const QString &captured - captured string
      */
     void capturedChanged(const QString &captured);
+
+    /*!
+     * \brief This signal is emitted when camera availability has changed
+     */
+    void cameraAvailableChanged();
+
+    /*!
+     * \brief This signal is emitted when the error description string changed
+     */
+    void errorDescriptionChanged();
 
 private slots:
     /*!
