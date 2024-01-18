@@ -1,4 +1,5 @@
 #include "SBarcodeDecoder.h"
+#include "ResultPoint.h"
 
 #include <QDebug>
 #include <QImage>
@@ -9,8 +10,6 @@
 #include <iostream>
 
 #include <ReadBarcode.h>
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
 
 
 /*!
@@ -18,7 +17,7 @@
  */
 namespace ZXing {
 namespace Qt {
-using ZXing::DecodeHints;
+using ZXing::ReaderOptions;
 using ZXing::BarcodeFormat;
 using ZXing::BarcodeFormats;
 using ZXing::Binarizer;
@@ -44,22 +43,21 @@ public:
 
     using ZXing::Result::format;
     using ZXing::Result::isValid;
-    using ZXing::Result::status;
 
     /*!
      * \fn inline QString text() const
      * \return scanned result human readable text
      */
-    inline QString text() const { return QString::fromWCharArray(ZXing::Result::text().c_str()); }
+    inline QString text() const { return QString::fromStdString(ZXing::Result::text()); }
 };
 
 /*!
- * \fn Result ReadBarcode(const QImage& img, const DecodeHints& hints = { })
+ * \fn Result ReadBarcode(const QImage& img, const ReaderOptions& options = { })
  * \brief Interface for calling ZXing::ReadBarcode method to get result as a text.
  * \param const QImage& img - referance of the image to be processed
- * \param const DecodeHints& hints - barcode decode hints
+ * \param const ReaderOptions& options - barcode decode hints
  */
-Result ReadBarcode(const QImage& img, const DecodeHints& hints = { })
+Result ReadBarcode(const QImage& img, const ReaderOptions& options = { })
 {
     auto ImgFmtFromQImg = [](const QImage& img){
           switch (img.format()) {
@@ -84,7 +82,7 @@ Result ReadBarcode(const QImage& img, const DecodeHints& hints = { })
       };
 
     auto exec = [&](const QImage& img){
-          return Result(ZXing::ReadBarcode({ img.bits(), img.width(), img.height(), ImgFmtFromQImg(img) }, hints));
+          return Result(ZXing::ReadBarcode({ img.bits(), img.width(), img.height(), ImgFmtFromQImg(img) }, options));
       };
 
     return ImgFmtFromQImg(img) == ImageFormat::None ? exec(img.convertToFormat(QImage::Format_RGBX8888)) : exec(img);
@@ -150,14 +148,14 @@ void SBarcodeDecoder::process(const QImage capturedImage, ZXing::BarcodeFormats 
 {
     setIsDecoding(true);
 
-    const auto hints = DecodeHints()
+    const auto readerOptions = ReaderOptions()
       .setFormats(formats)
       .setTryHarder(true)
       .setTryRotate(true)
       .setIsPure(false)
       .setBinarizer(Binarizer::LocalAverage);
 
-    const auto result = ReadBarcode(capturedImage, hints);
+    const auto result = ReadBarcode(capturedImage, readerOptions);
 
     if (result.isValid()) {
         setCaptured(result.text());

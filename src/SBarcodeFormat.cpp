@@ -23,9 +23,9 @@ const QMap<SCodes::SBarcodeFormat, ZXing::BarcodeFormat> k_formatsTranslations
     { SCodes::SBarcodeFormat::QRCode, ZXing::BarcodeFormat::QRCode },
     { SCodes::SBarcodeFormat::UPCA, ZXing::BarcodeFormat::UPCA },
     { SCodes::SBarcodeFormat::UPCE, ZXing::BarcodeFormat::UPCE },
-
-    { SCodes::SBarcodeFormat::OneDCodes, ZXing::BarcodeFormat::OneDCodes },
-    { SCodes::SBarcodeFormat::TwoDCodes, ZXing::BarcodeFormat::TwoDCodes },
+    { SCodes::SBarcodeFormat::MicroQRCode, ZXing::BarcodeFormat::MicroQRCode },
+    { SCodes::SBarcodeFormat::RMQRCode, ZXing::BarcodeFormat::RMQRCode },
+    { SCodes::SBarcodeFormat::DXFilmEdge, ZXing::BarcodeFormat::DXFilmEdge },
     { SCodes::SBarcodeFormat::Any, ZXing::BarcodeFormat::Any },
 };
 }
@@ -37,7 +37,7 @@ ZXing::BarcodeFormat SCodes::toZXingFormat(SBarcodeFormat format)
 
 QString SCodes::toString(SBarcodeFormat format)
 {
-    return QString(ZXing::ToString(toZXingFormat(format)));
+    return QString::fromStdString(ZXing::ToString(toZXingFormat(format)));
 }
 
 SCodes::SBarcodeFormat SCodes::fromString(const QString &formatName)

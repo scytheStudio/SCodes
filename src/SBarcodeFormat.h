@@ -29,10 +29,13 @@ enum class SBarcodeFormat : int {
     QRCode          = (1 << 13),
     UPCA            = (1 << 14),
     UPCE            = (1 << 15),
+    MicroQRCode     = (1 << 16),
+    RMQRCode        = (1 << 17),
+    DXFilmEdge      = (1 << 18),
 
     OneDCodes       = Codabar | Code39 | Code93 | Code128 | EAN8 | EAN13 | ITF | DataBar | DataBarExpanded | UPCA
-      | UPCE,
-    TwoDCodes       = Aztec | DataMatrix | MaxiCode | PDF417 | QRCode,
+      | UPCE | DXFilmEdge,
+    TwoDCodes       = Aztec | DataMatrix | MaxiCode | PDF417 | QRCode | MicroQRCode | RMQRCode,
     Any             = OneDCodes | TwoDCodes,
     Basic           = Code39 | Code93 | Code128 | QRCode | DataMatrix,
 };

@@ -314,12 +314,6 @@ ApplicationWindow {
               text: "Code128"
             }
             ListElement {
-              text: "DataBar"
-            }
-            ListElement {
-              text: "DataBarExpanded"
-            }
-            ListElement {
               text: "DataMatrix"
             }
             ListElement {
@@ -330,9 +324,6 @@ ApplicationWindow {
             }
             ListElement {
               text: "ITF"
-            }
-            ListElement {
-              text: "MaxiCode"
             }
             ListElement {
               text: "PDF417"
