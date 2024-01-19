@@ -60,7 +60,8 @@ public:
      * \param w - width of the resolution
      * \param h - heigth of the resolution
      */
-    void setResolution(const int &w, const int &h);
+    void setResolution(const QSize&);
+    [[deprecated("Use QSize overload instead")]] void setResolution(int w, int h);
 
 public slots:
     /*!
@@ -94,6 +95,7 @@ private:
      * \brief Captured string from barcode
      */
     QString m_captured = "";
+    QSize m_resolution;
 
     /*!
      * \fn void setCaptured(const QString &captured)

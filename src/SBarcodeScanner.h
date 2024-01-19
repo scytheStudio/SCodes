@@ -18,67 +18,47 @@
 class Worker;
 
 /*!
- * \brief The SBarcodeScanner class is a custom class that allows image processing with the cooperation of QML VideoOutput type.
+ * \brief The SBarcodeScanner class processes the video input from Camera,
  */
-class SBarcodeScanner : public QVideoSink
+class SBarcodeScanner : public QVideoSink, public QQmlParserStatus
 {
     Q_OBJECT
+    Q_INTERFACES(QQmlParserStatus)
+    QML_ELEMENT
 
-    Q_PROPERTY(QVideoSink* videoSink READ videoSink WRITE setVideoSink NOTIFY videoSinkChanged)
+    /// Set this property to the videosink that's supposed to do further processing on video frame. A VideoOutput.videosink for example, to show the video.
+    Q_PROPERTY(QVideoSink* forwardVideoSink MEMBER m_forwardVideoSink WRITE setForwardVideoSink NOTIFY forwardVideoSinkChanged)
+    /// Set this to the subsection of the frame that's acutally supposed to be scanned for qr code.
     Q_PROPERTY(QRectF captureRect READ captureRect WRITE setCaptureRect NOTIFY captureRectChanged)
+    /// (Readonly) This string is set to the description of possible encountered error. Empty if no error.
     Q_PROPERTY(QString errorDescription READ errorDescription NOTIFY errorDescriptionChanged)
+    /// Set to true if camera property is set
     Q_PROPERTY(bool cameraAvailable READ cameraAvailable NOTIFY cameraAvailableChanged)
+    /// Optional property if you want to set your own camera as an video input for scanning. Default video input is chosen by default.
+    Q_PROPERTY(QCamera* camera MEMBER m_camera WRITE setCamera NOTIFY cameraChanged)
 
 public:
     explicit SBarcodeScanner(QObject *parent = nullptr);
     ~SBarcodeScanner() override;
 
-    SBarcodeDecoder *getDecoder() ;
-
+    SBarcodeDecoder *getDecoder();
     /*!
-     * \fn QVideoSink *videoSink() const
-     * \brief Function for getting sink of video output
+     * This function is called after all properties set in Qml instantiation have been assigned.
+     * This allows us to, for example create default camera if none has been set by the user
      */
-    QVideoSink *videoSink() const;
+    void componentComplete() override;
+    /// This function does nothing and is here only to satisfy QQmlParserStatus interface
+    void classBegin() override;
 
-    /*!
-     * \fn void setVideoSink(QVideoSink *videoSink)
-     * \brief Function for setting sink of video output
-     * \param const QVideoSink *videoSink - video sink
-     */
-    void setVideoSink(QVideoSink *videoSink);
 
-    /*!
-     * \fn QRectF captureRect() const
-     * \brief Function for getting capture area
-     */
+
     QRectF captureRect() const;
-
-    /*!
-     * \fn void setCaptureRect(const QRectF &captureRect)
-     * \brief Function for setting capture area
-     * \param const QRectF &captureRect - capture area
-     */
     void setCaptureRect(const QRectF &captureRect);
-
-    /*!
-     * \fn QString captured() const
-     * \brief Function for getting captured string
-     */
     QString captured() const;
-
-    /*!
-     * \fn bool cameraAvailable() const
-     * \brief Function for getting camera availability
-     */
     bool cameraAvailable() const;
-
-    /*!
-     * \fn bool errorDescription() const
-     * \brief Function for getting error description
-     */
     QString errorDescription() const;
-
+    void setCamera(QCamera *newCamera);
+    void setForwardVideoSink(QVideoSink* sink);
 public slots:
     /*!
      * \fn void pauseProcessing()
@@ -105,61 +85,38 @@ public slots:
      */
     void imageProcess(SBarcodeDecoder *decoder, const QImage &image, ZXing::BarcodeFormats formats);
 
+signals:
+    void cameraChanged(QCamera *);
+
+    /// This signal emitted for running process in a thread
+    void process(const QImage &image);
+    void forwardVideoSinkChanged(QVideoSink*);
+    void captureRectChanged(const QRectF &captureRect);
+    void capturedChanged(const QString &captured);
+    void cameraAvailableChanged();
+    void errorDescriptionChanged();
+protected:
+    QCamera* makeDefaultCamera();
 private:
-    /*!
-     * \brief Decoder instance
-     */
+    /// Decoder object, doing the actual Qr detection and conversion
     SBarcodeDecoder m_decoder;
-
-    /*!
-     * \brief Camera instance
-     */
-    QCamera *camera;
-
-    /*!
-     * \brief Pointer to a sink
-     */
-    QPointer<QVideoSink> m_videoSink;
-
-    /*!
-     * \brief Capture area
-     */
+    /// Camera object used to capture video, set automatically to device described by QMediaDevices::defaultVideoInput()
+    QPointer<QCamera> m_camera;
+    /// VideoSink to forward the captured frame to. Normally this should be VideoOutput.videoSink
+    QPointer<QVideoSink> m_forwardVideoSink;
+    /// Subsection of videoframe to capture, in pixels
     QRectF m_captureRect;
-
-    /*!
-     * \brief Captured string
-     */
+    /// Last captured string from QrCode
     QString m_captured = "";
-
-    /*!
-     * \brief Camera session instance
-     */
+    /// QMediaCaptureSession instance to actually perform the camera recording
     QMediaCaptureSession m_capture;
-
-    /*!
-     * \brief An instance of a thread
-     */
+    /// Separate thread for Qr code processing and detection
     QThread workerThread;
-
-    /*!
-     * \brief A pointer of a Worker class
-     */
     Worker *worker;
 
-    /*!
-     * \brief Indicates the processing state
-     */
     bool m_processing = true;
-
-    /*!
-     * \brief Indicates the camera availability state
-     */
     bool m_cameraAvailable = false;
-
-    /*!
-     * \brief Contains error message of the scanner
-     */
-     QString m_errorDescription = "";
+    QString m_errorDescription = "";
 
     /*!
      * \fn void setCaptured(const QString &captured)
@@ -167,13 +124,8 @@ private:
      * \param const QString &captured - captured string
      */
     void setCaptured(const QString &captured);
-
-    /*!
-     * \fn void handleFrameCaptured(const QVideoFrame &frame)
-     * \brief Function for handling video frame
-     * \param const QVideoFrame &frame - video frame
-     */
-    void handleFrameCaptured(const QVideoFrame &frame);
+    /// Try process captured frame, if previous frame is already processed - skip it
+    void tryProcessFrame(const QVideoFrame &frame);
 
     /*!
      * \fn void setCameraAvailable(bool available)
@@ -188,57 +140,6 @@ private:
      * \param const QString &newErrorDescription - error message
      */
     void setErrorDescription(const QString &newErrorDescription);
-
-signals:
-    /*!
-     * \brief This signal emitted when camera changed
-     */
-    void cameraChanged();
-
-    /*!
-     * \brief This signal emitted for running process in a thread
-     */
-    void process(const QImage &image);
-
-    /*!
-     * \brief This signal is emitted when sink changed
-     */
-    void videoSinkChanged();
-
-    /*!
-     * \brief This signal is emitted when capture area changed
-     * \param const QRectF &captureRect - capture area
-     */
-    void captureRectChanged(const QRectF &captureRect);
-
-    /*!
-     * \brief This signal is emitted when captured string changed
-     * \param const QString &captured - captured string
-     */
-    void capturedChanged(const QString &captured);
-
-    /*!
-     * \brief This signal is emitted when camera availability has changed
-     */
-    void cameraAvailableChanged();
-
-    /*!
-     * \brief This signal is emitted when the error description string changed
-     */
-    void errorDescriptionChanged();
-
-private slots:
-    /*!
-     * \fn void initCam()
-     * \brief Function for initialization of camera
-     */
-    void initCam();
-
-    /*!
-     * \fn void stopCam()
-     * \brief Function for stopping camera
-     */
-    void stopCam();
 };
 
 /*!

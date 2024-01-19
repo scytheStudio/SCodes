@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.1)
 
 project(SCodes LANGUAGES CXX)
+option(SS_SCODES_DEBUG OFF)
+
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
@@ -30,15 +32,23 @@ else()
     list(FILTER SOURCE_CPP EXCLUDE REGEX "SBarcodeScanner.cpp")
 endif()
 
-add_library(${PROJECT_NAME} STATIC ${SOURCE_CPP})
 
+add_library(${PROJECT_NAME} STATIC ${SOURCE_CPP})
+target_sources(${PROJECT_NAME} PRIVATE private/debug.h)
 set_target_properties(${PROJECT_NAME} PROPERTIES
     QT_QML_MODULE_VERSION 1.0
     QT_QML_MODULE_URI com.scythestudio.scodes
+
 )
+if(SS_SCODES_DEBUG)
+    message("${PROJECT_NAME} debug messages enabled: ${SS_SCODES_DEBUG}")
+    target_compile_definitions(${PROJECT_NAME} PUBLIC SS_SCODES_DEBUG)
+endif()
+
 
 target_link_libraries(${PROJECT_NAME} PUBLIC ZXing Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Multimedia Qt${QT_VERSION_MAJOR}::Concurrent Qt${QT_VERSION_MAJOR}::Quick)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(${PROJECT_NAME} PRIVATE  "${CMAKE_CURRENT_SOURCE_DIR}/private")
 
 if (ANDROID)
 

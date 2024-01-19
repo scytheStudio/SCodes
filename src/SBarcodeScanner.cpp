@@ -1,27 +1,31 @@
 #include "SBarcodeScanner.h"
-
+#include <QMediaDevices>
+#include "debug.h"
 SBarcodeScanner::SBarcodeScanner(QObject* parent)
     : QVideoSink(parent)
-    , camera(nullptr)
+    , m_camera(nullptr)
 {
+    // Connect self to the media capture session
+    m_capture.setVideoSink(this);
 
+    // initiate decoder on another thread
     connect(&m_decoder, &SBarcodeDecoder::capturedChanged, this, &SBarcodeScanner::setCaptured);
-    connect(this, &QVideoSink::videoFrameChanged, this, &SBarcodeScanner::handleFrameCaptured);
+    connect(this, &QVideoSink::videoFrameChanged, this, &SBarcodeScanner::tryProcessFrame);
+
+    // Connect cameraAvaliable property. Utilise implicit conversion from pointer to bool.
+    connect(this, &SBarcodeScanner::cameraChanged, this, &SBarcodeScanner::cameraAvailable);
 
     worker = new Worker(this);
     worker->moveToThread(&workerThread);
     connect(&workerThread, &QThread::finished, worker, &QObject::deleteLater);
     connect(this, &SBarcodeScanner::process, worker, &Worker::process);
     workerThread.start();
-
-    initCam();
 }
 
 SBarcodeScanner::~SBarcodeScanner()
 {
     workerThread.quit();
     workerThread.wait();
-    stopCam();
 }
 
 SBarcodeDecoder* SBarcodeScanner::getDecoder()
@@ -29,58 +33,25 @@ SBarcodeDecoder* SBarcodeScanner::getDecoder()
     return &m_decoder;
 }
 
-void SBarcodeScanner::initCam()
+void SBarcodeScanner::componentComplete()
 {
-    camera = new QCamera(this);
-
-    if (camera->error()) {
-        qDebug() << "Error during camera initialization: " << camera->errorString();
-        setErrorDescription(camera->errorString());
-        return;
+    sDebug() << "Component complete, Camera status: " << m_camera;
+    if(m_camera.isNull())
+    {
+        sDebug() << "No camera provided. Setting default camera";
+        setCamera(makeDefaultCamera());
     }
-
-    const auto settings = camera->cameraDevice().videoFormats();
-
-#ifdef Q_OS_ANDROID
-    int i = camera->cameraDevice().videoFormats().size() - 1;
-#else
-    int i = 0;
-#endif
-
-    const auto s = settings.at(i);
-
-    int w = settings.at(i).resolution().width();
-    int h = settings.at(i).resolution().height();
-    m_decoder.setResolution(w, h);
-
-    camera->setFocusMode(QCamera::FocusModeAuto);
-    camera->setCameraFormat(s);
-
-    m_capture.setCamera(camera);
-    m_capture.setVideoSink(this);
-
-    setCameraAvailable(true);
-    camera->start();
 }
 
-void SBarcodeScanner::stopCam()
+void SBarcodeScanner::classBegin()
 {
-    camera->stop();
-    disconnect(camera, 0, 0, 0);
-    setCameraAvailable(false);
-    camera->setParent(nullptr);
-    delete camera;
-    camera = nullptr;
+    return;
 }
 
-void SBarcodeScanner::handleFrameCaptured(const QVideoFrame& frame)
+void SBarcodeScanner::tryProcessFrame(const QVideoFrame& frame)
 {
     if (m_processing) {
         emit process(m_decoder.videoFrameToImage(frame, captureRect().toRect()));
-
-        if (m_videoSink) {
-            m_videoSink->setVideoFrame(frame);
-        }
     }
     pauseProcessing();
 }
@@ -102,6 +73,35 @@ void SBarcodeScanner::imageProcess(
     continueProcessing();
 }
 
+QCamera *SBarcodeScanner::makeDefaultCamera()
+{
+    auto defaultCamera = QMediaDevices::defaultVideoInput();
+    if (defaultCamera.isNull())
+    {
+        sDebug() << "No default camera found!";
+        setErrorDescription("No default camera could be found on the system");
+        return nullptr;
+    }
+
+    auto camera = new QCamera(defaultCamera, this);
+    if (camera->error()) {
+        sDebug() << "Error during camera initialization: " << camera->errorString();
+        setErrorDescription(camera->errorString());
+        return nullptr;
+    }
+
+// TODO: Either explain what this is or remove it
+#ifdef Q_OS_ANDROID
+    const auto format = camera->cameraDevice().videoFormats().last();
+#else
+    const auto format = camera->cameraDevice().videoFormats().first();
+#endif
+
+    camera->setFocusMode(QCamera::FocusModeAuto);
+    camera->setCameraFormat(format);
+    return camera;
+}
+
 void SBarcodeScanner::setProcessing(bool p)
 {
     m_processing = p;
@@ -109,12 +109,12 @@ void SBarcodeScanner::setProcessing(bool p)
 
 void SBarcodeScanner::pauseProcessing()
 {
-    disconnect(this, &QVideoSink::videoFrameChanged, this, &SBarcodeScanner::handleFrameCaptured);
+    disconnect(this, &QVideoSink::videoFrameChanged, this, &SBarcodeScanner::tryProcessFrame);
 }
 
 void SBarcodeScanner::continueProcessing()
 {
-    connect(this, &QVideoSink::videoFrameChanged, this, &SBarcodeScanner::handleFrameCaptured);
+    connect(this, &QVideoSink::videoFrameChanged, this, &SBarcodeScanner::tryProcessFrame);
 }
 
 void SBarcodeScanner::setCaptured(const QString& captured)
@@ -144,23 +144,10 @@ void SBarcodeScanner::setCaptureRect(const QRectF& captureRect)
     }
 
     m_captureRect = captureRect;
+    sDebug() << "Capture Rectangle changed:" << m_captureRect;
     emit captureRectChanged(m_captureRect);
 }
 
-QVideoSink* SBarcodeScanner::videoSink() const
-{
-    return m_videoSink.get();
-}
-
-void SBarcodeScanner::setVideoSink(QVideoSink* videoSink)
-{
-    if (m_videoSink == videoSink) {
-        return;
-    }
-
-    m_videoSink = videoSink;
-    emit videoSinkChanged();
-}
 
 bool SBarcodeScanner::cameraAvailable() const
 {
@@ -170,6 +157,63 @@ bool SBarcodeScanner::cameraAvailable() const
 QString SBarcodeScanner::errorDescription() const
 {
     return m_errorDescription;
+}
+
+void SBarcodeScanner::setCamera(QCamera *newCamera)
+{
+    if(m_camera == newCamera){
+        return;
+    }
+    // disconnect old camera if not already null
+    if(m_camera)
+    {
+        m_camera->stop();
+        disconnect(m_camera,nullptr,this,nullptr);
+        m_capture.setCamera(nullptr);
+        if(m_camera->parent() == this)
+        {
+            delete m_camera;
+        }
+        m_camera = nullptr;
+    }
+
+    // connect new camera if not null
+    if(newCamera)
+    {
+        auto format = newCamera->cameraFormat();
+        connect(newCamera,&QCamera::errorOccurred,this,[this](auto err,const auto& string){
+            sDebug() << "Camera error:" << string;
+            setErrorDescription(string);
+        });
+        m_decoder.setResolution(format.resolution());
+        m_capture.setCamera(newCamera);
+        m_camera = newCamera;
+        m_camera->start();
+    }
+    sDebug() << "New Camera set: " << m_camera
+            << "\nFormat:\n"
+            << "  Pixel format:" << m_camera->cameraFormat().pixelFormat() << '\n'
+            << "  Resolution:" << m_camera->cameraFormat().resolution() << '\n'
+            << "  FPS:" << m_camera->cameraFormat().minFrameRate() << "-" << m_camera->cameraFormat().maxFrameRate();
+
+    emit cameraChanged(m_camera);
+}
+
+void SBarcodeScanner::setForwardVideoSink(QVideoSink *newSink)
+{
+    if(m_forwardVideoSink == newSink){
+        return;
+    }
+    if(m_forwardVideoSink)
+    {
+        disconnect(this,nullptr,m_forwardVideoSink,nullptr);
+    }
+    if(newSink)
+    {
+        connect(this,&SBarcodeScanner::videoFrameChanged,newSink,&QVideoSink::setVideoFrame);
+    }
+    m_forwardVideoSink = newSink;
+    forwardVideoSinkChanged(m_forwardVideoSink);
 }
 
 void SBarcodeScanner::setErrorDescription(const QString& newErrorDescription)
