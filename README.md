@@ -111,40 +111,14 @@ Registering the barcode generator class:
 ```
 
 <a name="porting"></a>
-### Porting to Qt6
+### Implementation details in Qt6
 
 Qt's multimedia library has major changes. The most importants are, changes in QML `VideoOutput`, absence of `QVideoFilterRunnable` and `QAbstractVideoFilter` classes in Qt6.
 
 SCodes library is using `SBarcodeFilter` class for Qt5 and `SBarcodesScanner` class for Qt6 version. 
 
-VideoOutput QML element has major changes and it is not possible to use same QML files for       both version. If you want to implement barcode reader functionality for both version you need to create two separate QML file too(that's because of QML VideoOutput changes in multimedia module of Qt6). Check our [QmlBarcodeReader example](https://github.com/scytheStudio/SCodes/tree/master/examples/QmlBarcodeReader) for more details. 
+If you want to read more about implementation details of the library in Qt6 read the document: [Implementation Details in Qt6](https://github.com/scytheStudio/SCodes/blob/master/doc/detailsQt6.md)
 
-`SBarcodeFilter.cpp` and `SBarcodesScanner.cpp` files included/excluded according to the Qt version in the [SCodes CMakeLists file](https://github.com/scytheStudio/SCodes/blob/master/src/CMakeLists.txt). The idea of excluding the related class according to Qt version is prevent to get error from not existing libraries when you compile the project for Qt6(e.g. QVideoFilterRunnable, QAbstractVideoFilter). Likewise in Qt5 for QVideoSink.
-
-SBarcodeScanner class is inherited from QVideoSink class. First, QMediaCaptureSession class instantiated and in the constructor `initCam()` function called to give QCamera and QVideoSink(the class itself) instances to QMediaCaptureSession instance as a parameter:
-```c++
-    m_capture.setCamera(camera);
-    m_capture.setVideoSink(this);
-```
-Right after that camera started.
-```c++
-    camera->start();
-```
-
-Also, in the constructor, `Worker` object that dependent on scanner variable passed to workerThread instance. So, we can access to resources of the scanner object.
-```c++
-    worker->moveToThread(&workerThread); 
-```
-`VideoOutput` has a `videoSink` property in Qt6(which holds C++ QVideoSink object that is used to render the video frames). This property assigned to m_videosink pointer of `SBarcodeScanner` to be able to get frames from QML VideoOutput element. To handle the frames `QVideoSink::videoFrameChanged` signal connected to `SBarcodeScanner::handleFrameCaptured` slot.
-As soon as new frame has came to the handle function;
-```c++
-    emit process(QImage &img);
-```
-signal emitted and `imageProcess` function started to run in worker thread.
-Also, frame passed to m_videoSink in order to show the frames on the screen.
-```c++
-    m_videoSink->setVideoFrame(frame);
-```
 
 ### Trying various formats
 `SBarcodeFilter` is a class that you need to use for scanning case. By default it scans only specific basic formats of code (Code 39, Code 93, Code 128, QR Code and DataMatrix.).
