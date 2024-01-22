@@ -90,11 +90,20 @@ QCamera *SBarcodeScanner::makeDefaultCamera()
         return nullptr;
     }
 
+    auto supportedFormats = camera->cameraDevice().videoFormats();
+    if(supportedFormats.empty())
+    {
+        const char* msg = "A default camera was found but it has no supported formats. The Camera may be wrongly configured.";
+        sDebug() << msg ;
+        setErrorDescription(msg);
+        return nullptr;
+    }
+
 // TODO: Either explain what this is or remove it
 #ifdef Q_OS_ANDROID
-    const auto format = camera->cameraDevice().videoFormats().last();
+    const auto format = supportedFormats.last();
 #else
-    const auto format = camera->cameraDevice().videoFormats().first();
+    const auto format = supportedFormats.first();
 #endif
 
     camera->setFocusMode(QCamera::FocusModeAuto);
