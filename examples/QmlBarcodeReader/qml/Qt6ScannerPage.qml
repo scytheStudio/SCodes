@@ -3,23 +3,26 @@ import QtQuick.Controls
 import QtMultimedia
 import com.scythestudio.scodes 1.0
 
+
 /*!
   Barcode scanner main page. All QML elements managing from here.
   */
 ApplicationWindow {
   id: root
 
-  width: Qt.platform.os === "android" || Qt.platform.os === "ios" ? Screen.width : 1280
-  height: Qt.platform.os === "android" || Qt.platform.os === "ios" ? Screen.height : 720
+  width: Qt.platform.os === "android"
+         || Qt.platform.os === "ios" ? Screen.width : 1280
+  height: Qt.platform.os === "android"
+          || Qt.platform.os === "ios" ? Screen.height : 720
 
   visible: true
 
   SBarcodeScanner {
     id: barcodeScanner
 
-    videoSink: videoOutput.videoSink
+    forwardVideoSink: videoOutput.videoSink
 
-    captureRect: Qt.rect(root.width / 4, root.height / 4, root.width / 2, root.height / 2)
+    captureRect: Qt.rect(1 / 4, 1 / 4, 1 / 2, 1 / 2)
 
     onCapturedChanged: function (captured) {
       scanResultText.text = captured
@@ -89,13 +92,5 @@ ApplicationWindow {
         }
       }
     }
-  }
-
-  onHeightChanged: {
-    barcodeScanner.captureRect = Qt.rect(width / 4, height / 4, width / 2, height / 2)
-  }
-
-  onWidthChanged: {
-    barcodeScanner.captureRect = Qt.rect(width / 4, height / 4, width / 2, height / 2)
   }
 }

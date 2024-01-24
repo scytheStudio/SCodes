@@ -42,7 +42,6 @@ if(ANDROID)
     else()
 
         qt_add_executable(${PROJECT_NAME} MANUAL_FINALIZATION main.cpp ${RSCS})
-
         set_target_properties(${PROJECT_NAME} PROPERTIES
             QT_ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android"
         )

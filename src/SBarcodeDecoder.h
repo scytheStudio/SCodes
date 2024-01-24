@@ -52,7 +52,7 @@ public:
      * \param QVideoFrame &videoFrame - frame of video data.
      * \param const QRect &captureRect - capture area rectangle.
      */
-    static QImage videoFrameToImage(const QVideoFrame &videoFrame, const QRect &captureRect);
+    QImage videoFrameToImage(const QVideoFrame &videoFrame, const QRect &captureRect) const;
 
     /*!
      * \fn void setResolution(const int &w, const int &h)
@@ -60,7 +60,8 @@ public:
      * \param w - width of the resolution
      * \param h - heigth of the resolution
      */
-    void setResolution(const int &w, const int &h);
+    void setResolution(const QSize&);
+    [[deprecated("Use QSize overload instead")]] void setResolution(int w, int h);
 
 public slots:
     /*!
@@ -94,6 +95,7 @@ private:
      * \brief Captured string from barcode
      */
     QString m_captured = "";
+    QSize m_resolution;
 
     /*!
      * \fn void setCaptured(const QString &captured)

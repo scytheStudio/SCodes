@@ -13,11 +13,11 @@ Item {
   Item {
     id: captureZoneCorners
 
-    x: root.captureRect.x
-    y: root.captureRect.y
+    x: parent.width * root.captureRect.x
+    y: parent.height * root.captureRect.y
 
-    width: root.captureRect.width
-    height: root.captureRect.height
+    width: parent.width * root.captureRect.width
+    height: parent.height * root.captureRect.height
 
     Rectangle {
       id: topLeftCornerH
@@ -158,7 +158,6 @@ Item {
         id: scanIndicatorAnimation
 
         loops: Animation.Infinite
-
         PropertyAnimation {
           id: toTopAnimation
 
@@ -205,8 +204,8 @@ Item {
   }
 
   onCaptureRectChanged: {
-    toTopAnimation.to = 5
-    toBottomAnimation.to = captureRect.height - 10
+    toTopAnimation.to = 10
+    toBottomAnimation.to = scanCapsuleText.x
     scanIndicatorAnimation.start()
   }
 }

@@ -50,7 +50,7 @@ public:
         }
 
         const QImage croppedCapturedImage =
-          SBarcodeDecoder::videoFrameToImage(*input, _filter->captureRect().toRect());
+            _filter->getDecoder()->videoFrameToImage(*input, _filter->captureRect().toRect());
         _filter->getImageFuture() =
           QtConcurrent::run(processImage, _filter->getDecoder(), croppedCapturedImage,
             SCodes::toZXingFormat(_filter->format()));

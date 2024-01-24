@@ -101,9 +101,6 @@ std::ostream& operator << (std::ostream& os, const std::vector<ZXing::ResultPoin
     return os;
 }
 
-static int m_resolutionWidth = DEFAULT_RES_W;
-static int m_resolutionHeight = DEFAULT_RES_H;
-
 SBarcodeDecoder::SBarcodeDecoder(QObject *parent) : QObject(parent)
 { }
 
@@ -164,7 +161,7 @@ void SBarcodeDecoder::process(const QImage capturedImage, ZXing::BarcodeFormats 
     setIsDecoding(false);
 }
 
-QImage SBarcodeDecoder::videoFrameToImage(const QVideoFrame &videoFrame, const QRect &captureRect)
+QImage SBarcodeDecoder::videoFrameToImage(const QVideoFrame &videoFrame, const QRect &captureRect) const
 {
 
     #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
@@ -230,19 +227,20 @@ QImage SBarcodeDecoder::videoFrameToImage(const QVideoFrame &videoFrame, const Q
     }
 
     // that's because qml videooutput has no mapNormalizedRectToItem method
-#ifdef Q_OS_ANDROID
-    return image.copy(m_resolutionHeight/4, m_resolutionWidth/4, m_resolutionHeight/2, m_resolutionWidth/2);
-#else
+
     return image.copy(captureRect);
-#endif // Q_OS_ANDROID
 
 
 #endif // QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 
 }
 
-void SBarcodeDecoder::setResolution(const int &w, const int &h)
+void SBarcodeDecoder::setResolution(int w, int h)
 {
-    m_resolutionWidth = w;
-    m_resolutionHeight = h;
-} // SBarcodeDecoder::videoFrameToImage
+    m_resolution = QSize{w,h};
+}
+
+void SBarcodeDecoder::setResolution(const QSize& newRes)
+{
+    m_resolution = newRes;
+}
