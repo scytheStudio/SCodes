@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.1)
 
 project(SCodes LANGUAGES CXX)
-option(SS_SCODES_DEBUG OFF)
+option(SCODES_DEBUG OFF)
 
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -40,9 +40,9 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
     QT_QML_MODULE_URI com.scythestudio.scodes
 
 )
-if(SS_SCODES_DEBUG)
+if(SCODES_DEBUG)
     message("${PROJECT_NAME} debug messages enabled: ${SS_SCODES_DEBUG}")
-    target_compile_definitions(${PROJECT_NAME} PUBLIC SS_SCODES_DEBUG)
+    target_compile_definitions(${PROJECT_NAME} PUBLIC SCODES_DEBUG)
 endif()
 
 

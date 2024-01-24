@@ -28,7 +28,7 @@ class SBarcodeScanner : public QVideoSink, public QQmlParserStatus
 
     /// Set this property to the videosink that's supposed to do further processing on video frame. A VideoOutput.videosink for example, to show the video.
     Q_PROPERTY(QVideoSink* forwardVideoSink MEMBER m_forwardVideoSink WRITE setForwardVideoSink NOTIFY forwardVideoSinkChanged)
-    /// Set this to the subsection of the frame that's acutally supposed to be scanned for qr code.
+    /// Set this to the subsection of the frame that's acutally supposed to be scanned for qr code. In Normalized coordinates (0.0-1.0)
     Q_PROPERTY(QRectF captureRect READ captureRect WRITE setCaptureRect NOTIFY captureRectChanged)
     /// (Readonly) This string is set to the description of possible encountered error. Empty if no error.
     Q_PROPERTY(QString errorDescription READ errorDescription NOTIFY errorDescriptionChanged)
@@ -104,7 +104,7 @@ private:
     QPointer<QCamera> m_camera;
     /// VideoSink to forward the captured frame to. Normally this should be VideoOutput.videoSink
     QPointer<QVideoSink> m_forwardVideoSink;
-    /// Subsection of videoframe to capture, in pixels
+    /// Subsection of videoframe to capture, in normalized coordinates
     QRectF m_captureRect;
     /// Last captured string from QrCode
     QString m_captured = "";

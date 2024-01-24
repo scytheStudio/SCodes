@@ -5,7 +5,7 @@
 #ifndef DEBUG_H
 #define DEBUG_H
 #include <QDebug>
-#ifdef SS_SCODES_DEBUG
+#ifdef SCODES_DEBUG
 #define sDebug QMessageLogger(QT_MESSAGELOG_FILE, QT_MESSAGELOG_LINE, QT_MESSAGELOG_FUNC).debug
 #else
 #define sDebug while (false) QMessageLogger().noDebug

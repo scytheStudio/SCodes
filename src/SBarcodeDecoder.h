@@ -52,7 +52,7 @@ public:
      * \param QVideoFrame &videoFrame - frame of video data.
      * \param const QRect &captureRect - capture area rectangle.
      */
-    static QImage videoFrameToImage(const QVideoFrame &videoFrame, const QRect &captureRect);
+    QImage videoFrameToImage(const QVideoFrame &videoFrame, const QRect &captureRect) const;
 
     /*!
      * \fn void setResolution(const int &w, const int &h)

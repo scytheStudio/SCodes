@@ -51,7 +51,13 @@ void SBarcodeScanner::classBegin()
 void SBarcodeScanner::tryProcessFrame(const QVideoFrame& frame)
 {
     if (m_processing) {
-        emit process(m_decoder.videoFrameToImage(frame, captureRect().toRect()));
+        // Scale the normalized rectangle for camera resolution
+        auto r = m_camera->cameraFormat().resolution();
+        auto cRect = QRectF{m_captureRect.x()*r.width(),
+                m_captureRect.y()*r.height(),
+                m_captureRect.width()*r.width(),
+                           m_captureRect.height()*r.height()}.toRect();
+        emit process(m_decoder.videoFrameToImage(frame, cRect));
     }
     pauseProcessing();
 }
@@ -91,6 +97,13 @@ QCamera *SBarcodeScanner::makeDefaultCamera()
     }
 
     auto supportedFormats = camera->cameraDevice().videoFormats();
+    for (auto f : supportedFormats)
+    {
+        sDebug() << "Supported format: "
+                 << f.pixelFormat()
+                 << f.resolution()
+                 << "  FPS:" << f.minFrameRate() << "-" << f.maxFrameRate();
+    }
     if(supportedFormats.empty())
     {
         const char* msg = "A default camera was found but it has no supported formats. The Camera may be wrongly configured.";
@@ -99,12 +112,13 @@ QCamera *SBarcodeScanner::makeDefaultCamera()
         return nullptr;
     }
 
-// TODO: Either explain what this is or remove it
-#ifdef Q_OS_ANDROID
-    const auto format = supportedFormats.last();
-#else
-    const auto format = supportedFormats.first();
-#endif
+    /// Pick best format - medium pixels
+    std::sort(supportedFormats.begin(),supportedFormats.end(),[](const auto& f1, const auto& f2){
+        QSize r1 = f1.resolution();
+        QSize r2 = f2.resolution();
+        return r1.height()*r1.width() < r2.height()*r2.width();
+    });
+    auto format = supportedFormats.at(supportedFormats.count()/2);
 
     camera->setFocusMode(QCamera::FocusModeAuto);
     camera->setCameraFormat(format);

@@ -161,7 +161,7 @@ void SBarcodeDecoder::process(const QImage capturedImage, ZXing::BarcodeFormats 
     setIsDecoding(false);
 }
 
-QImage SBarcodeDecoder::videoFrameToImage(const QVideoFrame &videoFrame, const QRect &captureRect)
+QImage SBarcodeDecoder::videoFrameToImage(const QVideoFrame &videoFrame, const QRect &captureRect) const
 {
 
     #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
@@ -227,11 +227,8 @@ QImage SBarcodeDecoder::videoFrameToImage(const QVideoFrame &videoFrame, const Q
     }
 
     // that's because qml videooutput has no mapNormalizedRectToItem method
-#ifdef Q_OS_ANDROID
-    return image.copy(m_resolution.height()/4, m_resolution.width()/4, m_resolution.height()/2, m_resolution.width()/2);
-#else
+
     return image.copy(captureRect);
-#endif // Q_OS_ANDROID
 
 
 #endif // QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
