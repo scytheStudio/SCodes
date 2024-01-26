@@ -87,6 +87,7 @@ private:
     QMediaCaptureSession m_capture;
     /// Separate thread for Qr code processing and detection
     QThread workerThread;
+    /// Guard variable that prevents us from queueuing up the frames for processing
     QAtomicInteger<bool> m_frameProcessingInProgress=false;
 
     bool m_scanning = true;

@@ -49,7 +49,6 @@ void SBarcodeScanner::tryProcessFrame(const QVideoFrame& frame)
     if(!m_scanning || m_frameProcessingInProgress) {
         return;
     }
-    SCODES_MEASURE(time);
     // Set the guard variable to not process more than 1 frame at the time
     m_frameProcessingInProgress = true;
 
