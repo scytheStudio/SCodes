@@ -30,8 +30,6 @@ class SBarcodeScanner : public QVideoSink, public QQmlParserStatus
     Q_PROPERTY(QVideoSink* forwardVideoSink MEMBER m_forwardVideoSink WRITE setForwardVideoSink NOTIFY forwardVideoSinkChanged)
     /// Set this to the subsection of the frame that's acutally supposed to be scanned for qr code. In Normalized coordinates (0.0-1.0)
     Q_PROPERTY(QRectF captureRect READ captureRect WRITE setCaptureRect NOTIFY captureRectChanged)
-    /// (Readonly) This string is set to the description of possible encountered error. Empty if no error.
-    Q_PROPERTY(QString errorDescription READ errorDescription NOTIFY errorDescriptionChanged)
     /// Set to true if camera property is set
     Q_PROPERTY(bool cameraAvailable READ cameraAvailable NOTIFY cameraAvailableChanged)
     /// Optional property if you want to set your own camera as an video input for scanning. Default video input is chosen by default.
@@ -56,7 +54,6 @@ public:
     void setCaptureRect(const QRectF &captureRect);
     QString captured() const;
     bool cameraAvailable() const;
-    QString errorDescription() const;
     void setCamera(QCamera *newCamera);
     void setForwardVideoSink(QVideoSink* sink);
 public slots:
@@ -94,7 +91,7 @@ signals:
     void captureRectChanged(const QRectF &captureRect);
     void capturedChanged(const QString &captured);
     void cameraAvailableChanged();
-    void errorDescriptionChanged();
+    void errorOccured(QString errorString);
 protected:
     QCamera* makeDefaultCamera();
 private:
@@ -116,7 +113,6 @@ private:
 
     bool m_processing = true;
     bool m_cameraAvailable = false;
-    QString m_errorDescription = "";
 
     /*!
      * \fn void setCaptured(const QString &captured)
@@ -133,13 +129,6 @@ private:
      * \param bool available - camera availability status
      */
     void setCameraAvailable(bool available);
-
-    /*!
-     * \fn void setErrorDescription(const QString &newErrorDescription)
-     * \brief Function setting error message that occured during initialization
-     * \param const QString &newErrorDescription - error message
-     */
-    void setErrorDescription(const QString &newErrorDescription);
 };
 
 /*!
