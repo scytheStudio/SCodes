@@ -10,7 +10,7 @@
 #include <iostream>
 
 #include <ReadBarcode.h>
-
+#include "debug.h"
 
 /*!
  * \brief Provide a interface to access `ZXing::ReadBarcode` method
@@ -141,8 +141,9 @@ bool SBarcodeDecoder::  isDecoding() const
     return m_isDecoding;
 }
 
-void SBarcodeDecoder::process(const QImage capturedImage, ZXing::BarcodeFormats formats)
+void SBarcodeDecoder::process(const QImage& capturedImage, ZXing::BarcodeFormats formats)
 {
+    SCODES_MEASURE(time);
     setIsDecoding(true);
 
     const auto readerOptions = ReaderOptions()
@@ -217,19 +218,7 @@ QImage SBarcodeDecoder::videoFrameToImage(const QVideoFrame &videoFrame, const Q
 
     #else
     // The CPU / GPU buffer check is done internally, or so it seems
-    QImage image = videoFrame.toImage();
-
-    if (image.isNull()) {
-        return QImage();
-    }
-
-    if (image.format() != QImage::Format_ARGB32) {
-        image = image.convertToFormat(QImage::Format_ARGB32);
-    }
-
-    // that's because qml videooutput has no mapNormalizedRectToItem method
-
-    return image.copy(captureRect);
+    return videoFrame.toImage().copy(captureRect).convertToFormat(QImage::Format_ARGB32);
 
 
 #endif // QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
