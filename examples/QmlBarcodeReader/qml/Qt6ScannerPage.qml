@@ -21,13 +21,13 @@ ApplicationWindow {
     id: barcodeScanner
 
     forwardVideoSink: videoOutput.videoSink
+    scanning: !resultScreen.visible
 
     captureRect: Qt.rect(1 / 4, 1 / 4, 1 / 2, 1 / 2)
 
     onCapturedChanged: function (captured) {
       scanResultText.text = captured
       resultScreen.visible = true
-      barcodeScanner.setProcessing(0)
     }
   }
 
@@ -87,8 +87,6 @@ ApplicationWindow {
 
         onClicked: {
           resultScreen.visible = false
-          barcodeScanner.setProcessing(1)
-          barcodeScanner.continueProcessing()
         }
       }
     }

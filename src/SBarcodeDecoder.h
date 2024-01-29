@@ -70,7 +70,7 @@ public slots:
      * \param const QImage capturedImage - captured image.
      * \param ZXing::BarcodeFormats formats - barcode formats.
      */
-    void process(const QImage capturedImage, ZXing::BarcodeFormats formats) ;
+    void process(const QImage& capturedImage, ZXing::BarcodeFormats formats);
 
 signals:
     /*!

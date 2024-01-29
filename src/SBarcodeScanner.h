@@ -14,9 +14,6 @@
 #include <QOpenGLFunctions>
 
 #include "SBarcodeDecoder.h"
-
-class Worker;
-
 /*!
  * \brief The SBarcodeScanner class processes the video input from Camera,
  */
@@ -28,6 +25,8 @@ class SBarcodeScanner : public QVideoSink, public QQmlParserStatus
 
     /// Set this property to the videosink that's supposed to do further processing on video frame. A VideoOutput.videosink for example, to show the video.
     Q_PROPERTY(QVideoSink* forwardVideoSink MEMBER m_forwardVideoSink WRITE setForwardVideoSink NOTIFY forwardVideoSinkChanged)
+    /// This property controls wether the frames are passed along to the decoder or not (default true)
+    Q_PROPERTY(bool scanning MEMBER m_scanning)
     /// Set this to the subsection of the frame that's acutally supposed to be scanned for qr code. In Normalized coordinates (0.0-1.0)
     Q_PROPERTY(QRectF captureRect READ captureRect WRITE setCaptureRect NOTIFY captureRectChanged)
     /// Set to true if camera property is set
@@ -57,30 +56,6 @@ public:
     void setCamera(QCamera *newCamera);
     void setForwardVideoSink(QVideoSink* sink);
 public slots:
-    /*!
-     * \fn void pauseProcessing()
-     * \brief Function for pause image processing
-     */
-    void pauseProcessing();
-
-    /*!
-     * \fn void continueProcessing()
-     * \brief Function for continue image processing
-     */
-    void continueProcessing();
-
-    /*!
-     * \fn void setProcessing(bool p)
-     * \brief Function for setting process status
-     */
-    void setProcessing(bool p);
-
-    /*!
-     * \fn void imageProcess(const QVideoFrame &frame)
-     * \brief Function for image processing
-     * \param const QVideoFrame &frame - video frame
-     */
-    void imageProcess(SBarcodeDecoder *decoder, const QImage &image, ZXing::BarcodeFormats formats);
 
 signals:
     void cameraChanged(QCamera *);
@@ -109,9 +84,10 @@ private:
     QMediaCaptureSession m_capture;
     /// Separate thread for Qr code processing and detection
     QThread workerThread;
-    Worker *worker;
+    /// Guard variable that prevents us from queueuing up the frames for processing
+    QAtomicInteger<bool> m_frameProcessingInProgress=false;
 
-    bool m_processing = true;
+    bool m_scanning = true;
     bool m_cameraAvailable = false;
 
     /*!
@@ -129,40 +105,6 @@ private:
      * \param bool available - camera availability status
      */
     void setCameraAvailable(bool available);
-};
-
-/*!
- * \brief The Worker class allows you to run `SBarcodeScanner::imageProcess` method in a different thread
- */
-class Worker : public QObject
-{
-    Q_OBJECT
-
-private:
-    /*!
-     * \brief A pointer of SBarcodeScanner
-     */
-    SBarcodeScanner *_scanner;
-
-public:
-    /*!
-     * \fn Worker(SBarcodeScanner *scanner)
-     * \brief Constructor.
-     * \param SBarcodeScanner *_scanner - a pointer to scanner class.
-     */
-    Worker(SBarcodeScanner *scanner) : _scanner{scanner} { ; }
-
-public slots:
-
-    /*!
-    * \fn void process(const QImage &image)
-    * \param const QImage &image - captured image
-    * \brief An interface for processing image
-    */
-    void process(const QImage &image) {
-        _scanner->imageProcess(_scanner->getDecoder(), image, SCodes::toZXingFormat(SCodes::SBarcodeFormat::Basic));
-    }
-
 };
 
 #endif // SBARCODESCANNER_H

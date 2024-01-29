@@ -4,6 +4,7 @@
 SBarcodeScanner::SBarcodeScanner(QObject* parent)
     : QVideoSink(parent)
     , m_camera(nullptr)
+    , m_scanning{true}
 {
     // Print error message if error occurs
     connect(this, &SBarcodeScanner::errorOccured, this, [](const QString& msg){
@@ -11,19 +12,15 @@ SBarcodeScanner::SBarcodeScanner(QObject* parent)
     });
     // Connect self to the media capture session
     m_capture.setVideoSink(this);
-
-    // initiate decoder on another thread
-    connect(&m_decoder, &SBarcodeDecoder::capturedChanged, this, &SBarcodeScanner::setCaptured);
     connect(this, &QVideoSink::videoFrameChanged, this, &SBarcodeScanner::tryProcessFrame);
 
     // Connect cameraAvaliable property. Utilise implicit conversion from pointer to bool.
-    connect(this, &SBarcodeScanner::cameraChanged, this, &SBarcodeScanner::cameraAvailable);
+    connect(this, &SBarcodeScanner::cameraChanged, this, &SBarcodeScanner::setCameraAvailable);
 
-    worker = new Worker(this);
-    worker->moveToThread(&workerThread);
-    connect(&workerThread, &QThread::finished, worker, &QObject::deleteLater);
-    connect(this, &SBarcodeScanner::process, worker, &Worker::process);
-    connect(&m_decoder,&SBarcodeDecoder::errorOccured,this, &SBarcodeScanner::errorOccured,Qt::QueuedConnection);
+    
+    m_decoder.moveToThread(&workerThread);
+    connect(&m_decoder, &SBarcodeDecoder::capturedChanged, this, &SBarcodeScanner::setCaptured, Qt::QueuedConnection);
+    connect(&m_decoder, &SBarcodeDecoder::errorOccured, this, &SBarcodeScanner::errorOccured, Qt::QueuedConnection);
     workerThread.start();
 }
 
@@ -55,16 +52,26 @@ void SBarcodeScanner::classBegin()
 
 void SBarcodeScanner::tryProcessFrame(const QVideoFrame& frame)
 {
-    if (m_processing) {
-        // Scale the normalized rectangle for camera resolution
-        auto r = m_camera->cameraFormat().resolution();
-        auto cRect = QRectF{m_captureRect.x()*r.width(),
-                m_captureRect.y()*r.height(),
-                m_captureRect.width()*r.width(),
-                           m_captureRect.height()*r.height()}.toRect();
-        emit process(m_decoder.videoFrameToImage(frame, cRect));
+    if(!m_scanning || m_frameProcessingInProgress) {
+        return;
     }
-    pauseProcessing();
+    // Set the guard variable to not process more than 1 frame at the time
+    m_frameProcessingInProgress = true;
+
+    // Scale the normalized rectangle for camera resolution
+    auto r = m_camera->cameraFormat().resolution();
+    auto cRect = QRectF{m_captureRect.x()*r.width(),
+            m_captureRect.y()*r.height(),
+            m_captureRect.width()*r.width(),
+                       m_captureRect.height()*r.height()}.toRect();
+
+    // Invoke processing asynchronously, potential result will be reported by capturedChanged signal
+    // We can copy QVideoFrame as it's explicitly shared (just like std::shared_ptr)
+    // Note the releasing the guard variable
+    QMetaObject::invokeMethod(&m_decoder, [=](){
+        m_decoder.process(m_decoder.videoFrameToImage(frame, cRect),SCodes::toZXingFormat(SCodes::SBarcodeFormat::Basic));
+        m_frameProcessingInProgress = false;
+    });
 }
 
 void SBarcodeScanner::setCameraAvailable(bool available)
@@ -75,13 +82,6 @@ void SBarcodeScanner::setCameraAvailable(bool available)
 
     m_cameraAvailable = available;
     emit cameraAvailableChanged();
-}
-
-void SBarcodeScanner::imageProcess(
-    SBarcodeDecoder* decoder, const QImage& image, ZXing::BarcodeFormats formats)
-{
-    decoder->process(image, formats);
-    continueProcessing();
 }
 
 QCamera *SBarcodeScanner::makeDefaultCamera()
@@ -113,32 +113,17 @@ QCamera *SBarcodeScanner::makeDefaultCamera()
         return nullptr;
     }
 
-    /// Pick best format - medium pixels
+    /// Pick best format - most pixels
     std::sort(supportedFormats.begin(),supportedFormats.end(),[](const auto& f1, const auto& f2){
         QSize r1 = f1.resolution();
         QSize r2 = f2.resolution();
         return r1.height()*r1.width() < r2.height()*r2.width();
     });
-    auto format = supportedFormats.at(supportedFormats.count()/2);
+    auto format = supportedFormats.last();
 
     camera->setFocusMode(QCamera::FocusModeAuto);
     camera->setCameraFormat(format);
     return camera;
-}
-
-void SBarcodeScanner::setProcessing(bool p)
-{
-    m_processing = p;
-}
-
-void SBarcodeScanner::pauseProcessing()
-{
-    disconnect(this, &QVideoSink::videoFrameChanged, this, &SBarcodeScanner::tryProcessFrame);
-}
-
-void SBarcodeScanner::continueProcessing()
-{
-    connect(this, &QVideoSink::videoFrameChanged, this, &SBarcodeScanner::tryProcessFrame);
 }
 
 void SBarcodeScanner::setCaptured(const QString& captured)

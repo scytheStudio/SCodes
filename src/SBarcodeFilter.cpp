@@ -5,6 +5,7 @@
 #include <QVideoFilterRunnable>
 
 #include "SBarcodeDecoder.h"
+#include "debug.h"
 
 void processImage(SBarcodeDecoder *decoder, const QImage &image, ZXing::BarcodeFormats formats)
 {
@@ -79,7 +80,7 @@ SBarcodeFilter::SBarcodeFilter(QObject *parent)
 
 QVideoFilterRunnable *SBarcodeFilter::createFilterRunnable()
 {
-    qDebug() << "FILTER CREATED!";
+    sDebug() << "FILTER CREATED!";
     return new SBarcodeFilterRunnable(this);
 }
 
@@ -139,7 +140,7 @@ const SCodes::SBarcodeFormats &SBarcodeFilter::format() const
 
 void SBarcodeFilter::setFormat(const SCodes::SBarcodeFormats &format)
 {
-    qDebug() << "set format " << format << ", old format " << m_format;
+    sDebug() << "set format " << format << ", old format " << m_format;
 
     if (m_format != format) {
         m_format = format;
