@@ -85,7 +85,7 @@ signals:
      */
     void capturedChanged(const QString &captured);
 
-    void errorOccured(QString errorString);
+    void errorOccured(const QString& errorString);
 
 private:
     /*!
