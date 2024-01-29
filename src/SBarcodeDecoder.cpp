@@ -10,6 +10,8 @@
 #include <iostream>
 
 #include <ReadBarcode.h>
+#include <exception>
+#include <QScopeGuard>
 #include "debug.h"
 
 /*!
@@ -79,11 +81,11 @@ Result ReadBarcode(const QImage& img, const ReaderOptions& options = { })
 
               default: return ImageFormat::None;
           }
-      };
+    };
 
     auto exec = [&](const QImage& img){
           return Result(ZXing::ReadBarcode({ img.bits(), img.width(), img.height(), ImgFmtFromQImg(img) }, options));
-      };
+     };
 
     return ImgFmtFromQImg(img) == ImageFormat::None ? exec(img.convertToFormat(QImage::Format_RGBX8888)) : exec(img);
 }
@@ -143,6 +145,8 @@ bool SBarcodeDecoder::  isDecoding() const
 
 void SBarcodeDecoder::process(const QImage& capturedImage, ZXing::BarcodeFormats formats)
 {
+    // This will set the "isDecoding" to false automatically
+    auto decodeGuard = qScopeGuard([=](){setIsDecoding(false);});
     SCODES_MEASURE(time);
     setIsDecoding(true);
 
@@ -153,13 +157,16 @@ void SBarcodeDecoder::process(const QImage& capturedImage, ZXing::BarcodeFormats
       .setIsPure(false)
       .setBinarizer(Binarizer::LocalAverage);
 
-    const auto result = ReadBarcode(capturedImage, readerOptions);
+    try{
+        const auto result = ReadBarcode(capturedImage, readerOptions);
 
-    if (result.isValid()) {
-        setCaptured(result.text());
+        if (result.isValid()) {
+            setCaptured(result.text());
+        }
     }
-
-    setIsDecoding(false);
+    catch(std::exception& e) {
+        emit errorOccured("ZXing exception: " + QString::fromLocal8Bit(e.what()));
+    }
 }
 
 QImage SBarcodeDecoder::videoFrameToImage(const QVideoFrame &videoFrame, const QRect &captureRect) const

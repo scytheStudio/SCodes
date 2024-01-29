@@ -85,6 +85,8 @@ signals:
      */
     void capturedChanged(const QString &captured);
 
+    void errorOccured(const QString& errorString);
+
 private:
     /*!
      * \brief Indicates the decoding state

@@ -6,6 +6,10 @@ SBarcodeScanner::SBarcodeScanner(QObject* parent)
     , m_camera(nullptr)
     , m_scanning{true}
 {
+    // Print error message if error occurs
+    connect(this, &SBarcodeScanner::errorOccured, this, [](const QString& msg){
+        qWarning() << "SCodes Error:" << msg;
+    });
     // Connect self to the media capture session
     m_capture.setVideoSink(this);
     connect(this, &QVideoSink::videoFrameChanged, this, &SBarcodeScanner::tryProcessFrame);
@@ -13,8 +17,10 @@ SBarcodeScanner::SBarcodeScanner(QObject* parent)
     // Connect cameraAvaliable property. Utilise implicit conversion from pointer to bool.
     connect(this, &SBarcodeScanner::cameraChanged, this, &SBarcodeScanner::setCameraAvailable);
 
+    
     m_decoder.moveToThread(&workerThread);
     connect(&m_decoder, &SBarcodeDecoder::capturedChanged, this, &SBarcodeScanner::setCaptured, Qt::QueuedConnection);
+    connect(&m_decoder, &SBarcodeDecoder::errorOccured, this, &SBarcodeScanner::errorOccured, Qt::QueuedConnection);
     workerThread.start();
 }
 
@@ -83,15 +89,13 @@ QCamera *SBarcodeScanner::makeDefaultCamera()
     auto defaultCamera = QMediaDevices::defaultVideoInput();
     if (defaultCamera.isNull())
     {
-        sDebug() << "No default camera found!";
-        setErrorDescription("No default camera could be found on the system");
+        errorOccured("No default camera could be found on the system");
         return nullptr;
     }
 
     auto camera = new QCamera(defaultCamera, this);
     if (camera->error()) {
-        sDebug() << "Error during camera initialization: " << camera->errorString();
-        setErrorDescription(camera->errorString());
+        errorOccured("Error during camera initialization: " + camera->errorString());
         return nullptr;
     }
 
@@ -105,9 +109,7 @@ QCamera *SBarcodeScanner::makeDefaultCamera()
     }
     if(supportedFormats.empty())
     {
-        const char* msg = "A default camera was found but it has no supported formats. The Camera may be wrongly configured.";
-        sDebug() << msg ;
-        setErrorDescription(msg);
+        errorOccured("A default camera was found but it has no supported formats. The Camera may be wrongly configured.");
         return nullptr;
     }
 
@@ -161,11 +163,6 @@ bool SBarcodeScanner::cameraAvailable() const
     return m_cameraAvailable;
 }
 
-QString SBarcodeScanner::errorDescription() const
-{
-    return m_errorDescription;
-}
-
 void SBarcodeScanner::setCamera(QCamera *newCamera)
 {
     if(m_camera == newCamera){
@@ -189,8 +186,7 @@ void SBarcodeScanner::setCamera(QCamera *newCamera)
     {
         auto format = newCamera->cameraFormat();
         connect(newCamera,&QCamera::errorOccurred,this,[this](auto err,const auto& string){
-            sDebug() << "Camera error:" << string;
-            setErrorDescription(string);
+            errorOccured("Camera error:" + string);
         });
         m_decoder.setResolution(format.resolution());
         m_capture.setCamera(newCamera);
@@ -221,14 +217,4 @@ void SBarcodeScanner::setForwardVideoSink(QVideoSink *newSink)
     }
     m_forwardVideoSink = newSink;
     forwardVideoSinkChanged(m_forwardVideoSink);
-}
-
-void SBarcodeScanner::setErrorDescription(const QString& newErrorDescription)
-{
-    if (m_errorDescription == newErrorDescription) {
-        return;
-    }
-
-    m_errorDescription = newErrorDescription;
-    emit errorDescriptionChanged();
 }
