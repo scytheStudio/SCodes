@@ -105,9 +105,10 @@ Registering the barcode reader classes with if directive:
     #endif
 ```
 <a name="register-generator"></a>
-Registering the barcode generator class:
+Registering the barcode generator class with associated enum:
 ```c++
     qmlRegisterType<SBarcodeGenerator>("com.scythestudio.scodes", 1, 0, "SBarcodeGenerator");
+    qmlRegisterUncreatableMetaObject(SCodes::staticMetaObject, "com.scythestudio.scodes", 1, 0, "SCodes", "Error: only enums");
 ```
 
 <a name="porting"></a>
