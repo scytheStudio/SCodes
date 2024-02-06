@@ -34,6 +34,7 @@ equals(QT_MAJOR_VERSION, 5) {
 }
 
 HEADERS += \
+    $$PWD/private/debug.h \
     $$PWD/SBarcodeDecoder.h \
     $$PWD/SBarcodeFormat.h \
     $$PWD/SBarcodeGenerator.h \
