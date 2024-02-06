@@ -1,6 +1,6 @@
 #include "SBarcodeScanner.h"
 #include <QMediaDevices>
-#include "debug.h"
+#include "private/debug.h"
 SBarcodeScanner::SBarcodeScanner(QObject* parent)
     : QVideoSink(parent)
     , m_camera(nullptr)

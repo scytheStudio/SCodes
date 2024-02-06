@@ -12,7 +12,7 @@
 #include <ReadBarcode.h>
 #include <exception>
 #include <QScopeGuard>
-#include "debug.h"
+#include "private/debug.h"
 
 /*!
  * \brief Provide a interface to access `ZXing::ReadBarcode` method
