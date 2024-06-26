@@ -5,7 +5,7 @@
 #include <QVideoFilterRunnable>
 
 #include "SBarcodeDecoder.h"
-#include "debug.h"
+#include "private/debug.h"
 
 void processImage(SBarcodeDecoder *decoder, const QImage &image, ZXing::BarcodeFormats formats)
 {
