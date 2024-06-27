@@ -4,12 +4,12 @@ ColorController::ColorController(QObject *parent)
     : QObject{parent}
 {}
 
-bool ColorController::checkColor(QString color)
+bool ColorController::checkColor(const QString &color)
 {
     return QColor(color).isValid();
 }
 
-QColor ColorController::convertStringToColor(QString color)
+QColor ColorController::convertStringToColor(const QString &color)
 {
     return QColor(color);
 }
