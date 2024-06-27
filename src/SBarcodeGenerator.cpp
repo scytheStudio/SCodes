@@ -242,8 +242,10 @@ QColor SBarcodeGenerator::foregroundColor() const
 
 void SBarcodeGenerator::setForegroundColor(const QColor &foregroundColor)
 {
-    if (_foregroundColor == foregroundColor)
+    if (_foregroundColor == foregroundColor) {
         return;
+    }
+
     _foregroundColor = foregroundColor;
     emit foregroundColorChanged();
 }
@@ -255,8 +257,10 @@ QColor SBarcodeGenerator::backgroundColor() const
 
 void SBarcodeGenerator::setBackgroundColor(const QColor &backgroundColor)
 {
-    if (_backgroundColor == backgroundColor)
+    if (_backgroundColor == backgroundColor) {
         return;
+    }
+
     _backgroundColor = backgroundColor;
     emit backgroundColorChanged();
 }
