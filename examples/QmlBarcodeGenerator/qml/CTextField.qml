@@ -8,6 +8,8 @@ import QtQuick.Controls 2.12
 TextField {
   id: root
 
+  property bool inputIsValid: true
+
   selectByMouse: true
 
   leftPadding: 5
@@ -16,7 +18,7 @@ TextField {
     radius: 2
 
     border {
-      color: Theme.borderColor
+      color: inputIsValid ? Theme.borderColor : Theme.invalidInputBorderColor
       width: 1
     }
   }

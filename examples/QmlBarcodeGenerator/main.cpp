@@ -2,6 +2,7 @@
 #include <QQmlApplicationEngine>
 
 #include "SBarcodeGenerator.h"
+#include "ColorController.h"
 
 int main(int argc, char *argv[])
 {
@@ -17,6 +18,7 @@ int main(int argc, char *argv[])
     qmlRegisterSingletonType(QUrl("qrc:/qml/Theme.qml"), "Theme", 1, 0, "Theme");
 
     qmlRegisterType<SBarcodeGenerator>("com.scythestudio.scodes", 1, 0, "SBarcodeGenerator");
+    qmlRegisterType<ColorController>("com.scythestudio.scodes", 1, 0, "ColorController");
 
     engine.load(QUrl(QStringLiteral("qrc:/qml/GeneratorPage.qml")));
 
