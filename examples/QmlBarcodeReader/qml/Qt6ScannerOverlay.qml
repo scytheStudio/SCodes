@@ -164,6 +164,7 @@ Item {
           target: scanIndicator
           property: "y"
           duration: 2000
+          to: captureZoneCorners.height
         }
 
         PropertyAnimation {
@@ -172,6 +173,7 @@ Item {
           target: scanIndicator
           property: "y"
           duration: 2000
+          to: 0
         }
       }
     }
@@ -204,8 +206,6 @@ Item {
   }
 
   onCaptureRectChanged: {
-    toTopAnimation.to = 10
-    toBottomAnimation.to = scanCapsuleText.x
     scanIndicatorAnimation.start()
   }
 }
