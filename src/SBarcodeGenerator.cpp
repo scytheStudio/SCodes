@@ -1,5 +1,6 @@
 #include "SBarcodeGenerator.h"
 #include <QStandardPaths>
+#include <QPainter>
 
 #ifdef Q_OS_ANDROID
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
@@ -21,19 +22,47 @@ bool SBarcodeGenerator::generate(const QString &inputString)
         if (inputString.isEmpty()) {
             return false;
         } else {
+            // Change ecc level to max to generate image on QR code.
+            if (m_format == SCodes::SBarcodeFormat::QRCode && !m_imagePath.isEmpty()) {
+                if (m_eccLevel < 8) {
+                    qDebug() << "To draw image on QR Code use maximum level of ecc. Setting it to 8.";
+
+                    m_eccLevel = 8;
+                    emit eccLevelChanged(m_eccLevel);
+                }
+            }
+
             ZXing::MultiFormatWriter writer = ZXing::MultiFormatWriter(SCodes::toZXingFormat(m_format)).setMargin(
                 m_margin).setEccLevel(m_eccLevel);
 
-            _bitmap = ZXing::ToMatrix<uint8_t>(writer.encode(inputString.toStdString(), m_width, m_height));
+            auto qrCodeMatrix = writer.encode(inputString.toStdString(), m_width, m_height);
+            auto _bitmap = ZXing::ToMatrix<uint8_t>(qrCodeMatrix);
+
+            QImage image(_bitmap.data(), m_width, m_height, QImage::Format_Grayscale8);
+
+            // Center images works only on QR codes.
+            if (m_format == SCodes::SBarcodeFormat::QRCode) {
+                if (!m_imagePath.isEmpty()) {
+                    QSize centerImageSize(m_width / m_centerImageRatio, m_height / m_centerImageRatio);
+                    drawCenterImage(&image, m_imagePath, centerImageSize,
+                                    (image.width() - centerImageSize.width()) / 2,
+                                    (image.height() - centerImageSize.height()) / 2);
+                } else {
+                    qDebug() << "Center Image path is empty. Skip drawing center image.";
+                }
+            } else {
+                qDebug() << "Center images works only on QR codes.";
+            }
 
             m_filePath = QDir::tempPath() + "/" + m_fileName + "." + m_extension;
 
-            auto image = QImage(_bitmap.data(), m_width, m_height, QImage::Format::Format_Grayscale8);
-
-            QFile file{m_filePath};
-
-            if(file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
+            // Save the final image with the QR code and center image
+            QFile file(m_filePath);
+            if (file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
                 image.save(&file);
+            } else {
+                qWarning() << "Could not open file for writing!";
+                return false;
             }
 
             emit generationFinished();
@@ -82,6 +111,37 @@ bool SBarcodeGenerator::saveImage()
     return true;
 }
 
+void SBarcodeGenerator::drawCenterImage(QImage *parentImage, QString imagePath, QSize imageSize, int x, int y)
+{
+    QImage centerImage(imageSize, QImage::Format_RGB32);
+    centerImage.load(imagePath);
+
+    if (centerImage.isNull()) {
+        qWarning() << "Center image could not be loaded!";
+        return;
+    }
+
+    // Create a painter to overlay the center image on the parentImage.
+    QPainter painter(parentImage);
+
+    // Draw background rectangle.
+    painter.setBrush(Qt::white);
+    painter.setPen(Qt::NoPen);
+    painter.drawRect(x, y, imageSize.width(), imageSize.height());
+
+    // Scale the center image to be smaller than background rectangle.
+    float imageRatio = 0.8;
+    centerImage = centerImage.scaled(imageSize.width() * imageRatio,
+                                     imageSize.height() * imageRatio,
+                                     Qt::KeepAspectRatio, Qt::SmoothTransformation);
+
+    // Draw image.
+    painter.drawImage(x + (imageSize.width() - centerImage.width()) / 2,
+                      y + (imageSize.height() - centerImage.height()) / 2,
+                      centerImage);
+    painter.end();
+}
+
 SCodes::SBarcodeFormat SBarcodeGenerator::format() const
 {
     return m_format;
@@ -111,4 +171,34 @@ void SBarcodeGenerator::setFormat(SCodes::SBarcodeFormat format)
 void SBarcodeGenerator::setFormat(const QString &formatName)
 {
     setFormat(SCodes::fromString(formatName));
+}
+
+QString SBarcodeGenerator::imagePath() const
+{
+    return m_imagePath;
+}
+
+void SBarcodeGenerator::setImagePath(const QString &imagePath)
+{
+    if (m_imagePath == imagePath) {
+        return;
+    }
+
+    m_imagePath = imagePath;
+    emit imagePathChanged();
+}
+
+int SBarcodeGenerator::centerImageRatio() const
+{
+    return m_centerImageRatio;
+}
+
+void SBarcodeGenerator::setCenterImageRatio(const int &centerImageRatio)
+{
+    if (m_centerImageRatio == centerImageRatio) {
+        return;
+    }
+
+    m_centerImageRatio = centerImageRatio;
+    emit centerImageRatioChanged();
 }
