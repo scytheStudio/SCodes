@@ -27,8 +27,7 @@ bool SBarcodeGenerator::generate(const QString &inputString)
                 if (m_eccLevel < 8) {
                     qDebug() << "To draw image on QR Code use maximum level of ecc. Setting it to 8.";
 
-                    m_eccLevel = 8;
-                    emit eccLevelChanged(m_eccLevel);
+                    setEccLvel(8);
                 }
             }
 
@@ -111,7 +110,7 @@ bool SBarcodeGenerator::saveImage()
     return true;
 }
 
-void SBarcodeGenerator::drawCenterImage(QImage *parentImage, QString imagePath, QSize imageSize, int x, int y)
+void SBarcodeGenerator::drawCenterImage(QImage *parentImage, const QString &imagePath, QSize imageSize, int x, int y)
 {
     QImage centerImage(imageSize, QImage::Format_RGB32);
     centerImage.load(imagePath);
@@ -140,6 +139,16 @@ void SBarcodeGenerator::drawCenterImage(QImage *parentImage, QString imagePath, 
                       y + (imageSize.height() - centerImage.height()) / 2,
                       centerImage);
     painter.end();
+}
+
+void SBarcodeGenerator::setEccLvel(int eccLevel)
+{
+    if (m_eccLevel == eccLevel) {
+        return;
+    }
+
+    m_eccLevel = eccLevel;
+    emit eccLevelChanged(m_eccLevel);
 }
 
 SCodes::SBarcodeFormat SBarcodeGenerator::format() const
@@ -193,7 +202,7 @@ int SBarcodeGenerator::centerImageRatio() const
     return m_centerImageRatio;
 }
 
-void SBarcodeGenerator::setCenterImageRatio(const int &centerImageRatio)
+void SBarcodeGenerator::setCenterImageRatio(int centerImageRatio)
 {
     if (m_centerImageRatio == centerImageRatio) {
         return;

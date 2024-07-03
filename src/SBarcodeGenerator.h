@@ -78,11 +78,11 @@ public:
     int centerImageRatio() const;
 
     /*!
-     * \fn void setCenterImageRatio(const int &centerImageRatio)
+     * \fn void setCenterImageRatio(int centerImageRatio)
      * \brief Sets the center image ratio.
      * \param const int &centerImageRatio - new image ratio.
      */
-    void setCenterImageRatio(const int &centerImageRatio);
+    void setCenterImageRatio(int centerImageRatio);
 
 public slots:
 
@@ -187,7 +187,14 @@ private:
      * \param int x - X coordinate where Image should be painted.
      * \param Qint y - Y coordinate where Image should be painted.
      */
-    void drawCenterImage(QImage *parentImage, QString imagePath, QSize imageSize, int x, int y);
+    void drawCenterImage(QImage *parentImage, const QString &imagePath, QSize imageSize, int x, int y);
+
+    /*!
+     * \fn void setEccLvel(int eccLevel)
+     * \brief Sets the QR code ecc level.
+     * \param int eccLevel - QR code ecc level.
+     */
+    void setEccLvel(int eccLevel);
 };
 
 #endif // SBARCODEGENERATOR_H
