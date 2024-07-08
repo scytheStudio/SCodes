@@ -31,13 +31,23 @@ bool SBarcodeGenerator::generate(const QString &inputString)
                 }
             }
 
-            ZXing::MultiFormatWriter writer = ZXing::MultiFormatWriter(SCodes::toZXingFormat(m_format)).setMargin(
-                m_margin).setEccLevel(m_eccLevel);
+            ZXing::MultiFormatWriter writer = ZXing::MultiFormatWriter(SCodes::toZXingFormat(m_format))
+                                                  .setMargin(m_margin)
+                                                  .setEccLevel(m_eccLevel);
 
             auto qrCodeMatrix = writer.encode(inputString.toStdString(), m_width, m_height);
-            _bitmap = ZXing::ToMatrix<uint8_t>(qrCodeMatrix);
 
-            QImage image(_bitmap.data(), m_width, m_height, QImage::Format_Grayscale8);
+            QImage image(m_width, m_height, QImage::Format_ARGB32);
+
+            for (int y = 0; y < m_height; ++y) {
+                for (int x = 0; x < m_width; ++x) {
+                    if (qrCodeMatrix.get(x, y)) {
+                        image.setPixelColor(x, y, m_foregroundColor);
+                    } else {
+                        image.setPixelColor(x, y, m_backgroundColor);
+                    }
+                }
+            }
 
             // Center images works only on QR codes.
             if (m_format == SCodes::SBarcodeFormat::QRCode) {
@@ -54,30 +64,6 @@ bool SBarcodeGenerator::generate(const QString &inputString)
             }
 
             m_filePath = QDir::tempPath() + "/" + m_fileName + "." + m_extension;
-
-            // Save the final image with the QR code and center image
-            QFile file(m_filePath);
-            ZXing::MultiFormatWriter writer = ZXing::MultiFormatWriter(SCodes::toZXingFormat(m_format))
-                                                  .setMargin(m_margin)
-                                                  .setEccLevel(m_eccLevel);
-
-            auto qrCodeMatrix = writer.encode(inputString.toStdString(), m_width, m_height);
-            _bitmap = ZXing::ToMatrix<uchar>(qrCodeMatrix, m_backgroundColor.rgba(), m_foregroundColor.rgba());
-
-            m_filePath = QDir::tempPath() + "/" + m_fileName + "." + m_extension;
-
-            // Create an image with desired format
-            QImage image(m_width, m_height, QImage::Format_ARGB32);
-
-            for (int y = 0; y < m_height; ++y) {
-                for (int x = 0; x < m_width; ++x) {
-                    if (qrCodeMatrix.get(x, y)) {
-                        image.setPixelColor(x, y, m_foregroundColor);
-                    } else {
-                        image.setPixelColor(x, y, m_backgroundColor);
-                    }
-                }
-            }
 
             QFile file{m_filePath};
             if (file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {

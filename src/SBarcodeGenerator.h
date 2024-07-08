@@ -218,8 +218,6 @@ private:
 
     SCodes::SBarcodeFormat m_format = SCodes::SBarcodeFormat::Code128;
 
-    ZXing::Matrix<uint8_t> _bitmap = ZXing::Matrix<uint8_t>();
-
     /*!
      * \brief This method draws Rectangle and `imageRatio` smaller Image in the center of that Rectangle.
      * \param QImage *parentImage - Image parent. It is used for Painter constructor.
@@ -237,8 +235,8 @@ private:
      */
     void setEccLvel(int eccLevel);
 
-    QColor m_foregroundColor = "white";
-    QColor m_backgroundColor = "black";
+    QColor m_foregroundColor = "black";
+    QColor m_backgroundColor = "white";
 };
 
 #endif // SBARCODEGENERATOR_H
