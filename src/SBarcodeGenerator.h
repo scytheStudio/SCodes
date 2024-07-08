@@ -29,6 +29,8 @@ class SBarcodeGenerator : public QQuickItem
     Q_PROPERTY(SCodes::SBarcodeFormat format READ format WRITE setFormat NOTIFY formatChanged)
     Q_PROPERTY(QString imagePath READ imagePath WRITE setImagePath NOTIFY imagePathChanged)
     Q_PROPERTY(int centerImageRatio READ centerImageRatio WRITE setCenterImageRatio NOTIFY centerImageRatioChanged)
+    Q_PROPERTY(QColor foregroundColor READ foregroundColor WRITE setForegroundColor NOTIFY foregroundColorChanged)
+    Q_PROPERTY(QColor backgroundColor READ backgroundColor WRITE setBackgroundColor NOTIFY backgroundColorChanged)
 
 public:
 
@@ -83,6 +85,19 @@ public:
      * \param const int &centerImageRatio - new image ratio.
      */
     void setCenterImageRatio(int centerImageRatio);
+    
+    /*!
+     * \fn QColor foregroundColor() const
+     * \brief Returns foregroundColor.
+     */
+    QColor foregroundColor() const;
+
+
+    /*!
+     * \fn QColor backgroundColor() const
+     * \brief Returns backgroundColor.
+     */
+    QColor backgroundColor() const;
 
 public slots:
 
@@ -105,6 +120,20 @@ public slots:
      * \brief Saves the generated barcode image.
      */
     bool saveImage();
+
+    /*!
+     * \fn void setForegroundColor(const QColor &newForegroundColor)
+     * \brief Sets the foreground.
+     * \param const QColor &foreground - foreground color.
+     */
+    void setForegroundColor(const QColor &foregroundColor);
+
+    /*!
+     * \fn void setBackgroundColor(const QColor &backgroundColor)
+     * \brief Sets the backgroundColor.
+     * \param const QColor &backgroundColor - background color.
+     */
+    void setBackgroundColor(const QColor &backgroundColor);
 
 signals:
 
@@ -160,6 +189,18 @@ signals:
      */
     void centerImageRatioChanged();
 
+    /*!
+     * \brief This signal is emitted to send foregroundColor to QML.
+     * \param const QColor &foregroundColor - foregroundColor.
+     */
+    void foregroundColorChanged();
+
+    /*!
+     * \brief This signal is emitted to send backgroundColor to QML.
+     * \param const QColor &backgroundColor - backgroundColor.
+     */
+    void backgroundColorChanged();
+
 private:
     int m_width    = 500;
     int m_height   = 500;
@@ -177,8 +218,6 @@ private:
 
     SCodes::SBarcodeFormat m_format = SCodes::SBarcodeFormat::Code128;
 
-    ZXing::Matrix<uint8_t> _bitmap = ZXing::Matrix<uint8_t>();
-
     /*!
      * \brief This method draws Rectangle and `imageRatio` smaller Image in the center of that Rectangle.
      * \param QImage *parentImage - Image parent. It is used for Painter constructor.
@@ -195,6 +234,9 @@ private:
      * \param int eccLevel - QR code ecc level.
      */
     void setEccLvel(int eccLevel);
+
+    QColor m_foregroundColor = "black";
+    QColor m_backgroundColor = "white";
 };
 
 #endif // SBARCODEGENERATOR_H

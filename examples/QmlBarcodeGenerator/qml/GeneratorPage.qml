@@ -24,8 +24,22 @@ ApplicationWindow {
     }
   }
 
+  ColorController {
+    id: colorController
+  }
+
   SBarcodeGenerator {
     id: barcodeGenerator
+
+    onForegroundColorChanged: {
+      image.source = ""
+      barcodeGenerator.generate(textField.text)
+    }
+
+    onBackgroundColorChanged: {
+      image.source = ""
+      barcodeGenerator.generate(textField.text)
+    }
 
     onGenerationFinished: function (error) {
       if (error === "") {
@@ -277,6 +291,40 @@ ApplicationWindow {
 
           onEditingFinished: function () {
             barcodeGenerator.eccLevel = text
+          }
+        }
+
+        CTextField {
+          id: foregroundColorField
+
+          implicitWidth: parent.width
+          implicitHeight: parent.height / 10
+
+          placeholderText: "Current foreground color: " + barcodeGenerator.foregroundColor
+
+          onTextChanged: function () {
+            foregroundColorField.inputIsValid = colorController.checkColor(foregroundColorField.text)
+
+            if (colorController.checkColor(foregroundColorField.text)) {
+              barcodeGenerator.setForegroundColor(colorController.convertStringToColor(foregroundColorField.text))
+            }
+          }
+        }
+
+        CTextField {
+          id: backgroundColorField
+
+          implicitWidth: parent.width
+          implicitHeight: parent.height / 10
+
+          placeholderText: "Current background color: " + barcodeGenerator.backgroundColor
+
+          onTextChanged: function () {
+            backgroundColorField.inputIsValid = colorController.checkColor(backgroundColorField.text)
+
+            if (colorController.checkColor(backgroundColorField.text)) {
+              barcodeGenerator.setBackgroundColor(colorController.convertStringToColor(backgroundColorField.text))
+            }
           }
         }
 

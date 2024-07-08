@@ -171,6 +171,9 @@ We are a group of Qt and C++ enthusiasts whose goal is to address growing demand
 
 The company offers broad spectrum of services for the clients who wish to bring their ideas to life. We have extensive and practical knowledge about various Qt modules and other technologies allowing to create high quality product in a cost effective approach. If you want to see what Scythe Studio is is capable of and what services we provide, check out [this link](https://scythe-studio.com/en/services).
 
+## Professional Support
+We offer professional support for those who need assistance with integrating SCodes library or require additional features. For more information on our support options and pricing, please contact us at sales@scythe-studio.com
+
 ## Follow us
 
 Check out those links if you want to see Scythe Studio in action and follow the newest trends saying about Qt Qml development.

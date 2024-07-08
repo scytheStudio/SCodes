@@ -51,7 +51,8 @@ if(ANDROID)
 
 else()
 
-    add_executable(${PROJECT_NAME} main.cpp ${RSCS})
+    add_executable(${PROJECT_NAME} main.cpp ${RSCS}
+        ColorController.h ColorController.cpp)
 
 endif()
 
