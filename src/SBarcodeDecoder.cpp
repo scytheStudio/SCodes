@@ -118,12 +118,7 @@ QString SBarcodeDecoder::captured() const
 
 void SBarcodeDecoder::setCaptured(const QString &captured)
 {
-    if (m_captured == captured) {
-        return;
-    }
-
     m_captured = captured;
-
     emit capturedChanged(m_captured);
 }
 
