@@ -62,7 +62,7 @@ bool SBarcodeGenerator::generate(const QString &inputString)
                                                   .setEccLevel(m_eccLevel);
 
             auto qrCodeMatrix = writer.encode(inputString.toStdString(), m_width, m_height);
-            _bitmap = ZXing::ToMatrix<uchar>(qrCodeMatrix, _backgroundColor.rgba(), _foregroundColor.rgba());
+            _bitmap = ZXing::ToMatrix<uchar>(qrCodeMatrix, m_backgroundColor.rgba(), m_foregroundColor.rgba());
 
             m_filePath = QDir::tempPath() + "/" + m_fileName + "." + m_extension;
 
@@ -72,9 +72,9 @@ bool SBarcodeGenerator::generate(const QString &inputString)
             for (int y = 0; y < m_height; ++y) {
                 for (int x = 0; x < m_width; ++x) {
                     if (qrCodeMatrix.get(x, y)) {
-                        image.setPixelColor(x, y, _foregroundColor);
+                        image.setPixelColor(x, y, m_foregroundColor);
                     } else {
-                        image.setPixelColor(x, y, _backgroundColor);
+                        image.setPixelColor(x, y, m_backgroundColor);
                     }
                 }
             }
@@ -237,30 +237,30 @@ void SBarcodeGenerator::setCenterImageRatio(int centerImageRatio)
 
 QColor SBarcodeGenerator::foregroundColor() const
 {
-    return _foregroundColor;
+    return m_foregroundColor;
 }
 
 void SBarcodeGenerator::setForegroundColor(const QColor &foregroundColor)
 {
-    if (_foregroundColor == foregroundColor) {
+    if (m_foregroundColor == foregroundColor) {
         return;
     }
 
-    _foregroundColor = foregroundColor;
+    m_foregroundColor = foregroundColor;
     emit foregroundColorChanged();
 }
 
 QColor SBarcodeGenerator::backgroundColor() const
 {
-    return _backgroundColor;
+    return m_backgroundColor;
 }
 
 void SBarcodeGenerator::setBackgroundColor(const QColor &backgroundColor)
 {
-    if (_backgroundColor == backgroundColor) {
+    if (m_backgroundColor == backgroundColor) {
         return;
     }
 
-    _backgroundColor = backgroundColor;
+    m_backgroundColor = backgroundColor;
     emit backgroundColorChanged();
 }

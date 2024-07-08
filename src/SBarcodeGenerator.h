@@ -236,8 +236,9 @@ private:
      * \param int eccLevel - QR code ecc level.
      */
     void setEccLvel(int eccLevel);
-    QColor _foregroundColor = "white";
-    QColor _backgroundColor = "black";
+
+    QColor m_foregroundColor = "white";
+    QColor m_backgroundColor = "black";
 };
 
 #endif // SBARCODEGENERATOR_H
