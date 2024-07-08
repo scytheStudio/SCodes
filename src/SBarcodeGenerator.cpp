@@ -35,7 +35,7 @@ bool SBarcodeGenerator::generate(const QString &inputString)
                 m_margin).setEccLevel(m_eccLevel);
 
             auto qrCodeMatrix = writer.encode(inputString.toStdString(), m_width, m_height);
-            auto _bitmap = ZXing::ToMatrix<uint8_t>(qrCodeMatrix);
+            _bitmap = ZXing::ToMatrix<uint8_t>(qrCodeMatrix);
 
             QImage image(_bitmap.data(), m_width, m_height, QImage::Format_Grayscale8);
 
