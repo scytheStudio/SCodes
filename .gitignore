@@ -40,6 +40,7 @@ Thumbs.db
 *.pro.user*
 *.txt.user*
 build-*
+build
 
 # xemacs temporary files
 *.flc

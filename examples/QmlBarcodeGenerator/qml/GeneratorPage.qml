@@ -58,15 +58,6 @@ ApplicationWindow {
         right: parent.right
       }
 
-      //      TextField {
-      //        id: textField
-
-      //        anchors.fill: parent
-
-      //        selectByMouse: true
-
-      //        placeholderText: qsTr("Input")
-      //      }
       CTextField {
         id: textField
 
@@ -226,7 +217,7 @@ ApplicationWindow {
           id: widthField
 
           implicitWidth: parent.width
-          implicitHeight: parent.height / 8
+          implicitHeight: parent.height / 10
 
           placeholderText: "Current width: " + barcodeGenerator.width
 
@@ -244,7 +235,7 @@ ApplicationWindow {
           id: heightField
 
           implicitWidth: parent.width
-          implicitHeight: parent.height / 8
+          implicitHeight: parent.height / 10
 
           placeholderText: "Current height: " + barcodeGenerator.height
 
@@ -262,7 +253,7 @@ ApplicationWindow {
           id: marginField
 
           implicitWidth: parent.width
-          implicitHeight: parent.height / 8
+          implicitHeight: parent.height / 10
 
           placeholderText: "Current margin: " + barcodeGenerator.margin
 
@@ -280,7 +271,7 @@ ApplicationWindow {
           id: eccLevelField
 
           implicitWidth: parent.width
-          implicitHeight: parent.height / 8
+          implicitHeight: parent.height / 10
 
           placeholderText: "Current ECC Level: " + barcodeGenerator.eccLevel
 
@@ -293,7 +284,7 @@ ApplicationWindow {
           id: formatDropDown
 
           implicitWidth: parent.width
-          implicitHeight: parent.height / 8
+          implicitHeight: parent.height / 10
 
           model: ListModel {
             id: formats
@@ -350,7 +341,7 @@ ApplicationWindow {
           id: imageFormat
 
           implicitWidth: parent.width
-          implicitHeight: parent.height / 8
+          implicitHeight: parent.height / 10
 
           model: ListModel {
             id: extensions
@@ -374,10 +365,40 @@ ApplicationWindow {
           text: qsTr(barcodeGenerator.fileName)
 
           implicitWidth: parent.width
-          implicitHeight: parent.height / 8
+          implicitHeight: parent.height / 10
 
           onEditingFinished: {
             barcodeGenerator.fileName = text
+          }
+        }
+
+        CTextField {
+          id: imagePathField
+
+          text: qsTr(barcodeGenerator.imagePath)
+
+          implicitWidth: parent.width
+          implicitHeight: parent.height / 10
+
+          placeholderText: "Current image path: " + barcodeGenerator.imagePath
+
+          onEditingFinished: {
+            barcodeGenerator.imagePath = text
+          }
+        }
+
+        CTextField {
+          id: centerImageRatioField
+
+          text: qsTr(barcodeGenerator.centerImageRatio.toString())
+
+          implicitWidth: parent.width
+          implicitHeight: parent.height / 10
+
+          placeholderText: "Current center image ratio: " + barcodeGenerator.centerImageRatio
+
+          onEditingFinished: {
+            barcodeGenerator.centerImageRatio = parseInt(text)
           }
         }
       }
