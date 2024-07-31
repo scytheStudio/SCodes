@@ -1,5 +1,7 @@
+#include "qcamera.h"
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
+#include <QPermissions>
 
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 #include "SBarcodeFilter.h"
@@ -15,6 +17,10 @@ int main(int argc, char* argv[])
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 #endif
     QGuiApplication app(argc, argv);
+
+    app.requestPermission(QCameraPermission{}, [](const QPermission& permission) {
+        qDebug() << permission;
+    });
 
     QQmlApplicationEngine engine;
 
