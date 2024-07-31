@@ -120,6 +120,22 @@ SCodes library is using `SBarcodeFilter` class for Qt5 and `SBarcodesScanner` cl
 
 If you want to read more about implementation details of the library in Qt6 read the document: [Implementation Details in Qt6](https://github.com/scytheStudio/SCodes/blob/master/doc/detailsQt6.md)
 
+### Deploy on Ios quickfix
+
+Project version with Qt6 on cmake is configured properly and as cmake files goes it's ready to use as is.
+But a common issue that can occour while targeting the Ios is that by default ZXing library is build as dynamic .dylib format that not always is properly recognized by the mobile devices.
+
+![Ios Quickfix Preview 0](/assets/fix_ios_0.png)
+
+To fix it simply go to the CMakeLists.txt file responsible for building the ZXing library, while I'm writing this it's in here `/.../SCodes/src/zxing-cpp/core/CMakeLists.txt`.
+You will know for sure when you find the list of all ZXing sources.
+
+![Ios Quickfix Preview 1](/assets/fix_ios_1.png)
+
+Scroll down into the line with `add_library` instruction, where the ZXing target is defined. Make this library static by writing the `STATIC` keyword. 
+Now we've changed the library format to static, which mean the ZXing code will be linked to your app during the compilation process. Rebuild your app and check if it works.
+
+![Ios Quickfix Preview 2](/assets/fix_ios_2.png)
 
 ### Trying various formats
 `SBarcodeFilter` is a class that you need to use for scanning case. By default it scans only specific basic formats of code (Code 39, Code 93, Code 128, QR Code and DataMatrix.).
