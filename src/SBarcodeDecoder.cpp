@@ -15,7 +15,7 @@
 #include "private/debug.h"
 
 /*!
- * \brief Provide a interface to access `ZXing::ReadBarcode` method
+ * \brief Provide an interface to access `ZXing::ReadBarcode` method
  */
 namespace ZXing {
 namespace Qt {
@@ -56,7 +56,7 @@ public:
 /*!
  * \fn Result ReadBarcode(const QImage& img, const ReaderOptions& options = { })
  * \brief Interface for calling ZXing::ReadBarcode method to get result as a text.
- * \param const QImage& img - referance of the image to be processed
+ * \param const QImage& img - reference of the image to be processed
  * \param const ReaderOptions& options - barcode decode hints
  */
 Result ReadBarcode(const QImage& img, const ReaderOptions& options = { })
