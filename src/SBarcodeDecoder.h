@@ -58,7 +58,7 @@ public:
      * \fn void setResolution(const int &w, const int &h)
      * \brief Update camera resolution values
      * \param w - width of the resolution
-     * \param h - heigth of the resolution
+     * \param h - height of the resolution
      */
     void setResolution(const QSize&);
     [[deprecated("Use QSize overload instead")]] void setResolution(int w, int h);
