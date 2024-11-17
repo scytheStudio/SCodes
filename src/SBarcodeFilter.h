@@ -42,7 +42,7 @@ public:
     /*!
      * \fn void setCaptureRect(const QRectF &captureRect)
      * \brief Sets the capture area rectangle.
-     * \param const QRectF &captureRect - capture area rectagle.
+     * \param const QRectF &captureRect - capture area rectangle.
      */
     void setCaptureRect(const QRectF &captureRect);
 
