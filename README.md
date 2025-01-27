@@ -162,17 +162,39 @@ Both build systems have their examples located in same directory. All you need t
 Please ensure that proper Java & NDK version installed on your system. This examples tested w/ Java 11 and 22.1.7171670 Android NDK version.
 
 ## About Scythe Studio
-We are a group of Qt and C++ enthusiasts whose goal is to address growing demand for cross-platform Qt development services. Thanks to our expertise in **Qt Qml development**, quality of deliveries and proven track of projects developed for companies from various industries we have been awarded the title of an official **Qt Service Partner**.
+We’re a team of **Qt and C++ enthusiasts** dedicated to helping businesses build great cross-platform applications. As an official Qt Service Partner, we’ve earned the trust of companies across various industries by delivering high-quality, reliable solutions. With years of experience in **Qt and QML development**, we know how to turn ambitious ideas into outstanding products.
 
-<span> 
-<a href="https://scythe-studio.com"><img width="340" height="150" src="https://user-images.githubusercontent.com/45963332/221174257-c1e1a9d9-0efa-4b25-996b-4b364ccb325c.svg"></a>
-<a href="https://clutch.co/profile/scythe-studio"><img height="150" width="150" src="https://user-images.githubusercontent.com/45963332/221174280-99b32a1d-7418-4a49-bcea-6927639cf557.png"></a>
-</span>
+<table style="margin: 0 auto; border:0;">
+    <tr style="border:0">
+        <td style="border:0">
+            <a href="https://scythe-studio.com">
+                <img width="340" height="150"
+                    src="https://user-images.githubusercontent.com/45963332/221174257-c1e1a9d9-0efa-4b25-996b-4b364ccb325c.svg">
+            </a>
+        </td>
+        <td style="border:0">
+            <a href="https://clutch.co/profile/scythe-studio">
+                <img height="150" width="150"
+                    src="https://github.com/user-attachments/assets/023e102e-84c1-4e7e-b9de-cae476e681e7">
+            </a>
+        </td>
+        <td style="border:0">
+            <a href="https://scythe-studio.com/en/iso">
+                <img src="https://github.com/user-attachments/assets/a5388270-4be7-4f37-bbfa-6e41a820ca36">
+            </a>
+        </td>
+        <td style="border:0">
+            <a href="https://scythe-studio.com/en/iso">
+                <img src="https://github.com/user-attachments/assets/a5388270-4be7-4f37-bbfa-6e41a820ca36">
+            </a>
+        </td>
+    </tr>
+</table>
 
-The company offers broad spectrum of services for the clients who wish to bring their ideas to life. We have extensive and practical knowledge about various Qt modules and other technologies allowing to create high quality product in a cost effective approach. If you want to see what Scythe Studio is is capable of and what services we provide, check out [this link](https://scythe-studio.com/en/services).
+We offer a wide range of services—from brainstorming ideas to delivering polished applications—always tailored to our clients’ needs. By combining deep knowledge of Qt modules and modern technologies with a practical, cost-effective approach, we create solutions that truly make a difference.
 
 ## Professional Support
-We offer professional support for those who need assistance with integrating SCodes library or require additional features. For more information on our support options and pricing, please contact us at sales@scythe-studio.com
+Need help with anything? We’ve got you covered. Our professional support services are here to assist you with. For more details about support options and pricing, just drop us a line at https://scythe-studio.com/en/contact.
 
 ## Follow us
 
