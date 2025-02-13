@@ -231,7 +231,7 @@ ApplicationWindow {
           id: widthField
 
           implicitWidth: parent.width
-          implicitHeight: parent.height / 10
+          implicitHeight: parent.height  / 13
 
           placeholderText: "Current width: " + barcodeGenerator.width
 
@@ -249,7 +249,7 @@ ApplicationWindow {
           id: heightField
 
           implicitWidth: parent.width
-          implicitHeight: parent.height / 10
+          implicitHeight: parent.height  / 13
 
           placeholderText: "Current height: " + barcodeGenerator.height
 
@@ -267,7 +267,7 @@ ApplicationWindow {
           id: marginField
 
           implicitWidth: parent.width
-          implicitHeight: parent.height / 10
+          implicitHeight: parent.height  / 13
 
           placeholderText: "Current margin: " + barcodeGenerator.margin
 
@@ -285,7 +285,7 @@ ApplicationWindow {
           id: eccLevelField
 
           implicitWidth: parent.width
-          implicitHeight: parent.height / 10
+          implicitHeight: parent.height  / 13
 
           placeholderText: "Current ECC Level: " + barcodeGenerator.eccLevel
 
@@ -298,7 +298,7 @@ ApplicationWindow {
           id: foregroundColorField
 
           implicitWidth: parent.width
-          implicitHeight: parent.height / 10
+          implicitHeight: parent.height  / 13
 
           placeholderText: "Current foreground color: " + barcodeGenerator.foregroundColor
 
@@ -315,7 +315,7 @@ ApplicationWindow {
           id: backgroundColorField
 
           implicitWidth: parent.width
-          implicitHeight: parent.height / 10
+          implicitHeight: parent.height  / 13
 
           placeholderText: "Current background color: " + barcodeGenerator.backgroundColor
 
@@ -332,7 +332,7 @@ ApplicationWindow {
           id: formatDropDown
 
           implicitWidth: parent.width
-          implicitHeight: parent.height / 10
+          implicitHeight: parent.height  / 13
 
           model: ListModel {
             id: formats
@@ -389,7 +389,7 @@ ApplicationWindow {
           id: imageFormat
 
           implicitWidth: parent.width
-          implicitHeight: parent.height / 10
+          implicitHeight: parent.height  / 13
 
           model: ListModel {
             id: extensions
@@ -413,7 +413,7 @@ ApplicationWindow {
           text: qsTr(barcodeGenerator.fileName)
 
           implicitWidth: parent.width
-          implicitHeight: parent.height / 10
+          implicitHeight: parent.height  / 13
 
           onEditingFinished: {
             barcodeGenerator.fileName = text
@@ -426,7 +426,7 @@ ApplicationWindow {
           text: qsTr(barcodeGenerator.imagePath)
 
           implicitWidth: parent.width
-          implicitHeight: parent.height / 10
+          implicitHeight: parent.height  / 13
 
           placeholderText: "Current image path: " + barcodeGenerator.imagePath
 
@@ -441,7 +441,7 @@ ApplicationWindow {
           text: qsTr(barcodeGenerator.centerImageRatio.toString())
 
           implicitWidth: parent.width
-          implicitHeight: parent.height / 10
+          implicitHeight: parent.height  / 13
 
           placeholderText: "Current center image ratio: " + barcodeGenerator.centerImageRatio
 
