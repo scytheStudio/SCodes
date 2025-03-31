@@ -9,7 +9,7 @@ Implementation of same method for both Qt version does not seems possible([check
 
 ---
 
-[![Scythe Studio](./assets/scytheStudioLogo.png)](https://scythe-studio.com)
+[![Scythe Studio](./assets/Main-SS-cropped.jpg)](https://scythe-studio.com)
 
 [![Built with Qt](./assets/buildWithQt.png)](https://qt.io)
 
